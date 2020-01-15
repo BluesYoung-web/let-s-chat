@@ -1,0 +1,83 @@
+<template>
+	<view>			
+			<view class="navBar flex-vc flex-js">
+				<view class="navImg flex flex-jc flex-vc ">
+					<image src="../../static/img/search.png" mode=""></image>
+				</view>				
+				<input type="text" value="" placeholder="手机号/来聊账号" />
+				<button>取消</button>
+			</view>
+	
+	<view class="inputActive flex flex-js">
+		<!-- {{inputMsg}} -->
+		<view class="img flex flex-jc flex-vc">
+			<image src="../../static/img/attention.png" mode=""></image>
+		</view>
+		<view class="inputMessage flex flex-vc">
+			<text>找人：</text>
+		</view>
+	</view>
+	
+	</view>
+</template>
+
+<script>
+	export default{
+		
+		data(){
+			return{
+				
+			}
+		},
+		//导航栏输入框数据监听
+		// onNavigationBarSearchInputChanged (val) {
+		// 	this.inputMsg = val.text;			
+		// },
+		// onNavigationBarButtonTap() {
+		// 	console.log(val.text)
+		// },
+		methods:{
+			
+		}
+
+	}
+</script>
+
+<style>
+	.navBar{
+		padding-left: 25upx;
+	}
+	.navImg{
+		width: 80upx;
+		height: 50upx;
+		background-color: #FFFFFF;
+	}
+	.navImg image{
+		width: 30upx;
+		height: 30upx;
+	}
+	.navBar input{
+		height: 50upx;
+		width: 500upx;
+		font-size: 30upx;
+		background: #FFFFFF;
+		margin-right: 30upx;
+	}
+	.navBar button{		
+		font-size: 35upx;
+		background-color: #344955;
+		color: #FFFFFF;
+	}
+	.inputActive{
+		margin-top: 100upx;
+		background-color: #EEEEEE;
+	}
+	.img{
+		width: 100upx;
+		height: 100upx;
+	}
+	.img image{
+		width: 50upx;
+		height: 50upx;
+	}
+</style>

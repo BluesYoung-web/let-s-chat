@@ -1,0 +1,44 @@
+// 管理账号信息缓存
+const USERS_KEY = 'USERS_KEY';
+const STATE_KEY = 'STATE_KEY';
+
+const getUsers = function () {
+    let ret = '';
+    ret = uni.getStorageSync(USERS_KEY);
+    if (!ret) {
+        ret = '[]';
+    }
+    return JSON.parse(ret);
+}
+
+const addUser = function (userInfo) {
+    let users = getUsers();
+	if (!users[0]) {
+		// 如果没有则新增
+		users.push({
+			account: userInfo.account,
+			name : userInfo.name,
+			motto : userInfo.motto,
+			phone : userInfo.phone,
+			avatarUrl : userInfo.avatarUrl,
+			wxId : userInfo.wxId
+		});
+	} else{
+		// 如果有则更新
+		users[0]=userInfo;
+	}
+    
+	console.log("缓存存入"+JSON.stringify(users));
+	uni.setStorage({
+		key : USERS_KEY,
+		data : JSON.stringify(users),
+		success: () => {
+			console.log("缓存存入成功");
+		}
+	})
+}
+
+export default {
+    getUsers,
+    addUser
+}

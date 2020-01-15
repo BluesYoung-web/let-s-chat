@@ -1,0 +1,73 @@
+ <!--修改签名页 --> 
+<template>
+	<view class="">
+		<!-- 输入文本框 -->
+		<view class="relative">
+			<textarea class="width-750 ft-36" v-model="motto" maxlength="20"/>
+			<view class="absolute countLimit">
+				<text>{{motto.length}}/</text>
+				<text>20</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	// 存储用户信息
+	import {mapMutations} from 'vuex'
+	export default {
+		data() {
+			return {
+				motto:'',//签名
+			}
+		},
+		onLoad(e) {
+			// 接收上个页面传过来的个性签名
+			this.motto = e.motto;
+		},
+		// 监听下一步按钮的点击事件
+		onNavigationBarButtonTap(e){
+			this.submitMotto();
+		},
+		methods: {
+			// 存储用户信息的方法
+			...mapMutations(['setInfo']),
+			submitMotto(){
+				let temp = {
+					motto : this.motto
+				};
+				this.setInfo(temp);
+				// 跳转回编辑资料的页面
+				uni.navigateBack();
+				uni.showToast({
+					title:"修改成功！"
+				})
+			}
+		},
+		computed:{
+			canSubmit:function(){
+				return this.motto.length > 0 ? false : true;
+			}
+		}
+	}
+</script>
+
+<style lang="less">
+	// 引入预先定义好的less
+	@import "~@/common/common.less";
+	page{
+		background-color: @bgcolor;
+	}
+	textarea{
+		background-color: @colorF;
+		height: 3.5*@u100;
+		padding-top: 0.2*@u100;
+		padding-left: 0.2*@u100;
+	}
+	
+	/* 字数限制的样式 */
+	.countLimit{
+		bottom: 0.2*@u100;
+		right: 0.3*@u100;
+	}
+</style>

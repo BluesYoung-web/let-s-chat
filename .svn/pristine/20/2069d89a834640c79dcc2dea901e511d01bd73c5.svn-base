@@ -1,0 +1,154 @@
+<template>
+	<!-- 我的发表列表 -->
+	<view>
+		<view class="release" v-for="(item,index) in findsList" :key="index">
+			<view class="releaseTime flex flex-jc flex-vc" >
+				<text>{{item.showTime}}</text>
+			</view>
+			<view class="myRelease flex flex-jc" @tap="checkImg(item)">
+				<image :src="item.dynamicImg" mode="aspectFit"></image>
+			</view>
+			
+			<view class="likes-comments">
+				<!-- 点赞 -->
+				<view class="likes" @tap="toLikeList">
+					<view class="flex flex-vc width-80 flex-jsb">
+						<view class="height-50">
+							<image src="/static/img/heart.png" mode=""></image>
+						</view>
+						<span class="inline-block width-20">{{item.likesNum}}</span>
+					</view>
+				</view>
+				<!-- 评论 -->
+				<view class="comments" @tap="toCommentList">
+					<view class="flex flex-vc width-80 flex-jsb">
+						<view class="height-50">
+							<image src="/static/img/comment.png" mode=""></image>
+						</view>
+						<span class="inline-block width-20">{{item.commentsNum}}</span>
+					</view>
+				</view>
+			</view>
+		</view>
+		
+	</view>
+</template>
+
+<script>
+	// 请求抽取
+	import request from '@/request/request.js';
+	
+	import {mapState,mapMutations} from 'vuex';
+	export default {
+		mounted() {
+			// 根据时间排序
+			this.findsList.sort((a,b)=>b.time-a.time);
+		},
+		beforeUpdate() {
+			// 根据时间排序
+			this.findsList.sort((a,b)=>b.time-a.time);
+		},
+		data() {
+			return {
+				findsList:[]
+			}
+		},
+		computed:{
+			...mapState(['userInfo','findLists'])
+		},
+		onLoad() {
+			// 如果暂存里面有，则直接从暂存里面拿
+			if(this.findLists){
+				this.getMyRelease(this.findLists);
+			}else{
+				//从服务器获取自己发送的动态
+				request.getLatestFinds((data)=>{
+					if(data){
+						this.getMyRelease(data);
+					}
+				});
+			}
+		},
+		methods: {
+			// 筛选出我的动态
+			getMyRelease(temp){
+				temp = temp.filter((temp)=>temp.userId==this.userInfo.account);
+				this.findsList=JSON.parse(JSON.stringify(temp));
+			},
+			// 查看图片
+			checkImg(item) {
+				uni.previewImage({
+					urls: [item.dynamicImg]
+				});
+			},
+			
+			toLikeList(){
+				uni.navigateTo({
+					url: '../../findsSubpackage/comments/comments',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			
+			toCommentList(){
+				uni.navigateTo({
+					url: '../../findsSubpackage/comments/comments',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			}
+		}
+	}
+</script>
+
+<style lang="less">
+	// 引入预先定义好的less
+	@import "~@/common/common.less";
+	.release{
+		width: @p100;
+		border-bottom: 10px solid @colorD;
+		padding: 0.2*@u100 0;
+	}
+	.releaseTime{
+		width: @p100;
+		height: 0.7*@u100;
+		font-size: 0.3*@u100;
+	}
+	.myRelease image{
+		width: @p100;
+	}
+	.likes-comments {
+		height: 0.7*@u100;
+		width: @p100;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.likes {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 0.5*@p100;
+		height: @p100;
+	}
+
+	.likes image {
+		width: 0.5*@u100;
+		height: 0.5*@u100;
+	}
+
+	.comments {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 0.5*@p100;
+		height: @p100;
+	}
+
+	.comments image {
+		width: 0.5*@u100;
+		height: 0.5*@u100;
+	}
+</style>

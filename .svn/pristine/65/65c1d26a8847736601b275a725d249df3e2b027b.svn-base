@@ -1,0 +1,84 @@
+ <!--修改签名页 --> 
+<template>
+	<view class="">
+		<!-- 输入文本框 -->
+		<view class="relative">
+			<textarea class="width-750 ft-36" value="" v-model="content" placeholder="编辑签名,展示我的独特态度" maxlength="20" @input="textInput"/>
+			<view class="absolute countLimit">
+				<text>{{textLength}}/</text>
+				<text>20</text>
+			</view>
+		</view>
+		
+		<!-- 提交按钮 -->
+		<view class="">
+			<button type="" class="submitBtn bg-f9aa33 color-fff" @click="submitMotto">完成</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				textLength: 0,//输入框中的字数
+				content:'',//输入框的内容
+				motto:'',//签名
+			}
+		},
+		methods: {
+			// 获取输入框内容与字数
+			textInput(event){
+				this.textLength =  this.content.length;
+				this.motto = this.content;//将文本框中的内容赋值给motto
+			},
+			// #ifdef APP-VUE
+			
+			// #endif
+			
+			// #ifdef MP-WEIXIN
+			submitMotto(){
+				//console.log(this.motto);
+				
+				// 跳转回编辑资料的页面
+				uni.navigateTo({
+					url: '../myInformation',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+				uni.showToast({
+					title:"修改成功！"
+				})
+			}
+			// #endif
+			
+			
+		}
+	}
+</script>
+
+<style>
+	page{
+		background-color: #EDF0F2;
+	}
+	textarea{
+		background-color: #fff;
+		height: 350upx;
+		padding-top: 20upx;
+		padding-left: 20upx;
+	}
+	
+	/* 字数限制的样式 */
+	.countLimit{
+		bottom: 20upx;
+		right: 30upx;
+	}
+	
+	/* 提交按钮 */
+	.submitBtn{
+		width: 200upx;
+		margin-left: 500upx;
+		margin-top: 40upx;
+	}
+</style>

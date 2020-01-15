@@ -1,0 +1,79 @@
+ <!--修改签名页 --> 
+<template>
+	<view class="">
+		<!-- 输入文本框 -->
+		<view class="relative">
+			<textarea class="width-750 ft-36" v-model="motto" maxlength="20"/>
+			<view class="absolute countLimit">
+				<text>{{motto.length}}/</text>
+				<text>20</text>
+			</view>
+		</view>
+		
+		<!-- 提交按钮 -->
+		<view class="">
+			<button type="" class="submitBtn bg-f9aa33 color-fff" @click="submitMotto" :disabled="canSubmit">完成</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	// 存储用户信息
+	import {mapMutations} from 'vuex'
+	export default {
+		data() {
+			return {
+				motto:'',//签名
+			}
+		},
+		onLoad(e) {
+			// 接收上个页面传过来的个性签名
+			this.motto = e.motto;
+		},
+		methods: {
+			// 存储用户信息的方法
+			...mapMutations(['setInfo']),
+			submitMotto(){
+				let temp = {
+					motto : this.motto
+				};
+				this.setInfo(temp);
+				// 跳转回编辑资料的页面
+				uni.navigateBack();
+				uni.showToast({
+					title:"修改成功！"
+				})
+			}
+		},
+		computed:{
+			canSubmit:function(){
+				return this.motto.length > 0 ? false : true;
+			}
+		}
+	}
+</script>
+
+<style>
+	page{
+		background-color: #EDF0F2;
+	}
+	textarea{
+		background-color: #fff;
+		height: 350upx;
+		padding-top: 20upx;
+		padding-left: 20upx;
+	}
+	
+	/* 字数限制的样式 */
+	.countLimit{
+		bottom: 20upx;
+		right: 30upx;
+	}
+	
+	/* 提交按钮 */
+	.submitBtn{
+		width: 200upx;
+		margin-left: 500upx;
+		margin-top: 40upx;
+	}
+</style>

@@ -1,0 +1,160 @@
+<!-- 通讯录界面 -->
+<template>	
+	<view>
+		<!-- 常用联系人列表 -->
+		<!-- 数据添加后改变为可变项 -->
+		<view class="top-contacts">
+			<view class="top-contacts-text">
+				<span>常用联系人</span>
+			</view>
+			<view class="top-contacts-head" v-for="(topContactsHead,key) in topContactsHeads" v-bind:key="key">
+				<image :src="topContactsHead" mode=""></image>
+			</view>			
+		</view>
+		<!-- 姓氏查找框 -->
+		<view class="username-search" >
+			<view class="word-search" v-for="(initial,key) in searchWord" v-bind:key="key">
+				{{initial}}
+			</view>
+		</view>
+		<!-- 好友列表 -->
+		<view class="friends-lists">
+			<view class="friends-lists-text">
+				<span>好友</span>
+			</view>
+			<view class="friends-row" v-for="(friend,key) in lists" :key="key" @tap="toFriendsInfo">
+				<view class="friends-head">
+					<image :src="friend[1].avatarUrl"></image>
+				</view>
+				<view class="friends-username">
+					<span>{{friend[1].name}}</span>
+				</view>
+			</view>			
+		</view>
+		
+	</view>
+</template>
+
+<script>
+	import {mapState,mapMutations} from 'vuex';
+	export default {
+		computed:{
+			...mapState(['myFriends'])
+		},
+		data() {
+			return {
+				topContactsHeads:[
+					"../../../static/img/avatar.png",
+					"../../../static/img/avatar.png",
+					"../../../static/img/avatar.png",
+					"../../../static/img/avatar.png"
+					],
+				lists:[
+					// [
+					// 	75443327,{
+					// 	name:"枯藤星际",
+					// 	motto:"蒸羊羔蒸熊掌蒸鹿尾烧花鸭烧雏鸡烧子鹅卤煮",
+					// 	avatarUrl:"/static/img/avatar.png",
+					// 	phone:18666666666,
+					// 	account:75443327,
+					// 	wxId:"",
+					// 	}
+					// ]
+				],
+				searchWord:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#']
+			}
+		},
+		onShow() {
+			// 更新好友列表
+			this.lists=this.myFriends;
+		},
+		// 前往添加好友界面
+		onNavigationBarButtonTap(e){
+			// 跳转到添加好友页面
+			uni.navigateTo({
+				url: '../../addressSubpackage/addFriends',
+				success: res => {},
+				fail: () => {},
+				complete: () => {}
+			});
+		},
+		methods: {
+			//前往好友资料页面
+			toFriendsInfo(e){
+				console.log(e);
+				uni.navigateTo({
+					url: '../../addressSubpackage/friendsInfo/friendsInfo',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+		}
+	}
+</script>
+
+<style>
+	.top-contacts{
+		height: 200upx;
+		margin-left: 50upx;
+		margin-top: 20upx;
+	}
+	.top-contacts-text{
+		font-size: 20upx;
+		color: #344955;
+		height: 50upx;
+	}
+	.top-contacts-head image{
+		float: left;
+		height: 150upx;
+		width: 150upx;
+		margin-right: 25upx;
+	}
+	.friends-lists{
+		margin-top: 40upx;
+		margin-left: 50upx;
+	}
+	.friends-lists-text{
+		font-size: 20upx;
+		color: #344955;
+	}
+	.friends-row{
+		display: flex;
+		width: 100%;
+		height: 100upx;
+	}
+	.friends-head{
+		width: 100upx;
+		height: 100upx;
+		display: inline-block;
+	}
+	.friends-head image{
+		width: 65upx;
+		height: 65upx;
+		border: 1px solid #344955;
+		border-radius: 50%;
+		margin-top: 20upx;
+		
+	}
+	.friends-username{
+		display: inline-block;
+		height: 100upx;
+		line-height: 100upx;
+		font-size: 25upx;
+		font-weight: bold;
+	}
+	.username-search{
+		position: fixed;
+		z-index: 1;
+		height: 100%;
+		right: 25upx;
+		top: 230upx;
+	}
+	.word-search{
+		width: 20upx;
+		height: 32upx;
+		line-height: 32upx;
+		font-size: 20upx;		
+		text-align: center;
+	}
+</style>

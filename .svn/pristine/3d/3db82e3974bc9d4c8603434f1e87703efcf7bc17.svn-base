@@ -1,0 +1,161 @@
+<script>
+	// 管理账号信息缓存
+	import service from 'service.js';
+	import {mapState,mapMutations} from 'vuex';
+	import request from '@/request/request.js';
+	export default {
+		data(){
+			return {
+				socketTask:null,
+				is_open_socket:false
+			}
+		},
+		methods:{
+			...mapMutations(['login','setInfo','setInfoTemp','addFriendFromCache',
+							'addFinds','addMessageList','addSocketTask','changeSocketFlag',
+							'addConversationMessage']),
+			connectSocketInit(){
+				// 创建一个this.socketTask对象【发送、接收、关闭socket都由这个对象操作】
+				this.socketTask = uni.connectSocket({
+				// 【非常重要】必须确保你的服务器是成功的,如果是手机测试千万别使用ws://127.0.0.1:9099【特别容易犯的错误】
+					url: `${this.websocketUrl}`,
+					success(data) {
+					console.log("websocket连接成功");
+					},
+				});
+				this.addSocketTask(this.socketTask);
+				// 消息的发送和接收必须在正常连接打开中,才能发送或接收【否则会失败】
+				this.socketTask.onOpen((res) => {
+					console.log("WebSocket连接正常打开中...！");
+					this.is_open_socket = true;
+					this.changeSocketFlag(this.is_open_socket);
+					// 注：只有连接正常打开中 ，才能正常成功发送消息
+					// 注：只有连接正常打开中 ，才能正常收到消息
+					this.socketTask.onMessage((res) => {
+						let temp=JSON.parse(JSON.parse(res.data));
+						try{
+							let dt=temp.Data;
+							// dt.sign='other';
+							// this.messages.push(dt);
+							let tp={
+								imgUrl:'/static/img/avatar.png',
+								username:"德莱厄斯",
+								time:"消息接收时间",
+								content:dt.content,
+								account:temp.ID,
+								right: 0,
+								msgNum:1
+							}
+							request.getUserInfo(temp.ID,(data)=>{
+								tp.username=data.name;
+								tp.imgUrl=data.avatarUrl;
+								// 推送到消息列表
+								this.addMessageList(tp);
+								let obj={
+									fid:tp.account,
+									messages:[]
+								}
+								obj.messages.push({
+									sign:'other',
+									head:tp.imgUrl,
+									content:tp.content,
+									time:tp.time
+								});
+								// 暂存到对话页面
+								this.addConversationMessage(obj);
+							});
+						}catch(e){
+							console.log(temp);
+						}
+					});
+				});
+				// 这里仅是事件监听【如果socket关闭了会执行】
+				this.socketTask.onClose(() => {
+					console.log("已经被关闭了")
+				});
+			},
+			closeSocket() {
+				this.socketTask.close({
+					success: (res) => {
+						this.is_open_socket = false;
+						this.changeSocketFlag(this.is_open_socket);
+						console.log("关闭成功", res)
+					},
+					fail: (err) => {
+						console.log("关闭失败", err)
+					},
+				});
+			},
+			//注册用户用的
+			register(id, ws) {
+				let Json = {
+					'ID': id,
+					'Op': "userRegister"
+				};
+				ws.send({
+					data: JSON.stringify(Json),
+					async success() {
+						console.log("注册成功");
+					},
+					async fail() {
+						console.log("注册失败");
+					},
+				});
+			},
+		},
+		computed:{
+			...mapState(['userInfo','findLists','websocketUrl'])
+		},
+		onLaunch() {
+			console.log('App Launch');
+			//在加载函数中监听缓存，管理登陆状态，如果缓存中有用户登录信息，就不必要每次打开应用都需要登录
+			let userInfo = service.getUsers();
+			userInfo=userInfo[0];
+			console.log("读取缓存："+JSON.stringify(userInfo));
+			// 将用户信息写入state
+			this.setInfo(userInfo);
+			// 登录
+			userInfo ? 	this.login() : null;
+			// 从缓存中读取好友列表
+			this.addFriendFromCache(service.getFriends());
+			console.log("缓存读取好友列表");
+			// 从缓存中读取好友圈
+			this.addFinds(service.getFinds());
+			console.log("缓存读取好友圈");
+			// 长轮询，如果好友圈发生变化则显示小红点
+			setInterval(()=>{
+				request.getLatestFinds((data)=>{
+					console.log("长轮询");
+					if(data.length != this.findLists.length){
+						// 显示好友圈的小红点
+						uni.showTabBarRedDot({
+							index: 2
+						});
+					}
+				});
+			},30000);
+			//连接websocket服务器
+			// 进入这个页面的时候创建websocket连接【整个页面随时使用】
+			this.connectSocketInit();
+			// 进入之后延时1s注册
+			setTimeout(()=>{
+				this.register(this.userInfo.account, this.socketTask);
+			},1000);
+		},
+		onShow() {
+			console.log('App Show');
+		},
+		onHide() {
+			console.log('App Hide');
+		},
+		onUnload() {
+			console.log("退出APP？");
+		}
+	}
+</script>
+
+<style>
+	/*每个页面公共css */
+	@import url("common/common.css");
+	
+</style>

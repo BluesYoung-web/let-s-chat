@@ -1,0 +1,149 @@
+<template>
+	<!-- 好友圈评论输入 --> 
+<view class="">
+	<view class="navBar">
+		<view class="navBarCancel flex flex-js flex-vc" @tap="back">
+			<image src="/static/img/cancel.png" mode=""></image>
+			<text>Cancel</text>
+		</view>
+		<view class="navBarTitle flex flex-jc flex-vc">
+			<text>发评论</text>
+		</view>
+		<view class="navBarBtn flex flex-je flex-ac bg-344955" >
+			<button :disabled="canPutUp" @tap="putUp" class="my-color-fff">发表</button>
+		</view>
+	</view>
+		<!-- 输入文本框 -->
+		<view class="writeComment">
+			<textarea class="width-full" value="" v-model="content" placeholder="写评论" maxlength="100" />
+			<view class="absolute countLimit ">
+				<text>{{content.length}}/</text>
+				<text>100</text>
+			</view>
+		</view>
+		
+		<!-- 发表成功提示框-->
+		<uni-popup :show="isShow" type="center"  @change="change">
+			<view class="popup">
+				<text>发表成功</text>
+				<button type="default" @click="closePopup">确定</button>
+			</view>
+		</uni-popup>
+</view>
+</template>
+
+<script>
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	export default {
+		components: {uniPopup},
+		data() {
+			return {
+				isShow:false,
+				content:'',//输入框的内容
+			}
+		},
+		methods: {
+			//返回评论列表界面
+			back(){
+				// 直接返回上个页面
+				uni.navigateBack();
+			},
+			// 发表评论
+			putUp(){
+				// 存储评论，返回上个页面
+				console.log(this.content);
+				this.isShow=true
+				
+			},
+			// 关闭提示框
+			closePopup(){
+				this.isShow = false;
+			},
+			// 点击空白处关闭提示框
+			change(e){
+				if (!e.show){
+					this.isShow = false;
+				}
+			}
+		},
+		computed:{
+			canPutUp:function(){
+				return this.content.length>0 ? false : true ;
+			}
+		}
+	}
+</script>
+
+<style>
+	
+	.navBarCancel{
+		width: 33.33%;
+		color: #FFFFFF;
+		padding-left: 10upx;
+	}
+	.navBarTitle{
+		width: 33.33%;
+		color: #FFFFFF;
+		font-size: 40upx;
+	}
+	.navBarCancel image{
+		height: 40upx;
+		width: 40upx;
+	}
+	.navBarBtn{
+		width: 33.33%;
+		padding-right: 10upx;
+	}
+	button::after{ border: none;}
+	.navBarBtn button[disabled]{
+		background-color: #BEBEBE;
+		border: 1upx solid #859299;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
+		border-radius: 0;
+		color: #859299;
+	}
+	.navBarBtn button{
+		background-color: #344955;
+		border: 1upx solid #859299;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
+		border-radius: 0;
+		color: #859299;
+	}
+	.writeComment{
+		margin-top: 100upx;
+	}
+	textarea{
+		height: 350upx;	
+		font-size: 30upx;	
+		padding-top: 35upx;
+		padding-left: 25upx;
+	}
+	
+	/* 字数限制的样式 */
+	.countLimit{
+		bottom: 20upx;
+		right: 30upx;
+	}
+	/* 弹出框样式 */
+	.popup{
+		width: 500upx;
+		height: 200upx;
+		background-color: #FFFFFF;
+		text-align: center;
+		border-radius: 5px;
+	}
+	.popup text{
+		height: 100upx;
+		line-height: 100upx;		
+	}
+	.popup button{
+		height: 100upx;
+		background: #344955;
+	}
+	
+</style>
+

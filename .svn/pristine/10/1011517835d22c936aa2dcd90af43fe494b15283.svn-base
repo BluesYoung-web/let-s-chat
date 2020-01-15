@@ -1,0 +1,526 @@
+// 页面请求数据————函数抽取
+import {mapState,mapMutations} from 'vuex';
+import service from '@/service.js';
+// 通讯录页面,从服务器获取最新数据
+const getLatestFriend=function(that){
+	let config={
+		url:`${that.serverUrl}?op=getLatestFriend&uid=${that.account}`,
+		method: 'GET',
+		data: {},
+		success: res => {
+			let fList=res.data;
+			// 清空好友列表
+			that.deleteAllFriend();
+			for (let s of fList) {
+				uni.request({
+					url: `${that.serverUrl}?op=getUserInfo&uid=${s.f_uid}`,
+					method: 'GET',
+					data: {},
+					success: res => {
+						let tp=res.data;
+						let dt={
+							name:tp.user_name,
+							phone:tp.user_phone,
+							account:tp.user_uid,
+							avatarUrl:tp.user_avatar,
+							motto:tp.user_motto,
+							wxId:tp.user_wxid
+						};
+						console.log("刷新加入",dt.name);
+						that.addFriend(dt);
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			}
+		},
+		fail: () => {},
+		complete: () => {
+			// 关闭下拉刷新动画
+			setTimeout(()=>{
+				uni.stopPullDownRefresh();
+			},1000);
+		}
+	}; 
+	
+	return uni.request(config);
+}
+// 好友信息页面,添加好友
+const addFriend=function(that){
+	let config={
+		url: `${that.serverUrl}?op=addFriend&user_uid=${that.userInfo.account}&f_uid=${that.account}`,
+		method: 'GET',
+		data: {},
+		success: res => {
+			if(res.data==1){
+				console.log("好友已添加到数据库");
+			}else{
+				console.log("好友添加到数据库失败");
+			}
+		},
+		fail: () => {},
+		complete: () => {}
+	};
+	
+	return uni.request(config);
+}
+// 好友信息页面,删除好友
+const deleteFriend=function(that){
+	let config={
+		url: `${that.serverUrl}?op=deleteFriend&user_uid=${that.userInfo.account}&f_uid=${that.account}`,
+		method: 'GET',
+		data: {},
+		success: res => {
+			if(res.data==1){
+				console.log("好友已从数据库删除");
+			}else{
+				console.log("好友从数据库删除失败");
+			}
+		},
+		fail: () => {},
+		complete: () => {}
+	};
+	
+	return uni.request(config);
+}
+// 更改手机号
+const changePhone=function(that){
+	let config={
+		url:`${that.serverUrl}?op=phoneChange` ,
+		method: 'POST',
+		header: {
+			'content-type':'application/x-www-form-urlencoded',
+		},
+		data:{
+			user_uid:that.account,
+			user_phone:that.newPhone
+		},
+		success: res => {
+			if(res.data==1){
+				// 将存入数据库的信息存入到state和缓存
+				let temp={
+					account:that.account,
+					phone:that.newPhone,
+					name:that.name,
+					avatarUrl:that.avatarUrl,
+					motto:that.motto,
+					wxId:that.wxId
+				};
+				that.setInfo(temp);
+				service.addUser(temp);
+				// 跳转到更换成功页面
+				uni.reLaunch({
+					url: 'bindSuccessful',
+					success: res => {
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+				
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '手机号修改失败！',
+				})
+			}
+		},
+		fail: () => {},
+		complete: () => {
+			uni.hideLoading();
+		}
+	};
+	
+	return uni.request(config);
+}
+// 绑定手机号
+const bindPhone=function(that){
+	let config={
+		url:`${that.serverUrl}?op=phoneBind` ,
+		method: 'POST',
+		header: {
+			'content-type':'application/x-www-form-urlencoded',
+		},
+		data:{
+			user_uid:that.account,
+			user_phone:that.phone,
+			user_name:that.name,
+			user_avatar:that.avatarUrl,
+			user_motto:that.motto,
+			user_wxid:that.wxId
+		},
+		success: res => {
+			if(res.data==1){
+				uni.showToast({
+					icon: 'none',
+					title: '手机号绑定成功！',
+				});
+				// 将存入数据库的信息存入到state和缓存
+				let temp={
+					account:that.account,
+					phone:that.phone,
+					name:that.name,
+					avatarUrl:that.avatarUrl,
+					motto:that.motto,
+					wxId:that.wxId
+				};
+				that.setInfo(temp);
+				service.addUser(temp);
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '手机号绑定失败,该手机号已经被绑定！',
+				})
+			}
+		},
+		fail: () => {},
+		complete: () => {}
+	};
+	
+	return uni.request(config);
+}
+// 用户修改个人信息之后同步数据库
+const setUserInfo=function(that){
+	let config={
+		url:`${that.serverUrl}?op=setUserInfo` ,
+		method: 'POST',
+		header: {
+			'content-type':'application/x-www-form-urlencoded',
+		},
+		data:{
+			user_name:that.name,
+			user_motto:that.motto,
+			user_uid:that.account,
+			user_avatar:that.avatarUrl
+		},
+		success: res => {
+			if(res.data==1){
+				console.log("已成功同步到数据库");
+				let temp={
+					account : that.account,
+					name : that.name,
+					phone : that.phone,
+					motto : that.motto,
+					avatarUrl : that.avatarUrl,
+					wxId : that.wxId
+				};
+				// 将修改后的用户信息写入缓存
+				service.addUser(temp);
+			}else{
+				console.log("同步到数据库失败");
+			}
+		},
+		fail: () => {},
+		complete: () => {}
+	};
+	
+	return uni.request(config);
+}
+// 使用修改头像
+const chooseImg=function(that,src){
+ 	let config={
+ 		count: 1,
+ 		sourceType:[src],
+ 		success: res => {
+ 			// console.log(JSON.stringify(res.tempFilePaths));
+ 			const avatar = res.tempFilePaths[0];
+ 			that.avatarUrl = avatar;
+ 			// 将图片上传到服务器
+ 			uni.uploadFile({
+ 				url:`${that.serverUrl}?op=upload`,
+ 				filePath:avatar,
+ 				name:"img",
+ 				success:(res) => {
+ 					that.avatarUrl=res.data;
+ 					console.log(res.data);
+ 				}
+ 			});
+ 			that.showPopup = false;
+ 			uni.showToast({
+ 				title:"更换成功！"
+ 			});
+ 			that.saveLogo();
+ 		},
+ 		fail: res => {
+ 			uni.showToast({
+ 				title:"加载超时",
+ 				icon:"none"
+ 			});
+ 		},
+ 	}
+ 	
+ 	return uni.chooseImage(config);
+ }
+// 查询数据库中是否已经存在此手机号
+const checkPhone=function(that){
+ 	let config={
+ 		url: `${that.serverUrl}?op=phoneCheck&user_phone=${that.phoneVal}`,
+ 		method: 'GET',
+ 		data: {},
+ 		success: res => {
+ 			if (res.data) {
+ 				uni.showToast({
+ 					title: '该手机号已注册，请重新输入',
+ 					icon: 'none'
+ 				});
+ 				// 清空手机号输入框
+ 				that.phoneVal='';
+ 			} 
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 用户注册到服务器 
+ const registerUser=function(that){
+ 	let config={
+ 		url: `${that.serverUrl}?op=phoneBind`,
+ 		method: 'POST',
+ 		header: {
+ 			'content-type':'application/x-www-form-urlencoded',
+ 		},
+ 		data: {
+ 			user_name:data.name,
+ 			user_motto:data.motto,
+ 			user_uid:data.account,
+ 			user_avatar:data.avatarUrl,
+ 			user_phone:data.phone
+ 		},
+ 		success: res => {
+ 			console.log(res.data);
+ 			if (res.data) {
+ 				// 添加账号到本地缓存
+ 				service.addUser(data);
+ 				that.login(that.account);
+ 				// 添加用户信息到state
+ 				that.setInfo(data);
+ 				uni.showToast({
+ 				    title: '用户注册成功'
+ 				});
+ 				uni.reLaunch({
+ 					url:"../../tabBar/message/message"
+ 				});
+ 			} else{
+ 				uni.showToast({
+ 				    title: '用户注册失败'
+ 				});
+ 			}
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 微信登录
+const wxLogin=function(that,value){
+ 	let config={
+ 		provider: value,
+ 		success: (res) => {
+ 			uni.getUserInfo({
+ 				provider: value,
+ 				success: (infoRes) => {
+ 					/**
+ 					 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
+ 					 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
+ 					 */
+ 					that.toMain(infoRes.userInfo);
+ 				}
+ 			});
+ 		},
+ 		fail: (err) => {
+ 			console.error('授权登录失败：' + JSON.stringify(err));
+ 		}
+ 	}
+ 	
+ 	return uni.login(config);
+ }
+// 微信登录之后的信息校验
+const toMain=function(that,wxId){
+ 	let config={
+ 		url: `${that.serverUrl}?op=wxCheck&user_wxid=${wxId}`,
+ 		method: 'GET',
+ 		data: {},
+ 		success: res => {
+ 			let info=res.data;
+ 			if(info){
+ 				const data = {
+ 					account: info.user_uid,
+ 					name :info.user_name,
+ 					motto:info.user_motto,
+ 					phone:info.user_phone,
+ 					avatarUrl:info.user_avatar,
+ 					wxId:info.user_wxId
+ 				}
+ 				// 登录
+ 				that.login(data.name);
+ 				// 添加账号到缓存
+ 				service.addUser(data);
+ 				// 添加账号到state
+ 				that.setInfo(data);
+ 				
+ 			}else{
+ 				// 将微信名作为登录标志存起来
+ 				that.login(userInfo.nickName);
+ 				// 将微信名及微信头像存入state
+ 				let temp={
+ 					name:userInfo.nickName,
+ 					avatarUrl:userInfo.avatarUrl,
+ 					wxId:userInfo.openId
+ 				};
+ 				// 将用户信息存入state
+ 				that.setInfo(temp);
+ 				// 将用户信息存入缓存
+ 				service.addUser(temp);
+ 			}
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 手机号登录
+const phoneLogin=function(that){
+ 	let config={
+ 		url: `${that.serverUrl}?op=phoneCheck&user_phone=${that.phoneVal}`,
+ 		method: 'GET',
+ 		data: {},
+ 		success: res => {
+ 			let info=res.data;
+ 			if(info){
+ 				const data = {
+ 					account: info.user_uid,
+ 					name :info.user_name,
+ 					motto:info.user_motto,
+ 					phone:info.user_phone,
+ 					avatarUrl:info.user_avatar,
+ 					wxId:info.user_wxId
+ 				};
+ 				// 添加账号到state
+ 				that.setInfo(data);
+ 				// 登录
+ 				that.login(data.name);
+ 				// 添加账号到缓存
+ 				service.addUser(data);
+ 				// 跳转到消息页面
+ 				uni.reLaunch({
+ 					url: "../../tabBar/message/message"
+ 				});
+ 				uni.showToast({
+ 					title:"登陆成功",
+ 					icon:"none"
+ 				});
+ 			}else{
+ 				uni.showToast({
+ 					title:"登陆失败，请仔细检查手机号",
+ 					icon:"none"
+ 				});
+ 			}
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 搜索好友
+const searchUser=function(that,str){
+ 	let config={
+ 		url: `${that.serverUrl}?op=searchUser&${str}=${that.inputMsg}&user_uid=${that.userInfo.account}`,
+ 		method: 'GET',
+ 		data: {},
+ 		success: res => {
+ 			if(res.data){
+ 				let temp=res.data;
+ 				let tp={
+ 					name:temp.user_name,
+ 					account:temp.user_uid,
+ 					motto:temp.user_motto,
+ 					phone:temp.user_phone,
+ 					avatarUrl:temp.user_avatar,
+ 					wxId:temp.user_wxid
+ 				};
+ 				// 将搜索到的数据存入state
+ 				that.setInfoTemp(tp);
+ 				// 拿到数据之后
+ 				uni.navigateTo({
+ 					url: `friendsInfo/friendsInfo?isF=${temp.isF}`,
+ 					success: res => {},
+ 					fail: () => {},
+ 					complete: () => {}
+ 				});
+ 			}else{
+ 				that.isShow=true;
+ 			}
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 获取最新好友圈
+const getLatestFinds=function(that){
+ 	let config={
+ 		url: `${that.serverUrl}?op=getLatestFinds`,
+ 		method: 'GET',
+ 		data: {},
+ 		success: res => {
+			that.findsList.length=0;
+			console.log("好友圈已清空");
+			that.findsList=JSON.parse(JSON.stringify(res.data));
+			console.log("好友圈已为最新");
+		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+// 发布好友圈
+const putUpFinds=function(that,put){
+ 	let config={
+ 		url: `${that.serverUrl}?op=putUpFinds`,
+ 		method: 'POST',
+ 		header:{
+ 			'content-type':'application/x-www-form-urlencoded',
+ 		},
+ 		data: put,
+ 		success: res => {
+ 			console.log(res.data);
+ 		},
+ 		fail: () => {},
+ 		complete: () => {}
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+/* 
+ const =function(that){
+ 	let config={
+ 		
+ 	}
+ 	
+ 	return uni.request(config);
+ }
+ 
+ */
+export default {
+    getLatestFriend,
+	addFriend,
+	deleteFriend,
+	changePhone,
+	bindPhone,
+	setUserInfo,
+	chooseImg,
+	checkPhone,
+	registerUser,
+	wxLogin,
+	toMain,
+	phoneLogin,
+	searchUser,
+	getLatestFinds,
+	putUpFinds
+}

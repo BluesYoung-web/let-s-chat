@@ -1,0 +1,202 @@
+<template>
+	<!-- 朋友圈界面 -->
+	<view class="content">
+		<!-- 一个朋友圈动态 -->
+		<view class="finds-body" v-for="(item, index) in findsList" :key="item.userId">
+			<!-- 好友动态信息 -->
+			<view class="dynamic-information">
+				<!-- 好友头像 -->
+				<view class="friends-head">
+					<image :src="item.avatar"></image>
+				</view>
+				<!-- 好友信息 -->
+				<view class="friends-information">
+					<!-- 好友昵称 -->
+					<view class="friends-username">
+						<span>{{item.name}}</span>
+					</view>				
+					<!-- 好友发布动态时间 -->
+					<view class="dynamic-time flex flex-vc">
+						<image src="../../../static/img/clock.png" mode=""></image>
+						<span class="mg-lt10 inline-block" >{{item.time}}</span>
+					</view>
+				</view>			
+			</view>
+			<!-- 动态图片 -->
+			<view class="dynamic-img">
+				<image :src="item.dynamicImg" mode=""></image>
+			</view>
+			<!-- 赞与留言 -->
+			<view class="likes-comments">
+				<!-- 点赞 -->
+				<view class="likes" @tap="like(index)">
+					<view class="flex flex-vc width-80 flex-jsb">
+						<view class="height-50" >
+							<image v-if="item.likeAction" src="../../../static/img/heart2.png" mode=""></image>
+							<image v-else src="../../../static/img/heart.png" mode=""></image>
+						</view>
+						<span class="inline-block width-20">{{item.likesNum}}</span>
+					</view>
+				</view>
+				<!-- 评论 -->
+				<view class="comments" @tap="comment(index)">
+					<view class="flex flex-vc width-80 flex-jsb">
+						<view class="height-50" >
+							<image src="../../../static/img/comment.png" mode=""></image>
+						</view>
+						<span class="inline-block width-20">{{item.commentsNum}}</span>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+	
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				findsList:[//空间发表动态的列表
+					{
+						userId:1,
+						avatar: "../../../static/img/finds_01.jpg",
+						name:"小强",
+						time:"09:36",
+						dynamicImg:"../../../static/img/finds_01.jpg", //发布的动态图片
+						likesNum:9,	//点赞数
+						commentsNum:15, //评论数
+						likeAction:false, //是否给他点赞
+					},
+					{
+						userId:2,
+						avatar: "../../../static/img/avatar.png",
+						name:"隔壁老王",
+						time:"09:40",
+						dynamicImg:"../../../static/img/finds_02.jpeg",
+						likesNum:0,
+						commentsNum:17,
+						likeAction:false, //是否给他点赞
+					}
+					
+				],
+			}
+		},
+		onLoad() {
+
+		},
+		methods: {
+			// 点赞
+			like:function(e){
+				// console.log(this.findsList[e])
+				// e传入的是索引
+				if(this.findsList[e].likeAction==true){
+					this.findsList[e].likeAction=false;
+					this.findsList[e].likesNum--;
+				}else if(this.findsList[e].likeAction==false){
+					this.findsList[e].likeAction=true;
+					this.findsList[e].likesNum++;
+				}
+				
+			},
+			
+			// 评论
+			comment(e){
+				// console.log(this.findsList[e])
+				// 跳转到评论详情页
+				uni.navigateTo({
+					url: '../../findsSubpackage/comments/comments',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+		}
+	}
+</script>
+
+<style>
+	.content{
+		width: 100%;
+	}
+	.finds-body{
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		border-bottom: 20upx solid #edf0f2;
+	}
+	.dynamic-information{
+		height: 120upx;
+	}
+	.friends-head{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		float: left;
+		width: 150upx;
+		height: 100%;
+	}
+	.friends-head image{
+		width: 90upx;
+		height: 90upx;
+		border: 1upx solid #344955;
+		border-radius: 50%;
+	}
+	.friends-information{
+	}
+	.friends-username{
+		height: 55upx;
+		display: flex;
+		align-items: flex-end;
+		font-size: 30upx;
+		font-weight: bold;
+	}
+	.dynamic-time{
+		height: 65upx;
+		display: flex;
+	}	
+	.dynamic-time image{
+		width: 26upx;
+		height: 26upx;
+	}
+	.dynamic-time span{
+		font-size: 24upx;
+		
+	}
+	.dynamic-img{
+		width: 100%;
+		height: 500upx;
+	}
+	.dynamic-img image{
+		height: 100%;
+		width: 100%;
+	}
+	.likes-comments{
+		height: 100upx;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+	.likes {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 50%;
+		height: 100%;
+	}
+	.likes image{
+		width: 50upx;
+		height: 50upx;
+	}
+	.comments{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 50%;
+		height: 100%;
+	}
+	.comments image{
+		width: 50upx;
+		height: 50upx;
+	}
+</style>

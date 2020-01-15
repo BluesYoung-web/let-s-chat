@@ -1,0 +1,310 @@
+<template>
+	<!-- 注册页面 -->
+	<view>
+		<!-- 商标logo -->
+		<view class="logo width-full flex flex-jc">
+			<image src="../../../static/img/logo.png" mode=""></image>
+		</view>
+		<!-- 注册的内容 -->
+		<form @submit="register">
+			<view v-show="showInput" class="loginContentView flex flex-ac flex-direction-column">
+				<!-- 手机号输入框 -->
+				<input name="phoneVal"   placeholder-class="color-ccc" type="number" class="phoneInput flex" maxlength="11" v-model="phoneVal" value=""
+				 placeholder="用于登录和作为个人账号" :focus="isFocus"/>
+				<!-- 验证码输入框 -->
+				<view class="width-600 height-100  mg-tp20  flex flex-jsb">
+					<input name="code"  placeholder-class="color-ccc" maxlength="6" class="passwordInput" type="number" placeholder="请输入验证码" @focus="checkPhone"/>
+					<!-- 获取验证码 -->
+					<button class="identifying-code ft-28 color-f9aa33" :disabled="isClick" @click="getIdentifyingCode">{{time}}</button>
+				</view>
+
+				<!-- 同意来聊用户协议 -->
+				<view name="" >
+					<checkbox-group name="checkbox" class="width-600 mg-tp20 flex flex-vc">
+						<label for="check" class="ft-30 flex flex-vc">
+							<checkbox value="agreement" name="agreement" style="transform:scale(0.7); border-color: #344955;" id="check"/><text>阅读并接受</text>
+						</label>
+						<text @click="showPopup" class="ft-30 text-decoration-none color-f9aa33">《来聊用户协议》</text>
+					</checkbox-group>
+				</view>
+				<!-- 注册按钮 -->
+				<button class="registerBtn bg-344955 color-fff " form-type="submit">注册</button>
+
+			</view>
+		</form>
+
+		<!-- 用户协议的弹出层 -->
+		<uni-popup :show="popup" type="center" @change="popupChange">
+			<view style="height: 1200upx;">
+				<scroll-view scroll-y="true" style="height: 90%;">
+					<image style="height: 3000upx;" src="../../../static/img/agreement.jpg" mode="scaleToFill"></image>
+				</scroll-view>
+				<view class="text-center mg-tp20">
+					<uni-icons type="clear" color="#fff" size="30" @click="closePopup()" />
+				</view>
+			</view>
+		</uni-popup>
+	</view>
+</template>
+
+<script>
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	import uniIcons from '@/components/uni-icons/uni-icons.vue'
+	// 管理账号信息
+	import service from '../../../service.js';
+	// 登录状态管理
+	import {mapState, mapMutations} from 'vuex'
+	export default {
+		components: {
+			uniPopup,
+			uniIcons
+		},
+		data() {
+			return {
+				showInput:true,//是否显示输入框
+				phoneVal: '', //手机号
+				time: '获取验证码', //获取验证码或倒计时
+				currtime: 60, //倒计时
+				isClick: false, //获取验证码按钮是否可用
+				popup: false, //是否弹出协议面板
+				isFocus:true, //是否自动聚焦
+				account:this.generate8(), //自动生成uid
+				avatarUrl:'/static/img/avatar.png',//默认头像地址
+				name:'新用户',//用户昵称
+				motto:'',//个性签名
+			}
+		},
+		methods: {
+			// 登录的方法（自动登录）
+			...mapMutations(['login','setInfo']),
+			// 生成8位uid
+			generate8(){
+			    let i=Math.random()*100000000;
+			    i=i.toFixed(0);
+			    return i;
+			},
+			// 查询数据库中是否已经存在此手机号
+			checkPhone(){
+				let phoneVal=this.phoneVal;
+				uni.request({
+					url: `${this.serverUrl}?op=phoneCheck&user_phone=${phoneVal}`,
+					method: 'GET',
+					data: {},
+					success: res => {
+						if (res.data) {
+							uni.showToast({
+								title: '该手机号已注册，请重新输入',
+								icon: 'none'
+							});
+							// 清空手机号输入框
+							this.phoneVal='';
+						} 
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			//获取验证码
+			getIdentifyingCode: function() {
+				var that = this;
+
+				var myreg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+				var phone = this.phoneVal;
+				if (!myreg.test(phone)) {
+					uni.showToast({
+						icon: 'none',
+						title: '请输入有效手机号！',
+					})
+				} else {
+					uni.showLoading({
+						title: '加载中'
+					});
+
+					setTimeout(function() {
+						uni.hideLoading();
+						// 获取验证码倒计时
+						that.time = that.currtime + 's';
+						that.isClick = true;
+						var interval = setInterval(function() {
+							that.time = --that.currtime + 's';
+							if (that.currtime <= 0) {
+								clearInterval(interval);
+								that.time = "重新获取";
+								that.currtime = 60;
+								that.isClick = false;
+							}
+						}, 1000)
+						uni.showToast({
+							icon: 'none',
+							title: "获取验证码成功"
+						})
+					}, 1000);
+
+				}
+
+			},
+			// 注册按钮
+			register(e) {
+				// e.detail.value是表单内容
+				//console.log(e.detail.value);
+				var myreg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+				var formMsg = e.detail.value; //表单提交的信息
+				var phone = formMsg.phoneVal;
+				// 判断手机号是否正确
+				if (!myreg.test(phone)) {
+					uni.showToast({
+						icon: 'none',
+						title: '请输入有效手机号！',
+					})
+				} 
+				// 判断验证码是否填写
+				else if (formMsg.code.length != 6){
+					//提示输入六位数的验证码
+					uni.showToast({
+						icon: "none",
+						title: "请输入六位数的验证码"
+					})
+					
+				}
+				// 判断是否同意用户协议
+				else if (formMsg.checkbox.length == 0) {
+					// 提示点击同意
+					uni.showToast({
+						icon: "none",
+						title: "请阅读并同意用户协议"
+					})
+				} 
+				else{
+					// 用户账号
+					const data = {
+					    account: this.account,
+						name: this.name,
+						motto:this.motto,
+						phone:this.phoneVal,
+						avatarUrl:this.avatarUrl
+					};
+					// 用户注册到服务器
+					uni.request({
+						url: `${this.serverUrl}?op=phoneBind`,
+						method: 'POST',
+						header: {
+							'content-type':'application/x-www-form-urlencoded',
+						},
+						data: {
+							user_name:data.name,
+							user_motto:data.motto,
+							user_uid:data.account,
+							user_avatar:data.avatarUrl,
+							user_phone:data.phone
+						},
+						success: res => {
+							console.log(res.data);
+							if (res.data) {
+								// 添加账号到本地缓存
+								service.addUser(data);
+								this.login(this.account);
+								// 添加用户信息到state
+								this.setInfo(data);
+								uni.showToast({
+								    title: '用户注册成功'
+								});
+								uni.reLaunch({
+									url:"../../tabBar/message/message"
+								});
+							} else{
+								uni.showToast({
+								    title: '用户注册失败'
+								});
+							}
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+					
+				}
+			},
+			//---------------------------弹出层------------------------
+			// 展示服务协议面板
+			showPopup() {
+				this.popup = true;
+				setTimeout(() => {
+					this.showInput = false;
+				},200);
+			},
+			//配合点击空白处关闭面板的函数
+			popupChange(e) {
+				if (!e.show) {
+					this.popup = false;
+					
+					// 防止手机端输入框的placeholder层将popup弹出层覆盖,在弹出层显示时就将输入框整体的view隐藏
+					setTimeout(() => {
+						this.showInput = true;
+					},50);
+				}
+			},
+			// 点击关闭弹出层
+			closePopup(e) {
+				this.popup = false;
+				setTimeout(() => {
+					this.showInput = true;
+				},100);
+			},
+		},
+		computed:{
+			...mapState(['serverUrl'])
+		}
+	}
+</script>
+
+<style>
+	.logo {
+		padding-top: 150upx;
+		padding-bottom: 100upx;
+	}
+
+	.logo image {
+		width: 200upx;
+		height: 200upx;
+	}
+
+	.loginContentView {}
+
+	/* 登录整体内容的view */
+	.loginContentView input {
+		height: 100upx;
+		border: #2C405A 1px solid;
+		border-radius: 6px;
+		padding-left: 20upx;
+		padding-left: 60upx;
+		background-repeat: no-repeat;
+		background-size: 40upx 40upx;
+	}
+
+	.phoneInput {
+		width: 600upx;
+		background-image: url("~@/static/img/phone.png");
+		background-position: 18upx 30upx;
+	}
+
+	.passwordInput {
+		width: 360upx;
+		background-image: url("~@/static/img/message.png");
+		background-position: 14upx 30upx;
+	}
+
+	/* 验证码的view */
+	.identifying-code {
+		border: 1px solid #344955;
+		border-radius: 6px;
+		background-color: #fff;
+		width: 210upx;
+		height: 100upx;
+		line-height: 100upx;
+	}
+
+	/* 登录按钮 */
+	.registerBtn {
+		width: 600upx;
+		margin-top: 100upx;
+	}
+</style>

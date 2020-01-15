@@ -1,0 +1,238 @@
+<!-- 设置 -->
+<template>
+	<view>
+		<view class="">
+			<view class="setList">
+				<!-- 更换手机号 -->
+				<view class="changePhoneItem flex flex-jsb flex-vc pd-lr30" @tap="toChangePhone">
+					<text v-if="phone">更换手机号</text>
+					<text v-else>绑定手机号</text>
+					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
+				</view>
+				<!-- 关于来聊 -->
+				<view class="aboutItem flex flex-jsb flex-vc pd-lr30" @tap="toAboutUs">
+					<text>关于来聊</text>
+					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
+				</view>
+				<!-- 清空聊天记录 -->
+				<view class="clearItem flex flex-hc flex-vc" @tap="showPopup" data-open="clearChatLogPopup">
+					<text>清空聊天记录</text>
+				</view>
+				<!-- 退出登录 -->
+				<view class="signOutItem flex flex-hc flex-vc" @tap="showPopup" data-open="signOutPopup">
+					<text>退出登录</text>
+				</view>
+			</view>
+		</view>
+		
+		
+		<!-- 清空聊天记录的弹出层 -->
+		<uni-popup :show="showclearChatLogPopup" type="bottom" @change="popupChange">
+			<view class="bg-edf0f2 width-750 flex flex-direction-column flex-vc">
+				<!-- 提示 -->
+				<view class="item ft-30 color-344955">
+					<text>将删除所有个人聊天记录</text>
+				</view>
+				<!-- 清空聊天记录按钮 -->
+				<view class="item height-100 " @click="clearChatLog">
+					<text class="color-red ft-36">清空聊天记录</text>
+				</view>
+				
+				<!-- 关闭弹出框 -->
+				<view class="item mg-tp20" @click="closePopup" data-cancel="clearChatLogPopup">
+					<text class="color-344955 ft-34 font-weight-550">取消</text>
+				</view>
+			</view>
+		</uni-popup>
+		
+		<!-- 退出登录的弹出层 -->
+		<uni-popup :show="showsignOutPopup" type="bottom" @change="popupChange">
+			<view class="bg-edf0f2 width-750">
+				<!-- 提示 -->
+				<view class="item ft-30 color-344955">
+					<text>退出登录后不会删除历史数据</text>
+				</view>
+				<!-- 清空聊天记录按钮 -->
+				<view class="item height-100 " @click="signOut">
+					<text class="color-red ft-36">退出登录</text>
+				</view>
+				
+				<!-- 关闭弹出框 -->
+				<view class="item mg-tp20" @click="closePopup"  data-cancel="signOutPopup">
+					<text class="color-344955 ft-34 font-weight-550">取消</text>
+				</view>
+			</view>
+		</uni-popup>
+		
+	</view>
+</template>
+
+<script>
+	import uniPopup from "@/components/uni-popup/uni-popup.vue"
+	// 登录状态管理
+	import {mapState, mapMutations} from 'vuex';
+	import service from '@/service.js';
+	import request from '@/request/request.js';
+	export default {
+		computed: {
+		    ...mapState(['userInfo','serverUrl'])
+		},
+		data() {
+			return {
+				showsignOutPopup:false, //是否弹出退出登录面板
+				showclearChatLogPopup:false, //是否弹出清空聊天记录面板
+				account:'',//账号
+				phone:'', //手机号
+			}
+		},
+		onShow() {
+			// 如果存在则获取数据
+			if (this.userInfo) {
+				let userInfo = this.userInfo;
+				this.phone = userInfo.phone;
+				this.account = userInfo.account || request.generate8();
+				// 将生成的uid存入state
+				let temp = {
+					account:this.account
+				};
+				this.setInfo(temp);
+			}
+		},
+		methods: {
+			...mapMutations(['setInfo','deleteConversationMessage']),
+			// 跳转到关于来聊的页面
+			toAboutUs(){
+				uni.navigateTo({
+					url: 'aboutUs/aboutUs',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			// 跳转更换/绑定手机号页面
+			toChangePhone(){
+				let isBind = this.phone ? "changePhone" : "bindPhone";
+				uni.navigateTo({
+					url: `changePhone/${isBind}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			
+			// 清除聊天记录
+			clearChatLog(){
+				uni.showModal({
+					title:"提示",
+					content:"确定要清除聊天记录吗?",
+					success: (res) => {
+						if(res.confirm == true){
+							uni.showToast({
+								title:"清除成功"
+							});
+							// 清除聊天记录的缓存
+							this.deleteConversationMessage();
+							uni.removeStorage({
+							    key: service.keyList.CONVERSATION,
+							    success: ()=> {
+							        console.log('清除聊天记录成功');
+							    }
+							});
+							// 跳转到消息页
+							uni.reLaunch({
+								url: "/pages/tabBar/message/message"
+							});
+						};
+						this.showclearChatLogPopup = false;
+					},
+					fail: (res) => {
+						uni.showToast({
+							title:"清除失败"
+						});
+					}
+				});
+			},
+			
+			// 退出登录
+			signOut(){
+				uni.showModal({
+					title:"提示",
+					content:"确定要退出登录吗?",
+					success: (res) => {
+						if(res.confirm == true){
+							// 清除账号缓存
+							uni.removeStorage({
+							    key: service.keyList.USERS_KEY,
+							    success: ()=> {
+							        console.log('清除账号缓存成功');
+							    }
+							});
+							uni.reLaunch({
+								url: "../../common/login/login"
+							});
+						};
+						
+					},
+					fail: (res) => {
+						uni.showToast({
+							title:"网络延迟"
+						})
+					}
+					
+				})
+			},
+			
+			// ------------------底部弹出层有关的函数-----------------------
+			// 弹出底部面板：清空聊天记录 & 退出登录
+			showPopup(e){
+				let a = 'show' + e.currentTarget.dataset.open;
+				this[a] = true;
+			},
+			// 点击取消
+			closePopup(e){
+				let a = 'show' + e.currentTarget.dataset.cancel;
+				// console.log(e.currentTarget.dataset.cancel);
+				this[a] = false;
+			},
+			//配合点击空白处关闭面板的函数
+			popupChange(e){
+				if (!e.show){
+					this.showsignOutPopup = false;
+					this.showclearChatLogPopup = false;
+				}
+			},
+		},
+		components: {uniPopup},
+	}
+</script>
+
+<style lang="less">
+	// 引入预先定义好的less
+	@import "~@/common/common.less";
+	page{
+		background-color: @bgcolor;
+	}
+	.changePhoneItem, .aboutItem, .clearItem, .signOutItem{
+		height: @u100;
+		background-color: @colorF;
+		margin-bottom: 0.2*@u100;
+	}
+	
+	/* 右图标 */
+	.rightIcon{
+		width: 0.3*@u100;
+		height: 0.3*@u100;
+		margin-left: 0.3*@u100;
+	}
+	
+	
+	/* 弹出层样式集合 */
+	.item{
+		background-color: @colorF;
+		width: @p100;
+		height: @u100;
+		line-height: @u100;
+		display: flex;
+		justify-content: center;
+	}
+</style>

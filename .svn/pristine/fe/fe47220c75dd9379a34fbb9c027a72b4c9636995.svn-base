@@ -1,0 +1,283 @@
+<template>
+	<!-- 好友资料页面 -->
+	<view class="content">
+		<!-- 头像后背景颜色 -->
+		<view class="topBg width-full bg-344955 absolute"></view>
+		<!-- 头像 -->
+		<view class="avatar mg-tp20">
+			<image :src="avatarUrl" mode="scaleToFill"></image>
+		</view>	
+			
+		<!-- 昵称资料 -->
+		<view class="messageContent mg-tp60 flex flex-direction-column flex-vc">
+			<!-- 昵称 -->
+			<view class="name ft-36 font-weight-600 color-344955 one-line-ellipsis">
+				<text v-if="name">{{name}}</text>
+				<text v-else class="">用户昵称</text>
+			</view>
+			<!-- 来聊账号 -->
+			<view class="account ft-26 color-889aa3 mg-tp15">
+				<text>来聊账号：</text>
+				<text>{{account}}</text>
+			</view>
+			<!-- 签名 -->
+			<view class="motto ft-26 color-889aa3 mg-tp20 one-line-ellipsis">
+				<text v-if="motto">{{motto}}</text>
+				<text v-else class="">暂未设置签名</text>
+			</view>
+			
+			<!-- 取消关注按钮 -->
+			<button class="editInformation bg-889aa3 color-889aa3 mg-tp60"  plain="true" @tap="toDeleteFriendSuccess"
+			v-text="isLiked? '取消关注' : '关注' "></button>
+			
+			<!-- 赞&关注&发表 -->
+			<view class="flex flex-direction-row flex-hc width-750">
+				<!-- 赞 -->
+				<view class="myCommend" @tap="toMyCommend">
+					<text class="color-889aa3 ft-26">赞</text>
+					<text class="color-4A6572 ft-28 mg-tp15">{{myCommend}}</text>
+				</view>
+				<!-- 关注 -->
+				<view class="myFocus" @tap="toMyFocus">
+					<text class="color-889aa3 ft-26">关注</text>
+					<text class="color-4A6572 ft-28 mg-tp15">{{myFocus}}</text>
+				</view>
+				<!-- 发表 -->
+				<view class="myRelease" @tap="toMyRelease">
+					<text class="color-889aa3 ft-26">发表</text>
+					<text class="color-4A6572 ft-28 mg-tp15">{{myRelease}}</text>
+				</view>
+			</view>
+		</view>
+		<view class="friendsInfoBottom bg-344955 width-full" v-if="isLiked">
+			<view class="btn width-full height-100" @tap="toConversation(0)">
+				<button class="bg-849aa5 color-fff">发语音消息</button>
+			</view>
+			<view class="btn width-full height-100" @tap="toConversation(1)">
+				<button class="bg-f9aa33 color-fff">发消息</button>
+			</view>						
+		</view>
+		<view class="friendsInfoBottom bg-344955 width-full" v-else>
+			<view class="btn width-full addFrends height-100" @tap="toDeleteFriendSuccess">
+				<button class="bg-f9aa33 color-fff">加为好友</button>
+			</view>						
+		</view>
+	</view>
+</template>
+
+<script>
+	import {mapState,mapMutations} from 'vuex';
+	import request from '@/request/request.js';
+	export default {
+		data() {
+			return{
+				name:"", //昵称
+				motto:"",//签名
+				account:'',//账号
+				myCommend:0,//赞数
+				myFocus:32,//关注
+				myRelease:51,//发表
+				avatarUrl:'',//头像地址
+				isLiked:false 
+			}
+		},
+		onLoad(e) {
+			let uid=e.uid;
+			// 如果是自己
+			if(uid==this.userInfo.account){
+				uni.reLaunch({
+					url:"/pages/tabBar/profile/profile"
+				});
+			}
+			let isF=e.isF;
+			if(isF=='true'){
+				console.log(isF);
+				this.isLiked=true;
+			}
+			if(uid){
+				// 如果存在
+				this.isLiked=true;
+				let myFriends=this.myFriends;
+				let key=[];
+				for (let i in myFriends) {
+					key.push(myFriends[i][0]);
+				}
+				for (let i in key) {
+					if(uid==key[i]){
+						let tp=myFriends[i][1];
+						this.name=tp.name;
+						this.account=tp.account;
+						this.motto=tp.motto;
+						this.avatarUrl=tp.avatarUrl;
+						// 为了后续删除好友做准备
+						let data={
+							name:tp.name,
+							motto:tp.motto,
+							account:tp.account,
+							avatarUrl:tp.avatarUrl,
+							wxId:tp.wxId,
+							phone:tp.phone
+						}
+						this.setInfoTemp(data);
+					}
+				}
+			}else{
+				if(this.tempInfo){
+					this.name=this.tempInfo.name;
+					this.motto=this.tempInfo.motto;
+					this.account=this.tempInfo.account;
+					this.avatarUrl=this.tempInfo.avatarUrl;
+				}
+			}
+			// 动态获取赞的个数
+			request.getLikesNum(this.account,(data)=>{
+				console.log(JSON.stringify(data));
+				this.myCommend=data.length;
+				this.addLikes(data);
+			});
+		},
+		computed:{
+			...mapState(['tempInfo','myFriends','serverUrl','userInfo'])
+		},
+		methods: {
+			...mapMutations(['addFriend','deleteFriend','setInfoTemp','addLikes']),
+			//跳转到消息界面
+			toConversation(e){
+				let voiceActive=e;
+				uni.navigateTo({
+					url: `../../messageSubpackage/conversation?voiceActive=${voiceActive}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			//点击关注/取消关注按钮
+			toDeleteFriendSuccess(){
+				this.isLiked = !this.isLiked;
+				if (this.isLiked) {
+					// 添加好友到state
+					this.addFriend(this.tempInfo);
+					// 添加好友到数据库
+					request.addFriend((data)=>{
+						if(data==1){
+							console.log("好友已添加到数据库");
+						}else{
+							console.log("好友添加到数据库失败");
+						}
+					});
+				} else{
+					// 删除好友
+					this.deleteFriend(this.tempInfo);
+					// 从数据库删除好友
+					request.deleteFriend((data)=>{
+						if(data==1){
+							console.log("好友已从数据库删除");
+						}else{
+							console.log("好友从数据库删除失败");
+						}
+					});
+				}
+			},
+					
+			
+			//---------下方的赞&关注&发表--------
+			// 跳转到我收到的赞的页面
+			toMyCommend:function(){
+				uni.navigateTo({
+					url: '../../mySubpackage/myCommend/myCommend',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			// 跳转到关注我的页面
+			toMyFocus:function(){
+				uni.navigateTo({
+					url: '../../mySubpackage/myFocus/myFocus',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			// 跳转到我收到的赞的页面
+			toMyRelease:function(){
+				uni.navigateTo({
+					url: '../../mySubpackage/myRelease/myRelease',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+		}
+	}
+</script>
+
+<style>
+	/* 首部头像下的背景颜色 */
+	.topBg{
+		height: 350upx;
+		top: 0;
+		z-index: -1;
+	}
+	.settingIcon{
+		margin-top: -100upx;
+	}
+	/* 头像 */
+	.avatar{
+		/* margin-top: -350upx; */
+		width: 500upx;
+		height: 500upx;
+		box-shadow:0upx 2upx 50upx 0upx #344955;
+	}
+	.avatar image{
+		width: 500upx;
+		height: 500upx;
+	}
+	/* 编辑资料按钮 */
+	.editInformation{
+		border: #889aa3;
+		border-radius: 8upx;
+		width: 320upx;
+		color: #889aa3;
+	}
+	/* 赞 关注 发表 */
+	.myCommend,.myFocus,.myRelease{
+		width: 33%;
+		height: 200upx;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.name, .motto{
+		width: 400upx;
+		text-align: center;
+	}
+	.friendsInfoBottom{
+		position: fixed;
+		z-index: 1;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 110upx;
+	}
+	.btn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.friendsInfoBottom button{
+		width: 325upx;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: 30upx;
+	}
+	.addFrends button{
+		width: 650upx !important;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: 30upx;
+	}
+</style>

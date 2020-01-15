@@ -1,0 +1,299 @@
+<template>
+	<!-- 消息页面  -->
+    <scroll-view :scroll-y="isScroll" >
+			<!-- 一条消息列表 -->
+			<view class="message-row" :key="index" v-for="(item, index) in dataList"   @touchstart.capture="touchS" @touchmove="touchM" @touchend.capture="touchE" :data-index="index" :style="{right:item.right + 'upx'}" >
+				<view class="friend-message" @tap="toConversation(index)">
+					<!-- 朋友头像框 -->
+					<view class="message-head relative">
+						<image :src="item.imgUrl" mode="aspectFill"></image>
+						<!-- 未读消息的角标 -->
+						<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
+						<text v-if="item.msgNum > 99" class="icon">99+</text>
+					</view>
+					<!-- 消息内容 -->
+					<view class="message-body">
+						<view class="message-informatin">
+							<span class="message-username">{{item.username}}</span>
+							<span class="message-time">{{item.time}}</span>
+						</view>
+						<view class="message-content one-line-ellipsis">{{item.content}}</view>
+					</view>	
+				</view>
+				<!-- 删除对话框（左滑出现） -->
+				<view class="message-delete"    @tap="deleteMessage(index)">
+					删除对话
+				</view>
+			</view>
+	</scroll-view>    
+</template>
+
+<script>
+	// 使用vuex管理登录状态
+	import {mapState} from 'vuex'
+	export default {
+		
+		onLoad() {
+			// 显示tabBar的角标
+			uni.setTabBarBadge({
+			  index: 0,
+			  text: this.countMsg+''
+			})
+			// 隐藏角标
+			// uni.removeTabBarBadge({
+				
+			// })
+			// 检测是否登录(加延时)
+			setTimeout(()=>{
+				if (!this.hasLogin) {
+				    uni.showModal({
+				        title: '未登录',
+				        content: '您未登录，需要登录后才能继续',
+				        /**
+				         * 如果需要强制登录，不显示取消按钮
+				         */
+				        showCancel: !this.forcedLogin,
+				        success: (res) => {
+				            if (res.confirm) {
+								/**
+								 * 如果需要强制登录，使用reLaunch方式
+								 */
+								uni.reLaunch({
+								    url: '../../common/login/login'
+								});
+				            }
+				        }
+				    });
+				}
+			},500);
+		},
+		data() {
+			return {
+				// countMsg:0,
+				isScroll: true,
+				delBtnWidth: 160, //删除按钮宽度
+				startX:'',  //手指触碰起点坐标
+				dataList:[
+				{
+					imgUrl:'../../../static/img/finds_02.jpeg',
+					username:"老王",
+					time:"消息接收时间",
+					content:"如果v-if后面跟的是布尔值，而非变量语句的时候，可以根据布尔",
+					right: 0,
+					msgNum:133
+				},
+				{
+					imgUrl:'../../../static/img/finds_01.jpg',
+					username:"贾榜",
+					time:"消息接收时间",
+					content:"如果暴力不是为了杀戮那将毫无意义",
+					right: 0,
+					msgNum:2
+				},
+				{
+					imgUrl:'../../../static/img/logo.png',
+					username:"波波",
+					time:"消息接收时间",
+					content:"当然是选择原谅她啊",
+					right: 0,
+					msgNum:14
+				},
+				{
+					imgUrl:'../../../static/img/avatar.png',
+					username:"德莱厄斯",
+					time:"消息接收时间",
+					content:"诺克萨斯！诺克萨斯！",
+					right: 0,
+					msgNum:0
+				}
+				]				
+			}
+		},
+		methods: {
+			//前往对话界面
+			toConversation:function(index){
+				let voiceActive=1;
+				uni.navigateTo({
+					url: `../../messageSubpackage/conversation?voiceActive=${voiceActive}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+				this.dataList[index].msgNum=0;//进入对话界面以后，未读消息为零
+				const num = this.countMsg;
+				if(num==0){
+					uni.removeTabBarBadge({
+						index:0
+					})
+				}else{
+					uni.setTabBarBadge({
+					  index: 0,
+					  text: num+''
+					});
+				}	
+			},
+			// 删除消息			
+			deleteMessage(index){
+				this.dataList.splice(index,1);
+				
+				//同时减少消息tabBar右上角数字，num为零时移除
+				const num = this.countMsg;
+				if(num==0){
+					uni.removeTabBarBadge({
+						index:0
+					})
+				}else{
+					uni.setTabBarBadge({
+					  index: 0,
+					  text: num+''
+					});
+				}
+				// 动态修改数据显示(未完成)
+				
+				console.log(this.dataList[0]);
+			},
+			// 触摸开始
+			touchS:function (e) {
+				// console.log('S')
+                var touch = e.touches[0];
+                for (var index in this.dataList) {
+                    this.dataList[index].right = 0;
+                }
+                this.startX = touch.clientX;
+				// console.log(this.dataList[index].right)
+            },
+			// 触摸移动
+			touchM:function(e){
+				// console.log('M')
+				var touch = e.touches[0];
+				var item = this.dataList[e.currentTarget.dataset.index];
+				var disX = this.startX - touch.clientX;
+				// console.log(disX)
+				if (disX >=20) {
+				    if(disX>this.delBtnWidth){
+						disX = this.delBtnWidth;
+					}
+				    this.isScroll = false;
+				    this.dataList[e.currentTarget.dataset.index].right = disX;
+					// console.log(this.dataList[e.currentTarget.dataset.index])
+				} else {
+				    this.isScroll = true;
+				    this.dataList[e.currentTarget.dataset.index].right = 0;
+				}
+			},
+			// 触摸结束
+			touchE: function (e) {
+				// console.log('E') 
+				var item = this.dataList[e.currentTarget.dataset.index];
+				// console.log(item.right)
+				if (item.right >= this.delBtnWidth / 2) {
+				    this.isScroll = true;
+				    this.dataList[e.currentTarget.dataset.index].right = this.delBtnWidth;
+				} else {
+				    this.isScroll = true;
+				    this.dataList[e.currentTarget.dataset.index].right = 0;
+				}
+				// console.log(item.right)
+
+			}
+		},
+		computed: {
+			...mapState(['forcedLogin', 'hasLogin']),
+			// 计算消息条数
+			countMsg(){
+				let msgCount=0;
+				for (let i in this.dataList) {
+					msgCount+=this.dataList[i].msgNum;
+				}
+				msgCount= msgCount>99 ? '99+' : msgCount;
+				return msgCount;
+			},
+		},
+		// 下拉刷新
+		onPullDownRefresh() {
+			console.log("下拉刷新了");
+			// 从服务器拉取新数据
+			
+			// 关闭下拉刷新动画
+			setTimeout(()=>{
+				uni.stopPullDownRefresh();
+			},1000);
+		}
+	}
+</script>
+
+
+<style>	
+	.message-row{
+		width: 100%;
+		height: 150upx;
+		position: relative;
+		background-color: #FFFFFF;
+		display: flex;
+	}
+	.friend-message{
+		width: 750upx;
+		display: flex;
+		/* border: 5px solid #007AFF; */
+	}
+	.message-delete{
+		/* border: 1px solid #1AAD19; */
+		width: 160upx;
+		height: 150upx;
+		position: absolute;
+		top: 0;
+		right: -160upx;
+		color: #FFFFFF;
+		font-size: 25upx;
+		background-color: #eb5757;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+		
+	.message-head{
+		width: 18%;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;		
+		padding-right: 20upx;
+	}
+	.message-head image{
+		width: 80upx;
+		height: 80upx;
+		border: 1px solid #344955;
+		border-radius: 50%;
+	}
+	.message-body{
+		margin-top: 20upx;
+		width: 82%;
+	}
+	.message-username{		
+		font-size: 28upx;
+		font-weight: bold;
+	}
+	.message-time{		
+		float: right;
+		margin-right: 10upx;
+	    color: #939393;
+		font-size: 20upx;
+	}
+	.message-content{
+		margin-top: 10upx;
+		font-size: 10px;
+		width: 68%;
+	}
+	/* 未读消息角标 */
+	.icon{
+		position: absolute;
+		top: 28upx;
+		left: 84upx;
+		font-size: 20upx;
+		color: white;
+		display: block;
+		padding-left: 10upx;
+		padding-right: 10upx;
+		background-color: #F43530;
+		border-radius: 40upx;
+	}
+</style>

@@ -1,0 +1,112 @@
+<template>
+	<!-- 好友圈评论输入 --> 
+<view class="">
+	<view class="navBar">
+		<view class="navBarCancel flex flex-js flex-vc" @tap="back">
+			<image src="/static/img/cancel.png" mode=""></image>
+			<text>Cancel</text>
+		</view>
+		<view class="navBarTitle flex flex-jc flex-vc">
+			<text>发评论</text>
+		</view>
+		<view class="navBarBtn flex flex-je flex-ac bg-344955" >
+			<button :disabled="canPutUp" @click="putUp" class="my-color-fff">发表</button>
+		</view>
+	</view>
+		<!-- 输入文本框 -->
+		<view class="writeComment">
+			<textarea class="width-full" value="" v-model="content" placeholder="写评论" maxlength="100" />
+			<view class="absolute countLimit ">
+				<text>{{content.length}}/</text>
+				<text>100</text>
+			</view>
+		</view>
+</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				content:'',//输入框的内容
+			}
+		},
+		methods: {
+			//返回评论列表界面
+			back(){
+				// 直接返回上个页面
+				uni.navigateBack();
+			},
+			// 发表评论
+			putUp(){
+				// 存储评论，返回上个页面
+				console.log(this.content);
+			}
+		},
+		computed:{
+			canPutUp:function(){
+				return this.content.length>0 ? false : true ;
+			}
+		}
+	}
+</script>
+
+<style>
+	
+	.navBarCancel{
+		width: 33.33%;
+		color: #FFFFFF;
+		padding-left: 10upx;
+	}
+	.navBarTitle{
+		width: 33.33%;
+		color: #FFFFFF;
+		font-size: 40upx;
+	}
+	.navBarCancel image{
+		height: 40upx;
+		width: 40upx;
+	}
+	.navBarBtn{
+		width: 33.33%;
+		padding-right: 10upx;
+	}
+	button::after{ border: none;}
+	.navBarBtn button[disabled]{
+		background-color: #BEBEBE;
+		border: 1upx solid #859299;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
+		border-radius: 0;
+		color: #859299;
+	}
+	.navBarBtn button{
+		background-color: #344955;
+		border: 1upx solid #859299;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
+		border-radius: 0;
+		color: #859299;
+	}
+	.writeComment{
+		margin-top: 100upx;
+	}
+	textarea{
+		height: 350upx;	
+		font-size: 30upx;	
+		padding-top: 35upx;
+		padding-left: 25upx;
+	}
+	
+	/* 字数限制的样式 */
+	.countLimit{
+		bottom: 20upx;
+		right: 30upx;
+	}
+	/* .my-color-fff{
+		color: #FFFFFF !important;
+	} */
+</style>
+

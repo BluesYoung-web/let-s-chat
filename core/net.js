@@ -1,5 +1,5 @@
 // 网络请求相关
-import Socket from '@/core/socket.js';
+import Socket from '@/core/class/socket.js';
 import config from '@/core/config.js';
 import event from '@/core/event.js';
 

@@ -30,7 +30,7 @@ class Socket{
 			if(self.onOpen){
 				// 连接建立成功的回调函数
 				suc && suc();
-				self.onOpen();
+				self.onOpen && self.onOpen();
 			}
 		});
 		this.socketTask.onMessage((res) => {
@@ -45,7 +45,7 @@ class Socket{
 			if(!self.onClose){
 				self.reConnect();
 			}else{
-                self.onClose(code);
+                self.onClose && self.onClose(code);
             }
 		});
 		this.socketTask.onError((code) => {
@@ -55,7 +55,7 @@ class Socket{
 			if(!self.onError){
 				self.reConnect();
 			}else{
-                self.onError(code);
+                self.onError && self.onError(code);
             }
 		});
     }

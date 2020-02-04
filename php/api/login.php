@@ -3,6 +3,10 @@
     include_once('../common/conn.php');
     // 引入返回特定格式响应的函数
     include_once('../common/respond.php');
+    // 引入token的生成方法
+    include_once('../common/token.php');
+    // 引入redis
+    include_once('../common/redis.php');
     // 接收post传参
     $tel = $_POST['tel'] or '';
     $wxid = $_POST['wxid'] or '';
@@ -41,6 +45,13 @@
     }
 
     $arr['user'] = $rs;
+    // 秘钥
+    $key = 'www.bluesyoung-web.com';
+    // 生成token
+    $token = makeToken($key);
+    // 使用redis存储token
+    $redis -> set("token", $token);
+    $arr['user']['token'] = $token;
 
     respond(2000, $arr, "welcom");
 ?>

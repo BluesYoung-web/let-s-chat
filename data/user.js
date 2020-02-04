@@ -6,8 +6,8 @@ import event from '@/core/event.js';
 import tools from '@/core/tools.js';
 
 const path = {
-    login: '/login.php',
-    upload: '/upload.php'
+    login: '/api/login.php',
+    upload: '/api/upload.php'
 }
 const prefix = 'user';
 

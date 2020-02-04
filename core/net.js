@@ -105,8 +105,8 @@ const http = function(args){
 				fail && fail(res.data);
 			}
 		},
-		fail: (err) => {
-			fail && fail(err.msg);
+		fail: (code, err) => {
+			fail && fail(code, err);
 		}
 	});
 }

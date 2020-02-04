@@ -58,7 +58,7 @@ const set = function(args){
     if(res){
         success && success(key+"存储成功");
     }else{
-        fail && fail(400, key+"存储失败");
+        fail && fail(4001, key+"存储失败");
     }
 }
 // 删除数据
@@ -68,7 +68,7 @@ const del = function(args){
     if(res){
         success && success(key+"删除成功");
     }else{
-        fail && fail(401, key+"删除失败");
+        fail && fail(4002, key+"删除失败");
     }
 }
 export default {

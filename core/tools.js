@@ -1,1 +1,6 @@
-// 工具函数
+// ??????
+import md5 from '@/js_sdk/md5.min.js';
+
+export default{
+    md5
+}

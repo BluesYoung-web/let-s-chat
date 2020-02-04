@@ -78,6 +78,7 @@
 			});
 		},
 		onLoad() {
+			/*
 			// 判断是否有账户信息
 			setTimeout(()=>{
 				if(! this.token){
@@ -95,6 +96,7 @@
 					});
 				}
 			},1200);
+			*/
 			// 显示tabBar的角标
 			uni.setTabBarBadge({
 				index: 0,

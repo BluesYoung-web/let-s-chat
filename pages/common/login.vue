@@ -3,13 +3,13 @@
 	<view class="relative" :style="fullHeight">
 		<!-- 商标logo -->
 		<view class="logo width-full flex flex-jc">
-			<image src="../../../static/img/logo.png" mode=""></image>
+			<image src="/static/img/logo.png" mode=""></image>
 		</view>
 		<!-- 登录的内容 -->
 		<form @submit="loginCheck">
 			<view v-show="showInput" class="loginContentView flex flex-ac flex-direction-column">
 				<!-- 手机号输入框 -->
-				<input name="phone" placeholder-class="color-ccc" type="number" class="phoneInput flex" maxlength="11" v-model="user.phone"
+				<input name="phone" placeholder-class="color-ccc" type="number" class="phoneInput flex" maxlength="11" v-model="user.tel"
 				 value="" placeholder="请输入手机号" />
 				<!-- 验证码输入框 -->
 				<view class="width-600 height-100  mg-tp20  flex flex-jsb">
@@ -22,8 +22,7 @@
 				<button class="loginBtn bg-344955 color-fff" form-type="submit">登录</button>
 				<!-- 微信登录 -->
 				<view class="register flex flex-jsb mg-tp10 color-344955 ft-32">
-					<text class="wx-green" @tap="wxlogin('weixin')">微信登陆</text>
-					<text @tap="register">注册账号</text>
+					<text class="wx-green" @tap="wxlogin()">微信登陆</text>
 				</view>
 			</view>
 		</form>
@@ -38,7 +37,7 @@
 		<uni-popup :show="popup" type="center" @change="popupChange">
 			<view class="relative" style=" height: 1200upx;">
 				<scroll-view scroll-y="true" style="height: 90%;">
-					<image style="height: 3000upx;" src="../../../static/img/agreement.jpg" mode="scaleToFill"></image>
+					<image style="height: 3000upx;" src="/static/img/agreement.jpg" mode="scaleToFill"></image>
 				</scroll-view>
 				<view class="text-center mg-tp20">
 					<uni-icons type="clear" color="#fff" size="30" @click="closePopup()" />
@@ -49,18 +48,10 @@
 </template>
 
 <script>
-	import uniPopup from "@/components/uni-popup/uni-popup.vue"
-	import uniIcons from '@/components/uni-icons/uni-icons.vue'
-	// 管理账号信息缓存
-	import service from '@/service.js';
-	// 登录状态管理
-	import {mapState,mapMutations} from 'vuex';
-	// 请求抽离
-	import request from '@/request/request.js';
-	// 常用方法抽离
-	import tools from '@/tools/tools.js';
-	// websocket 抽离
-	import socket from '@/socket/socket.js';
+	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import uniIcons from '@/components/uni-icons/uni-icons.vue';
+	import data from '@/data.js';
+	import tools from '@/core/tools.js';
 	export default {
 		components: {
 			uniPopup,
@@ -76,12 +67,12 @@
 				fullHeight: "", //用来获取手机屏幕大小便于底部协议底部绝对布局
 				code:'',
 				user:{
-					phone:'',
-					account:'', //uid
-					name:'', //昵称
+					tel:'',
+					uid:'', //uid
+					nick:'', //昵称
 					motto:'', //个性签名
-					avatarUrl:'', //头像
-					wxId:'' //微信id
+					avatar:'', //头像
+					wxid:'' //微信id
 				}
 			}
 		},
@@ -93,78 +84,67 @@
 				}
 			});
 		},
-		computed:{
-			...mapState(['serverUrl']), 
-		}, 
 		methods: {
-			...mapMutations(['setInfo','addConversationFromCache','addFriendFromCache']),
-			//注册跳转
-			register() {
-				uni.navigateTo({
-					url: '../register/register',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			//初始化成功之后进行的操作 
-			successInit(data){
-				// 添加账号到缓存
-				service.addUser(data);
-				// 添加账号到state
-				this.setInfo(data);
-				// 从缓存读取消息列表
-				this.addConversationFromCache(service.getConversation());
-				// 从缓存中读取好友列表
-				this.addFriendFromCache(service.getFriends());
-				// 连接websocket
-				socket.connectSocketInit();
-			},
-			// 微信登录
-			wxlogin(value) {
-				request.wxLogin(this,value);
-			},
-			toMain(userInfo) {
-				// 向服务器查询此微信是否已经绑定手机号
-				let wxId = userInfo.openId;
-				request.toMain(wxId,(data)=>{
-					if(data.phone){
-						this.successInit(data);
-					}else{
-						// 将微信名及微信头像存入state
-						let temp={
-							name:userInfo.nickName,
-							avatarUrl:userInfo.avatarUrl,
-							wxId:userInfo.openId
-						};
-						this.setInfo(temp);
-						// 强制绑定手机号
-						uni.showModal({
-							showCancel:false,
-						    title: '提示',
-						    content: '请先去绑定手机号',
-						    success: (res)=> {
-						        if (res.confirm) {
-						            uni.reLaunch({
-						            	url:"/pages/mySubpackage/setting/changePhone/bindPhone"
-						            });
-						        } 
-						    }
+			login(){
+				data.user.login({
+					user: this.user,
+					success: (res) => {
+						console.log(res);
+						uni.showToast({
+							icon: "none",
+							title: "登陆成功"
 						});
+						uni.reLaunch({
+							url: "/pages/tabBar/message"
+						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 500);
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+						uni.showToast({
+							icon: "none",
+							title: "登陆失败"
+						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 500);
 					}
 				});
-				// 跳转到消息页
-				uni.reLaunch({
-					url: "../../tabBar/message/message"
-				});
-				uni.showToast({
-					title:"登陆成功",
-					icon:"none"
-				});
+			},
+			// 微信登录
+			wxlogin() {
+				let config={
+					provider: 'weixin',
+					success: (res) => {
+						uni.getUserInfo({
+							provider: 'weixin',
+							success: (infoRes) => {
+								/**
+								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
+								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
+								 */
+								this.toMain(infoRes.userInfo);
+							}
+						});
+					},
+					fail: (err) => {
+						console.error('授权登录失败：' + JSON.stringify(err));
+					}
+				}
+				
+				uni.login(config);
+			},
+			toMain(userInfo) {
+				console.log(userInfo);
+				// 向服务器查询此微信是否已经绑定手机号
+				this.user.wxid = userInfo.openId;
+				this.login();
 			},
 			//获取验证码
 			getIdentifyingCode() {
-				tools.phoneCheck(this.user.phone,()=>{
+				if(tools.phoneCheck(this.user.tel)){
 					uni.showLoading({
 						title: '加载中'
 					});
@@ -187,17 +167,17 @@
 							title: "获取验证码成功"
 						});
 					}, 1000);
-				},()=>{
+				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
-				});
+				}
 			},
 
 			// 登陆验证
 			loginCheck(e) {
-				tools.phoneCheck(this.user.phone,()=>{
+				if(tools.phoneCheck(this.user.tel)){
 					if (this.code.length != 6) {
 						uni.showToast({
 							icon: "none",
@@ -205,31 +185,14 @@
 						});
 					} else {
 						// 从服务器验证用户是否存在，存在则登录
-						request.phoneLogin(this.user.phone,(data)=>{
-							if(data){
-								this.successInit(data);
-								// 跳转到消息页面
-								uni.reLaunch({
-									url: "../../tabBar/message/message"
-								});
-								uni.showToast({
-									title:"登陆成功",
-									icon:"none"
-								});
-							}else{
-								uni.showToast({
-									title:"登陆失败，请仔细检查手机号",
-									icon:"none"
-								});
-							}
-						});
+						this.login();
 					}
-				},()=>{
+				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
-				});
+				}
 			},
 
 			//---------------------------弹出层------------------------

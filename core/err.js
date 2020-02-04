@@ -13,6 +13,4 @@ const error = function(code){
     });
 }
 
-export default{
-    error
-}
+export default error;

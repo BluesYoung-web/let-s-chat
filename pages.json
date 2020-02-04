@@ -1,7 +1,7 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/tabBar/message/message",
+			"path": "pages/tabBar/message",
 			"style": {
 				"navigationBarTitleText": "消息",
 				"enablePullDownRefresh": true, //是否开启下拉刷新
@@ -18,7 +18,7 @@
 			}
 		},
 		{
-			"path": "pages/common/login/login",
+			"path": "pages/common/login",
 			"style": {
 				"navigationBarTitleText": "登录",
 				"app-plus": {
@@ -32,7 +32,7 @@
 			}
 		},
 		{
-			"path": "pages/tabBar/address/address",
+			"path": "pages/tabBar/address",
 			"style": {
 				"navigationBarTitleText": "通讯录",
 				"enablePullDownRefresh": true, //是否开启下拉刷新
@@ -57,7 +57,7 @@
 		},
 
 		{
-			"path": "pages/tabBar/finds/finds",
+			"path": "pages/tabBar/finds",
 			"style": {
 				"navigationBarTitleText": "发现",
 				"enablePullDownRefresh": true, //是否开启下拉刷新
@@ -73,7 +73,7 @@
 			}
 		},
 		{
-			"path": "pages/tabBar/profile/profile",
+			"path": "pages/tabBar/profile",
 			"style": {
 				"navigationBarTitleText": "我",
 				"app-plus": {
@@ -89,30 +89,24 @@
 					}
 				}
 			}
-		},
-		{
-			"path": "pages/common/register/register",
-			"style": {
-				"navigationBarTitleText": "注册"
-			}
 		}, {
 			"path": "pages/mySubpackage/setting/setting",
 			"style": {
 				"navigationBarTitleText": "设置"
 			}
 		}, {
-			"path": "pages/mySubpackage/myCommend/myCommend",
+			"path": "pages/mySubpackage/myCommend",
 			"style": {
 				"navigationBarTitleText": "赞我的",
 				"enablePullDownRefresh": true
 			}
 		}, {
-			"path": "pages/mySubpackage/myRelease/myRelease",
+			"path": "pages/mySubpackage/myRelease",
 			"style": {
 				"navigationBarTitleText": "我发布的"
 			}
 		}, {
-			"path": "pages/mySubpackage/myFocus/myFocus",
+			"path": "pages/mySubpackage/myFocus",
 			"style": {
 				"navigationBarTitleText": "关注我的"
 			}
@@ -122,7 +116,7 @@
 				"navigationBarTitleText": "编辑资料"
 			}
 		}, {
-			"path": "pages/mySubpackage/myInformation/changeName/changeName",
+			"path": "pages/mySubpackage/myInformation/changeName",
 			"style": {
 				"navigationBarTitleText": "编辑昵称",
 				"app-plus": {
@@ -136,7 +130,7 @@
 				}
 			}
 		}, {
-			"path": "pages/mySubpackage/myInformation/changeMotto/changeMotto",
+			"path": "pages/mySubpackage/myInformation/changeMotto",
 			"style": {
 				"navigationBarTitleText": "编辑签名",
 				"app-plus": {
@@ -157,24 +151,24 @@
 				"navigationBarTitleText": "用户昵称"
 			}
 		}, {
-			"path": "pages/findsSubpackage/comments/comments",
+			"path": "pages/findsSubpackage/comments",
 			"style": {
 				"navigationBarTitleText": "评论"
 			}
 		},
 		{
-			"path": "pages/addressSubpackage/friendsInfo/friendsInfo",
+			"path": "pages/addressSubpackage/friendsInfo",
 			"style": {
 				"navigationBarTitleText": ""
 
 			}
 		}, {
-			"path": "pages/findsSubpackage/comments/writeComment/writeComment",
+			"path": "pages/findsSubpackage/writeComment",
 			"style": {
 				"navigationStyle": "custom"
 			}
 		}, {
-			"path": "pages/mySubpackage/setting/changePhone/changePhone",
+			"path": "pages/mySubpackage/setting/changePhone",
 			"style": {
 				"navigationBarTitleText": "更换手机号",
 				"app-plus": {
@@ -188,18 +182,18 @@
 				}
 			}
 		}, {
-			"path": "pages/mySubpackage/setting/aboutUs/aboutUs",
+			"path": "pages/mySubpackage/setting/aboutUs",
 			"style": {
 				"navigationBarTitleText": "关于来聊"
 
 			}
 		}, {
-			"path": "pages/mySubpackage/setting/changePhone/bindSuccessful",
+			"path": "pages/mySubpackage/setting/bindSuccessful",
 			"style": {
 				"navigationBarTitleText": "绑定成功"
 			}
 		}, {
-			"path": "pages/mySubpackage/setting/changePhone/bindPhone",
+			"path": "pages/mySubpackage/setting/bindPhone",
 			"style": {
 				"navigationBarTitleText": "绑定手机号",
 				"app-plus": {
@@ -213,7 +207,7 @@
 				}
 			}
 		}, {
-            "path": "pages/games/gobang/gobang",
+            "path": "pages/games/gobang",
             "style": {
             	"navigationBarTitleText": "五子棋"            
             }
@@ -240,25 +234,25 @@
 		"list": [
 			// tabBar.list包含四项（消息，通讯录，好友圈，我的）
 			{
-				"pagePath": "pages/tabBar/message/message",
+				"pagePath": "pages/tabBar/message",
 				"iconPath": "static/img/tabBar/message.png",
 				"selectedIconPath": "static/img/tabBar/message_active.png",
 				"text": "消息"
 			},
 			{
-				"pagePath": "pages/tabBar/address/address",
+				"pagePath": "pages/tabBar/address",
 				"iconPath": "static/img/tabBar/address.png",
 				"selectedIconPath": "static/img/tabBar/address_active.png",
 				"text": "通讯录"
 			},
 			{
-				"pagePath": "pages/tabBar/finds/finds",
+				"pagePath": "pages/tabBar/finds",
 				"iconPath": "static/img/tabBar/finds.png",
 				"selectedIconPath": "static/img/tabBar/finds_active.png",
 				"text": "好友圈"
 			},
 			{
-				"pagePath": "pages/tabBar/profile/profile",
+				"pagePath": "pages/tabBar/profile",
 				"iconPath": "static/img/tabBar/profile.png",
 				"selectedIconPath": "static/img/tabBar/profile_active.png",
 				"text": "我的"

@@ -99,7 +99,7 @@ const http = function(args){
 		},
 		data: params,
 		success: (res) => {
-			if(res.data.status == 0){
+			if(res.data.status == 2000){
 				success && success(res.data.data);
 			}else{
 				fail && fail(res.data);

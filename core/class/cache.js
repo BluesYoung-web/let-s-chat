@@ -12,16 +12,16 @@ class Cache{
             uni.getStorage({
 				key : `${this.prefix}.${this.uid}.${key}`,
 				success : (res) => {
-                    value = JSON.parse(res.data);
+                    data = JSON.parse(res.data);
                     // 更新data
-					this.data[key] = value;
+					this.data[key] = data;
 				},
 				fail : (err) => {
-					value = null;
+					data = null;
 				}
 			});
         } 
-        return value;
+        return data;
     }
     set(key, value){
 		let rs = true;
@@ -57,3 +57,5 @@ class Cache{
 		return rs;
     }
 }
+
+export default Cache;

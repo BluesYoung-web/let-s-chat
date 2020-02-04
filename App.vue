@@ -1,4 +1,5 @@
 <script>
+	/*
 	// 管理账号信息缓存
 	import service from 'service.js';
 	import {mapState,mapMutations} from 'vuex';
@@ -97,6 +98,36 @@
 		},
 		onHide() {
 			console.log('App Hide');
+		}
+	}
+	*/
+	import data from '@/data.js';
+	export default{
+		data(){
+			return{
+				
+			}
+		},
+		onLaunch() {
+			data.user.login({
+				success: () => {
+					uni.reLaunch({
+						url:"pages/tabBar/message"
+					});
+				},
+				fail: () => {
+					uni.showToast({
+						icon: "none",
+						title: "缓存中找不到用户信息"
+					});
+					uni.reLaunch({
+						url: "pages/common/login"
+					});
+					setTimeout(() => {
+						uni.hideToast();
+					}, 500);
+				}
+			});
 		}
 	}
 </script>

@@ -18,6 +18,7 @@ const login_to_service = function(args){
         path: path.login,
         params,
         success: (res) => {
+			console.log(res);
             // 返回之前处理数据
             let user = res.user;
             // 将用户信息存入state和缓存
@@ -25,6 +26,11 @@ const login_to_service = function(args){
             // 存入签名与密码
             user.sign = sign;
             store.set(`${prefix}.account`,user);
+            success && success({
+                user,
+                benew: res.benew
+            });
+            /*
             // 连接websocket
             net.init(() => {
                 // 连接成功之后,正式返回
@@ -33,6 +39,7 @@ const login_to_service = function(args){
                     benew: res.benew
                 });
             });
+            */
         },
         fail
     });

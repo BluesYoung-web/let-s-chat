@@ -1,6 +1,6 @@
 export default{
     // 数据服务器地址
-	httpUrl:'http://192.168.10.136',
+	httpUrl:'http://www.bluesyoung-web.com',
 	// websocket服务器地址
-	websocketUrl:'ws://192.168.10.136:8848',
+	websocketUrl:'ws://www.bluesyoung-web.com:8848',
 }

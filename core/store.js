@@ -8,8 +8,8 @@ const get = function(args){
     if(!force){
         // 如果不是强制，先从缓存获取
         let data = store.get(key);
-        if(!data){
-            // 拿不到数据，再从服务器获取
+        if(!data && req){
+            // 拿不到数据且有请求参数，再从服务器获取
             net.send({
                 cmd: req.cmd,
                 data: req.data,
@@ -25,12 +25,12 @@ const get = function(args){
                 }
             });
         }else{
-            // 如果拿到数据，直接返回数据
+            // 如果拿到数据或没有请求参数，直接返回数据
             success && success(data);
             return data;
         }
-    }else{
-        // 直接从服务器获取
+    }else if(req){
+        // 有请求参数，直接从服务器获取
         net.send({
             cmd: req.cmd,
             data: req.data,
@@ -45,6 +45,10 @@ const get = function(args){
                 return null;
             }
         });
+    }else{
+        // 强制从服务器获取，但是又没有传递参数
+        fail && fail(4000, "请传递请求参数");
+        return null;
     }
 }
 // 存储数据

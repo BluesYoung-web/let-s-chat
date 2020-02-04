@@ -1,6 +1,6 @@
 class Cache{
-    constructor(prefix){
-        this.prefix = prefix;
+    constructor(user, name, prefix){
+        this.prefix = `${user}.${name}.${prefix}`;
         this.data = {};
     }
     get(key){

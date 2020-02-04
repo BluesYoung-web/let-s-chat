@@ -212,13 +212,17 @@
 					}
 				}
 			}
-		}
-	    ,{
+		}, {
             "path": "pages/games/gobang/gobang",
             "style": {
             	"navigationBarTitleText": "五子棋"            
             }
-        }
+        }, {
+			"path": "pages/error/error",
+			"style": {
+				"navigationBarTitleText": "错误"
+			}
+		}
     ],
 	// 全局样式配置
 	"globalStyle": {

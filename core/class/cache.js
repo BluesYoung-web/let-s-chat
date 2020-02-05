@@ -2,7 +2,6 @@ class Cache{
     constructor(name, prefix){
         this.prefix = `${name}.${prefix}`;
 		this.data = {};
-		this.uid = '';
     }
     get(key){
         // 首先从全局变量获取
@@ -10,7 +9,7 @@ class Cache{
         if (data === false) {
             // 全局变量中没有则从缓存获取
             uni.getStorage({
-				key : `${this.prefix}.${this.uid}.${key}`,
+				key : `${this.prefix}.${key}`,
 				success : (res) => {
                     data = JSON.parse(res.data);
                     // 更新data
@@ -30,7 +29,7 @@ class Cache{
 			console.log("设置账户信息",this.uid);
 		}
 		uni.setStorage({
-			key: `${this.prefix}.${this.uid}.${key}`,
+			key: `${this.prefix}.${key}`,
 			data: JSON.stringify(value),
 			success: (res) => {
 				// 更新data
@@ -45,7 +44,7 @@ class Cache{
     del(key){
         let rs = true;
 		uni.removeStorage({
-			key: `${this.prefix}.${this.uid}.${key}`,
+			key: `${this.prefix}.${key}`,
 			success: (res) => {
 				// 更新data
 				delete this.data[key];

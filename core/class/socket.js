@@ -1,22 +1,59 @@
-// socket 类
+/**
+ * 用于websocket管理的类
+ * @author 张扬
+ * @copyright http://github.com/BluesYoung-web
+ */
 class Socket{
-    constructor(args){
+	/**
+	 * 用于websocket管理的类
+	 * @param {object} args 
+	 */
+	 constructor(args){
         let {url, params, onOpen, onMessage, onClose, onError, onDisconnect} = {...args};
-        // 最大重连次数
-        this.maxReConnectNum = params && params.num || 5;
-        this.url = url;
-        this.is_open_socket = false;
-        this.onOpen = onOpen;
-        this.onMessage = onMessage;
-        this.onClose = onClose;
-        this.onError = onError;
+		/**
+		 * @type {number} 最大重连次数
+		 */
+		this.maxReConnectNum = params && params.num || 5;
+		/**
+		 * @type {string} websocket连接的url
+		 */
+		this.url = url;
+		/**
+		 * @type {boolean} 连接正常打开的标志
+		 */
+		this.is_open_socket = false;
+		/**
+		 * @type {function} 连接正常打开的回调函数
+		 */
+		this.onOpen = onOpen;
+		/**
+		 * @type {function} 收到消息的回调函数
+		 */
+		this.onMessage = onMessage;
+		/**
+		 * @type {function} 连接关闭的回调函数
+		 */
+		this.onClose = onClose;
+		/**
+		 * @type {function} 连接出错的回调函数
+		 */
+		this.onError = onError;
+		/**
+		 * @type {function} 连接失败的回调函数
+		 */
         this.onDisconnect = onDisconnect;        
     }
-    // 初始化
+    /**
+	 * socket对象初始化
+	 * @param {function} suc 初始化完成的回调函数
+	 */
     init(suc){
         let self = this;
 		console.log(this.url);
 		let url = this.url;
+		/**
+		 * @type {object} socket对象
+		 */
 		this.socketTask = uni.connectSocket({
 			url,
 			success: () => {}
@@ -59,7 +96,13 @@ class Socket{
             }
 		});
     }
-    // 发消息
+    /**
+	 * 通过socket连接发送消息
+	 * @param {object} args
+	 * @param {object} args.msg 消息内容
+	 * @param {function} args.success 发送成功的回调函数
+	 * @param {function} args.fail 发送失败的回调函数
+	 */
     send(args){
         let {msg, success, fail} = {...args};
         let data = JSON.stringify(msg);
@@ -77,7 +120,9 @@ class Socket{
 								});
 		this.is_open_socket || fail && fail(-1, "连接已断开");
     }
-    // 主动关闭socket连接
+    /**
+	 * 主动关闭连接
+	 */
     close(){
         let params = {
 			code: 1000,
@@ -88,7 +133,9 @@ class Socket{
 		}
 		this.socketTask && this.socketTask.close(params);
     }
-    // 重连
+    /**
+	 * 断线重连
+	 */
     reConnect (){
 		// 是否超过最大重连次数 || 连接正常打开
 		if(this.maxReConnectNum && !this.is_open_socket){

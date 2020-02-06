@@ -7,6 +7,13 @@ class Socket{
 	/**
 	 * 用于websocket管理的类
 	 * @param {object} args 
+	 * @param {string} args.url websocket服务器地址
+	 * @param {string} args.url websocket服务器地址
+	 * @param {function} args.onOpen websocket连接正常打开的回调函数
+	 * @param {function} args.onMessage 收到消息的回调函数
+	 * @param {function} args.onClose websocket连接关闭的回调函数
+	 * @param {function} args.onError websocket连接出错的回调函数
+	 * @param {function} args.onDisconnect websocket连接失败的回调函数
 	 */
 	 constructor(args){
         let {url, params, onOpen, onMessage, onClose, onError, onDisconnect} = {...args};
@@ -152,4 +159,9 @@ class Socket{
 	}
 }
 
+/**
+ * 
+ * @module Socket
+ * @namespace Socket
+ */
 export default Socket;

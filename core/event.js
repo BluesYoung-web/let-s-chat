@@ -1,14 +1,33 @@
-// 事件处理模块
+/**
+ * 事件处理模块
+ * @author 张扬
+ * @copyright http://github.com/BluesYoung-web
+ */
+
+/**
+ * 用于存放首层监听函数
+ */
 let events_model = {};
+/**
+ * 用于存放二层监听函数
+ */
 let events_model_type = {};
+/**
+ * 用于存放三层监听函数
+ */
 let events_model_type_id = {};
 
-// 注册监听
-const register = function(...arg){
-	let on_event = arg.pop();
-	let model = arg.shift();
-	let type = arg.shift();
-	let id = arg.shift();
+/**
+ * 注册事件监听
+ * @param {object} args
+ * @param {number} args.model - 首层监听
+ * @param {number} args.type - 二层监听
+ * @param {number} args.id - 三层监听
+ * @param {function} args.on_event - 监听的回调函数
+ */
+const register = function(args){
+	let {model, type, id, on_event} = {...args};
+	
 	if(model && type && id){
 		if(!events_model_type_id[model]){
 			events_model_type_id[model] = [];
@@ -35,12 +54,17 @@ const register = function(...arg){
 		events_model[model].push(on_event);
 	}
 }
-// 移除监听
-const unregister = function(...arg){
-	let on_event = arg.pop();
-	let model = arg.shift();
-	let type = arg.shift();
-	let id = arg.shift();
+/**
+ * 移除事件监听
+ * @param {object} args
+ * @param {number} args.model - 首层监听
+ * @param {number} args.type - 二层监听
+ * @param {number} args.id - 三层监听
+ * @param {function} args.on_event - 监听的回调函数
+ */
+const unregister = function(args){
+	let {model, type, id, on_event} = {...args};
+
 	if(model && type && id){
 		if(events_model_type_id[model][type][id]){
 			events_model_type_id[model][type][id].splice(events_model_type_id[model][type][id].indexOf(on_event),1);
@@ -63,12 +87,17 @@ const unregister = function(...arg){
 		return;
 	}
 }
-// 事件分发
-const dispatch = function(...arg){
-	let data = arg.pop();
-	let model = arg.shift();
-	let type = arg.shift();
-	let id = arg.shift();
+/**
+ * 事件分发(触发，自动调用对应的监听的回调函数)
+ * @param {object} args
+ * @param {number} args.model - 首层监听
+ * @param {number} args.type - 二层监听
+ * @param {number} args.id - 三层监听
+ * @param {object} args.data - 传入的数据
+ */
+const dispatch = function(args){
+	let {model, type, id, data} = {...args};
+
 	if(events_model_type_id[model] && events_model_type_id[model][type] && events_model_type_id[model][type][id]){
 		for (let on_event in events_model_type_id[model][type][id]) {
 			events_model_type_id[model][type][id][on_event](model,type,id,data);
@@ -87,13 +116,16 @@ const dispatch = function(...arg){
 		}
 	}
 }
-// 广播
-const broadcast = function(...arg){
-	let data = arg.pop();
-	let model = arg.shift();
-	let type = arg.shift();
-	let id = arg.shift();
-	
+/**
+ * 广播(没有对应的事件监听)
+ * @param {object} args
+ * @param {number} args.model - 首层监听
+ * @param {number} args.type - 二层监听
+ * @param {number} args.id - 三层监听
+ * @param {object} args.data - 传入的数据
+ */
+const broadcast = function(args){
+	let {model, type, id, data} = {...args};
 	if(model){
 		for (let on_event in events_model) {
 			events_model[model][on_event](model, type, id, data);

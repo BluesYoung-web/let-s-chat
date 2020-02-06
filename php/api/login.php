@@ -38,7 +38,7 @@
             $rs = mysqli_fetch_assoc($res);
         }else{
             // 插入失败
-            respond(4000, null, "insert fail");
+            respond(-1, null, "insert fail");
             return;
         }
         $arr['benew'] = 1;
@@ -53,5 +53,5 @@
     $redis -> set("token", $token);
     $arr['user']['token'] = $token;
 
-    respond(2000, $arr, "welcom");
+    respond(0, $arr, "welcom");
 ?>

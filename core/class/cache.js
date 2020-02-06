@@ -45,10 +45,6 @@ class Cache{
 	 */
     set(key, value){
 		let rs = true;
-		if(key.includes('account')){
-			this.uid = value.uid;
-			console.log("设置账户信息",this.uid);
-		}
 		uni.setStorage({
 			key: `${this.prefix}.${key}`,
 			data: JSON.stringify(value),

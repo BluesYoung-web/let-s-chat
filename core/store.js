@@ -1,8 +1,26 @@
-// 存储用户数据
+/**
+ * 用于存储用户数据的模块
+ */
+/**
+ * @typedef {object} Cache 存储类
+ */
 import Cache from '@/core/class/cache.js';
 import net from '@/core/net.js';
+
+/**
+ * 存储对象 
+ * @type {Cache} store
+ */
 let store = new Cache('store', 'data');
-// 获取数据
+/**
+ * 获取存储的值
+ * @param {object} args 
+ * @param {string} args.key 键名
+ * @param {object} args.req  请求参数
+ * @param {boolean} args.force 是否强制获取最新数据
+ * @param {function} args.success 获取成功的回调函数
+ * @param {function} args.fail 获取失败的回调函数
+ */
 const get = function(args){
     let {key, req, success, fail, force} = {...args};
     if(!force){
@@ -51,7 +69,14 @@ const get = function(args){
         return null;
     }
 }
-// 存储数据
+/**
+ * 设置存储的值
+ * @param {object} args 
+ * @param {string} args.key 键值
+ * @param {object} args.value 要存储的键值
+ * @param {function} args.success 设置成功的回调函数
+ * @param {function} args.fail 设置失败的回调函数
+ */
 const set = function(args){
     let {key, value, success, fail} = {...args};
     let res = store.set(key, value);
@@ -61,7 +86,13 @@ const set = function(args){
         fail && fail(4001, key+"存储失败");
     }
 }
-// 删除数据
+/**
+ * 删除存储的值
+ * @param {object} args 
+ * @param {string} args.key 键名
+ * @param {function} args.success 删除成功的回调函数
+ * @param {function} args.fail 删除失败的回调函数
+ */
 const del = function(args){
     let {key, success, fail} = {...args};
     let res = store.del(key);

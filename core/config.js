@@ -6,6 +6,12 @@
  * @type {string} websocketUrl websocket服务器地址
  */
 export default{
+	/**
+	 * @type {string} http服务器地址
+	 */
 	httpUrl:'http://www.bluesyoung-web.com',
+	/**
+	 * @type {string} websocket服务器地址
+	 */
 	websocketUrl:'ws://www.bluesyoung-web.com:8848',
 }

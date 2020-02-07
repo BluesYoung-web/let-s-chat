@@ -126,6 +126,7 @@ const dispatch = function(args){
  */
 const broadcast = function(args){
 	let {model, type, id, data} = {...args};
+	
 	if(model){
 		for (let on_event in events_model) {
 			events_model[model][on_event](model, type, id, data);

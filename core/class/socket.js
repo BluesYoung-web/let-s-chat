@@ -159,9 +159,4 @@ class Socket{
 	}
 }
 
-/**
- * 
- * @module Socket
- * @namespace Socket
- */
 export default Socket;

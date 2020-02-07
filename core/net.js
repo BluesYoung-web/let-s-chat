@@ -13,15 +13,15 @@ import Socket from '@/core/class/socket.js';
 import config from '@/core/config.js';
 import event from '@/core/event.js';
 /**
- * @type {object} socket对象
+ * @type {Socket} socket对象
  */
 let socket = null;
 /**
- * @type {object} 回调函数列表
+ * 回调函数列表
  */
 let callbackList = {};
 /**
- * @type {number} 回调函数对应的索引值(键值)
+ * 回调函数对应的索引值(键值)
  */
 let callbackListNum = 0;
 /**
@@ -41,6 +41,7 @@ const onClose = function(){
  * @param {object} data 
  * @param {number} data.cbk 操作的回调函数的索引
  * @param {number} data.status 操作的状态码 0 -> 成功, -1 -> 失败
+ * @param {object} data.extra 透传参数
  * @param {object} data.data 操作取回的数据
  * @param {number} data.model 首层
  * @param {number} data.type 二层
@@ -61,11 +62,21 @@ const onMessage = function(data){
 			delete callbackList[data.cbk];
 		}else{
 			console.log("net----------没有对应的回调函数,使用广播");
-			event.broadcast(data.model, data.type, data.id, data.data);
+			event.broadcast({
+                model: data.model,
+                type: data.type,
+                id: data.id,
+                data: data.data
+            });
 		}
 	}else{
 		// 没有对应回调函数则使用事件分发
-		event.dispatch(data.model, data.type, data.id, data.data);
+		event.dispatch({
+            model: data.model,
+            type: data.type,
+            id: data.id,
+            data: data.data
+        });
 	}
 }
 /**
@@ -79,15 +90,19 @@ const onError = function(){
  */
 const onDisconnect = function(){
     console.log("连无法连接到网络，请检查网络连接后重试");
-    event.dispatch(100, 4001, "超过最大重连次数");
+    event.dispatch({
+        model: 100,
+        type: 4001, 
+        data:"超过最大重连次数"
+    });
 }
 /**
  * socket初始化
- * @param {function} success 
+ * @param {function} success 初始化完成的回调函数
  */
 const init = function(success){
     let url = config.websocketUrl;
-    new Socket("",)
+    
     socket = new Socket({
         url,
         params: {
@@ -225,9 +240,35 @@ const post = function(args){
         fail
     });
 }
+/**
+ * 上传函数
+ * @param {object} args 
+ * @param {string} args.path 上传路由 
+ * @param {string} args.filePath 本地文件路径 
+ * @param {name} args.name 文件对象的键名 
+ * @param {function} args.success 上传成功的回调函数 
+ * @param {function} args.fail 上传失败的回调函数 
+ */
+const upload = function(args){
+    let {path, filePath, name, success, fail} = {...args};
+	let url = config.httpUrl + path;
+	console.log(url);
+	uni.uploadFile({
+		url,
+		filePath,
+		name,
+		success: (res) => {
+			success && success(res);
+		},
+		fail: (err) => {
+			fail && fail(err.code, err);
+		}
+	})
+}
 export default {
     init,
     send,
     get,
-    post
+    post,
+    upload
 }

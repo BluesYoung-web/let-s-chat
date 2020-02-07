@@ -270,5 +270,7 @@ export default {
     send,
     get,
     post,
-    upload
+    upload,
+    close: () => socket.close(),
+	auto_reconnect: () => socket.reConnect(),
 }

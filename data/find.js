@@ -1,1 +1,5 @@
-// 朋友圈模块
+/**
+ * 朋友圈模块 
+ * @author 张扬
+ * @copyright http://github.com/BluesYoung-web
+ */

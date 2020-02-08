@@ -6,38 +6,63 @@
  */
 class SocketServer
 {
-    private $sockets; //连接池
-    private $master;
-    private $handshake;
-    // 连接号与用户id对应
-    private $users;
-
     /**
+     * socket连接池
+     */
+    private $sockets = []; 
+    /**
+     * 服务器主机
+     */
+    private $master;
+    /**
+     * 握手
+     */
+    private $handshake;
+    /**
+     * 当前在线用户数组(uid => #R5...)
+     */
+    private $users;
+    /**
+     * 读写redis数据库
+     */
+    private $redis;
+    /**
+     * 构造函数
      * @param $address 服务器ip地址
      * @param $port 服务器端口号
      */
-    public function run($address, $port)
-    {
-        //实例化Redis类
-        $redis = new Redis();
-        //选择指定的redis数据库连接，默认端口号为6379
-        $redis->connect('127.0.0.1', 6379);
-        //指定前面设置的密码
-        $redis->auth('123456');
-        echo $redis -> get('token');
-        //配置错误级别、运行时间、刷新缓冲区
-        echo "欢迎来到PHP Socket测试服务";
+    public function __construct($address, $port){
+        /**
+         * 初始化redis
+         */
+        $this -> redis = new Redis();
+        $this -> redis -> connect('127.0.0.1', 6379);
+        $this -> redis -> auth('123456');
+        /**
+         * 初始化socket服务
+         * 配置错误级别、运行时间、刷新缓冲区
+         * 创建socket
+         */
+        echo "欢迎来到PHP Socket\n";
         error_reporting(0);
         set_time_limit(0);
         ob_implicit_flush();
-
-        //创建socket
-        $this->master = $this->_connect($address, $port);
-        $this->sockets[] = $this->master;
-        
-
-
-        //运行socket
+        $this -> master = $this -> _connect($address, $port);
+        array_push($this -> sockets, $this -> master);
+        echo '主机：'.$this -> sockets[0]."\n";
+    }
+    /**
+     * 析构函数
+     */
+    public function __destruct(){
+        echo "\n谢谢使用，我们下次再见\n";
+    }
+    /**
+     * 启动websocket服务器
+     */
+    public function run()
+    {
+        echo "socket服务器运行中\n";
         while (true) {
             $sockets = $this->sockets;
             $write = NULL;
@@ -214,8 +239,7 @@ class SocketServer
         }
     }
 }
-// 开启websocket服务器
-$sc = new SocketServer();
-// 不要使用本地ip  ！！！！！！！！！！！！
-$sc->run('192.168.1.4', 8848);
+// 开启websocket服务器 ,ip一定要先看ipconfig  ！！！！！！！！！！！！
+$socket = new SocketServer('192.168.0.102', 8080);
+$socket -> run();
 ?>

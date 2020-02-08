@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <title>socket连接测试</title>
+    </head>
+    <body>
+        <input type="text">
+        <input type="button" value="发消息">
+        <script>
+            let socket = new WebSocket('ws://117.78.0.214:8080');
+            socket.onopen = function (e) {
+                console.log(e,"正常打开");
+            }
+            socket.onclose = function (e) {
+                console.log(e,"连接关闭");
+            }
+            socket.onerror = function (e) {
+                console.log(e,"连接出错");
+            }
+        </script>
+    </body>
+</html>

@@ -157,7 +157,8 @@
 								name: 'img',
 								filePath: this.tempFilePath,
 								success: (res) => {
-									console.log(res)
+									let data = JSON.parse(res.data);
+									console.log(data);
 								},
 								fail: (res) => {
 									console.log(res);

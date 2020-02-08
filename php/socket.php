@@ -1,8 +1,8 @@
 <?php
-
 /**
- * Socket服务器
- * @author zhangyang 2020/2/4
+ * 用户模块 
+ * @author 张扬
+ * @copyright http://github.com/BluesYoung-web
  */
 class SocketServer
 {
@@ -18,8 +18,15 @@ class SocketServer
      */
     public function run($address, $port)
     {
+        //实例化Redis类
+        $redis = new Redis();
+        //选择指定的redis数据库连接，默认端口号为6379
+        $redis->connect('127.0.0.1', 6379);
+        //指定前面设置的密码
+        $redis->auth('123456');
+        echo $redis -> get('token');
         //配置错误级别、运行时间、刷新缓冲区
-        echo iconv('UTF-8', 'GBK', "欢迎来到PHP Socket测试服务。 \n");
+        echo "欢迎来到PHP Socket测试服务";
         error_reporting(0);
         set_time_limit(0);
         ob_implicit_flush();
@@ -167,7 +174,7 @@ class SocketServer
 
     /**
      * 解析数据帧
-     * @param $buffer
+     * @param $buffer 字节码
      * @return null|string
      */
     private function _decode($buffer)
@@ -210,5 +217,5 @@ class SocketServer
 // 开启websocket服务器
 $sc = new SocketServer();
 // 不要使用本地ip  ！！！！！！！！！！！！
-$sc->run('192.168.10.136', 8848);
+$sc->run('192.168.1.4', 8848);
 ?>

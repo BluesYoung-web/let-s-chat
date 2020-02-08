@@ -7,6 +7,9 @@
 				<text class="color-344955">空空如也~</text>
 				<text class="ft-26 color-999">赶快去聊天吧</text>
 			</view>
+			<view class="">
+				<button type="primary" @tap="test">00000000</button>
+			</view>
 			<!-- 一条消息列表 -->
 			<view class="message-row" :key="index" v-for="(item, index) in dataList" @touchstart.capture="touchS" @touchmove="touchM"
 			 @touchend.capture="touchE" :data-index="index" :style="{right:item.right + 'upx'}">
@@ -52,6 +55,7 @@
 </template>
 
 <script>
+	import data from '@/data.js';
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	// 使用vuex管理登录状态
 	import {
@@ -140,6 +144,37 @@
 		},
 		methods: {
 			...mapMutations(['setWindowHeght']),
+			test(){
+				let config={
+				 		count: 1,
+				 		sourceType:['album'],
+				 		success: res => {
+				 			// console.log(JSON.stringify(res.tempFilePaths));
+							//裁剪图片的路径
+							this.tempFilePath = res.tempFilePaths.shift()
+							uni.uploadFile({
+								url: 'http://117.78.0.214/api/upload.php?fileType=img',
+								name: 'img',
+								filePath: this.tempFilePath,
+								success: (res) => {
+									console.log(res)
+								},
+								fail: (res) => {
+									console.log(res);
+								}
+							});
+				 		},
+				 		fail: res => {
+				 			uni.showToast({
+				 				title:"用户取消或加载超时",
+				 				icon:"none"
+				 			});
+				 		},
+				 	}
+				 	
+				 	uni.chooseImage(config);
+					
+			},
 			popupChange(e) {
 				if (!e.show) {
 					this.showGame = false;

@@ -1,5 +1,7 @@
 <?php
-    $f=$_GET['fileType'];
+    include_once('../common/respond.php');
+    $f = $_GET['fileType'];
+    // var_dump($_FILES);
     // 获取上传文件对应的字典（对象）
     $fileInfo = $_FILES[$f.''];
     // 获取上传文件的名称
@@ -8,9 +10,12 @@
     // 获取上传文件保存的临时路径
     $filePath = $fileInfo["tmp_name"];
 
-    // 将图片存到服务器
+    // 将文件存到服务器
     move_uploaded_file($filePath, "../".$f."/".$fileName);
-    // $new_avatar="http://117.78.0.214/".$f."/".$fileName;
-    $new_avatar="http://127.0.0.1/".$f."/".$fileName;
-    echo $new_avatar;
+    $url = "http://117.78.0.214/".$f."/".$fileName;
+    
+    $arr = [];
+    $arr['url'] = $url;
+
+    respond(0, $arr, "文件上传成功");
 ?>

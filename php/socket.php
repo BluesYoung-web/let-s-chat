@@ -15,13 +15,13 @@ class SocketServer
      */
     private $master;
     /**
-     * 握手
+     * 握手标志
      */
     private $handshake;
     /**
      * 当前在线用户数组(uid => #R5...)
      */
-    private $users;
+    private $users = [];
     /**
      * 读写redis数据库
      */
@@ -32,24 +32,8 @@ class SocketServer
      * @param $port 服务器端口号
      */
     public function __construct($address, $port){
-        /**
-         * 初始化redis
-         */
-        $this -> redis = new Redis();
-        $this -> redis -> connect('127.0.0.1', 6379);
-        $this -> redis -> auth('123456');
-        /**
-         * 初始化socket服务
-         * 配置错误级别、运行时间、刷新缓冲区
-         * 创建socket
-         */
-        echo "欢迎来到PHP Socket\n";
-        error_reporting(0);
-        set_time_limit(0);
-        ob_implicit_flush();
-        $this -> master = $this -> _connect($address, $port);
-        array_push($this -> sockets, $this -> master);
-        echo '主机：'.$this -> sockets[0]."\n";
+        $this -> _redisInit();
+        $this -> _socketInit($address, $port);
     }
     /**
      * 析构函数
@@ -63,75 +47,206 @@ class SocketServer
     public function run()
     {
         echo "socket服务器运行中\n";
+        // 定义写入监听连接池
+        $write = null;
+        //定义权限接受连接池
+        $except = null;
+        //定义超时时间
+        $time_out = null;
+        //启动循环阻塞任务
         while (true) {
-            $sockets = $this->sockets;
-            $write = NULL;
-            $except = NULL;
-            socket_select($sockets, $write, $except, NULL); //$write,$except传引用
-            foreach ($sockets as $socket) {
-                if ($socket == $this->master) {
-                    $client = socket_accept($socket);
-                    $this->handshake = false;
-                    if ($client) {
+            // 复制监听连接池
+            $sockets = $this -> sockets;
+            //设置同步阻塞监听函数
+            $res = socket_select($sockets, $write, $except, $time_out); 
+            //监听端口可读后操作
+            if ($res === false) {
+                // 出错了
+                die("socket连接出错");
+            } else {
+                // 正常
+                foreach ($sockets as $socket) {
+                    //如果监听到的是原端口
+                    if ($socket == $this->master) {
+                        // 接收套接字的资源信息，成功返回套接字的信息资源，失败为false
+                        $client = socket_accept($socket);
+                        if($client === false)
+                        {
+                            die('failed to accept socket: '.socket_strerror($socket)."\n");
+                        }
+                        // 改变握手标志
+                        $this -> handshake = false;
                         $this->sockets[] = $client; //加入连接池
-                        echo "有用户加入了\n";
-                    }
-                } else {
-                    //接收信息
-                    $bytes = @socket_recv($socket, $buffer, 2048, 0);
-                    if ($bytes <= 6) {
-                        $this->_disConnect($socket);
-                        continue;
-                    };
-
-                    //处理信息
-                    if (!$this->handshake) {
-                        $this->_handshake($socket, $buffer);
+                        echo "用户".$client."加入了\n";
                     } else {
-                        $buffer = $this->_decode($buffer);
-                        //字符串转对象
-                        $tp=json_decode(json_decode(json_encode($buffer)));
-                        // 对象转数组
-                        $tp=get_object_vars($tp);
-                        // 如果操作为用户注册
-                        if($tp['Op']=='userRegister'){
-                            //ID => socketId
-                            $this->users[$tp['ID']]=$socket;
-                            // foreach($this->users as $k=>$v){
-                            //     echo $k.":".$v."\n";
-                            // }
-                        }else if($tp['Op']=='privateChat'){
-                            // 私聊
-                            $this->_sendMsgPrivate($buffer, $socket, $this->users[$tp['FID']]);
-                        }else{
-                            // 群聊
-                            $this->_sendMsg($buffer, $socket);
+                        //接收信息
+                        $bytes = socket_recv($socket, $buffer, 2048, 0);
+                        if ($bytes <= 6) {
+                            $this -> _disConnect($socket);
+                            continue;
+                        };
+                        //处理信息
+                        if (!$this -> handshake) {
+                            // 协议升级（握手）
+                            $this -> _handshake($socket, $buffer);
+                        } else {
+                            $buffer = $this->_decode($buffer);
+                            //字符串转对象
+                            $tp=json_decode(json_decode(json_encode($buffer)),true);
+                            $cmd = $tp['cmd'] or null;
+                            $data = $tp['data'] or null;
+                            $cbk = $tp['cbk'] or null;
+                            $extra = $tp['extra'] or null;
+                            // 如果未进行过token验证
+                            if(!array_search($socket, $this -> users)){
+                                $this -> _tokenCheck($socket, $cmd, $data, $cbk, $extra);
+                            }else {
+                                // 其他正常操作
+                                $this -> _Operation($socket, $cmd, $data, $cbk, $extra);
+                            }
                         }
                     }
+    
                 }
-
             }
+            
+            
         }
     }
 
     /**
+     * 初始化redis
+     */
+    private function _redisInit(){
+        $this -> redis = new Redis();
+        $this -> redis -> connect('127.0.0.1', 6379);
+        $this -> redis -> auth('123456');
+    }
+    /**
+     * 初始化socket服务
+     * @param string $address 服务器ip地址
+     * @param number $port 服务器端口号
+     */
+    private function _socketInit($address, $port){
+        echo "欢迎来到PHP Socket\n";
+        // 关闭错误报告
+        error_reporting(0);
+        // 将程序执行时间设为 ∞
+        set_time_limit(0);
+        // 打开绝对（隐式）刷送 —— 每次输出调用后有一次刷送操作
+        ob_implicit_flush();
+        $this -> master = $this -> _connect($address, $port);
+        // array_push($this -> sockets, $this -> master); //功能与下面相同
+        // 将服务器主机加入监听连接池
+        $this -> sockets [] = $this -> master;
+        echo '主机：'.$this -> sockets[0]."\n";
+    }
+    /**
      * 创建socket连接
-     * @param $address
-     * @param $port
-     * @return resource
+     * @param string $address 服务器ip地址
+     * @param number $port 服务器端口号
+     * @return resource $master 套接字
      */
     private function _connect($address, $port)
     {
-        //创建socket
+        // 创建并返回一个套接字(通讯节点) 使用IPV4协议，流式套接字，TCP协议
         $master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)
+        // 创建失败
         or die("socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n");
+        // 给套接字绑定名字
         socket_bind($master, $address, $port)
+        // 绑定失败
         or die("socket_bind() failed: reason: " . socket_strerror(socket_last_error($master)) . "\n");
-        socket_listen($master, 5)
+        // 监听连接事件(进程转服务器，使其可以接受其他进程的连接) 套接字，连接队列长度
+        socket_listen($master, 10)
+        // 监听失败
         or die("socket_listen() failed: reason: " . socket_strerror(socket_last_error($master)) . "\n");
+        // 返回套接字
         return $master;
     }
-
+    /**
+     * token验证
+     * @param resource $socket 套接字
+     * @param number $cmd 操作码
+     * @param array $data 用户发送的包含uid和签名的数组
+     * @param number $cbk 回调函数id
+     * @param array $extra 透传参数
+     */
+    private function _tokenCheck($socket, $cmd, $data, $cbk, $extra){
+        if($cmd != 0){
+            // 如果没有验证则发送提示信息后，断开连接
+            $arr['status'] = -1;
+            $arr['msg'] = "非法用户，请重新连接后立即验证token";
+            $tips = $this -> _pushFormat(100, 0, 0, $arr);
+            $this -> _sendMsgPrivate($tips, $socket);
+            sleep(1);
+            $this -> _disConnect($socket);
+        }else{
+            $uid = $data['uid'];
+            $sign = $data['sign'];
+            if(array_key_exists($uid, $this -> users)){
+                // 异地登录，挤号
+                $tp['status'] = -1;
+                $tp['msg'] = "异地登录";
+                $tips = $this -> _pushFormat(100, 1, 0, $tp);
+                $toClose = $this -> users[$uid];
+                $this -> _sendMsgPrivate($tips, $toClose);
+                sleep(1);
+                $this -> _disConnect($toClose);
+            }
+            $this -> users[$uid] = $socket;
+            $arr['msg'] = "已成功验证token，欢迎".$socket;
+            $tips = $this -> _resFormat(0, $arr, null, null);
+            $this -> _sendMsgPrivate($tips, $socket);
+        }
+        
+    }
+    /**
+     * 其他操作的处理
+     */
+    private function _Operation($socket, $cmd, $data, $cbk, $extra){
+        $this -> _sendMsgPrivate(json_encode($data), $socket);
+    }
+    /**
+     * 用于socket主动推送消息的处理函数
+     * @param number $model 首层
+     * @param number $type 二层
+     * @param number $id 三层
+     * @param array $data 推送的数据
+     * @return string 返回json编码后的数据
+     */
+    private function _pushFormat($model, $type, $id, $data){
+        $data = $data === null ? '{}' : $data;
+        $model = $model === null ? 0 : $model;
+        $type = $type === null ? 0 : $type;
+        $id = $id === null ? 0 : $id;
+        $rs = [];
+        $rs['model'] = $model;
+        $rs['type'] = $type;
+        $rs['id'] = $id;
+        $rs['data'] = $data;
+        return json_encode($rs);
+    }
+    /**
+     * 用于socket响应推送消息的处理函数
+     * @param number $status 状态码 0 -> 成功, -1 -> 失败
+     * @param array $data 响应的数据
+     * @param number $cbk 回调函数id
+     * @param array $extra 透传参数
+     * @return string 返回json编码后的数据
+     */
+    private function _resFormat($status, $data, $cbk, $extra){
+        $data = $data === null ? '{}' : $data;
+        $status = $status === null ? 0 : $status;
+        $cbk = $cbk === null ? 0 : $cbk;
+        $extra = $extra === null ? '{}' : $extra;
+        $rs = [];
+        $rs['status'] = $status or 0;
+        $rs['data'] = $data;
+        $rs['cbk'] = $cbk;
+        $rs['extra'] = $extra;
+        return json_encode($rs);
+    }
     /**
      * 握手动作
      * @param $socket
@@ -165,18 +280,17 @@ class SocketServer
         if ($index >= 0) {
             array_splice($this->sockets, $index, 1);
         }
-        echo "用户已下线\n";
+        echo "用户".$socket."已下线\n";
     }
 
     /**
      * 发送信息（私聊）
-     * @param $buffer
-     * @param $client
-     * @param $target
+     * @param  $buffer 要发送的数据
+     * @param resource $target 目标套接字
      */
-    private function _sendMsgPrivate($buffer, $client, $target)
+    private function _sendMsgPrivate($buffer, $target)
     {
-        $send_buffer = $this->_frame(json_encode($buffer));
+        $send_buffer = $this->_frame($buffer);
         socket_write($target, $send_buffer, strlen($send_buffer));
     }
 
@@ -187,7 +301,7 @@ class SocketServer
      */
     private function _sendMsg($buffer, $client)
     {
-        $send_buffer = $this->_frame(json_encode($buffer));
+        $send_buffer = $this->_frame($buffer);
         foreach ($this->sockets as $socket) {
             // echo $socket;
             if ($socket != $this->master && $socket != $client) { 
@@ -239,7 +353,8 @@ class SocketServer
         }
     }
 }
+
 // 开启websocket服务器 ,ip一定要先看ipconfig  ！！！！！！！！！！！！
-$socket = new SocketServer('192.168.0.102', 8080);
+$socket = new SocketServer('192.168.1.4', 8080);
 $socket -> run();
 ?>

@@ -5,10 +5,10 @@
         <title>socket连接测试</title>
     </head>
     <body>
-        <input type="text">
-        <input type="button" value="发消息">
+        <input type="text" id="value">
+        <input type="button" value="发消息" id="btn">
         <script>
-            let socket = new WebSocket('ws://192.168.0.102:8080');
+            let socket = new WebSocket('ws://192.168.1.4:8080');
             socket.onopen = function (e) {
                 console.log(e,"正常打开");
             }
@@ -18,6 +18,24 @@
             socket.onerror = function (e) {
                 console.log(e,"连接出错");
             }
+            socket.onmessage = function (e) {
+                console.log(e);
+                console.log(JSON.parse(e.data));
+            }
+            let btn = document.querySelector("#btn");
+            let value = document.querySelector("#value");
+            btn.addEventListener('click',() => {
+                console.log("999999");
+                let obj = {
+                    cmd: 0,
+                    data: {
+                        uid: 19,
+                        sign: value.value
+                    },
+                    cbk: 1
+                }
+                socket.send(JSON.stringify(obj)); 
+            });
         </script>
     </body>
 </html>

@@ -57,7 +57,7 @@ const login_to_service = function(args){
             // 存入签名与密码
             user.sign = sign;
             store.set({
-                ket: `${prefix}.account`,
+                key: `${prefix}.account`,
                 value: user
             });
             // 连接websocket

@@ -112,7 +112,7 @@
 			data.user.login({
 				success: () => {
 					uni.reLaunch({
-						url:"pages/tabBar/message"
+						url:"/pages/tabBar/message"
 					});
 				},
 				fail: () => {
@@ -121,7 +121,7 @@
 						title: "缓存中找不到用户信息"
 					});
 					uni.reLaunch({
-						url: "pages/common/login"
+						url: "/pages/common/login"
 					});
 					setTimeout(() => {
 						uni.hideToast();

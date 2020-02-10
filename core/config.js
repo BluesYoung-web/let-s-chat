@@ -13,5 +13,5 @@ export default{
 	/**
 	 * @type {string} websocket服务器地址
 	 */
-	websocketUrl:'ws://www.bluesyoung-web.com:8848',
+	websocketUrl:'ws://192.168.1.4:8080',
 }

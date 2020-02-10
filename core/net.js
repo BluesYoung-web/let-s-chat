@@ -12,6 +12,7 @@
 import Socket from '@/core/class/socket.js';
 import config from '@/core/config.js';
 import event from '@/core/event.js';
+
 /**
  * @type {Socket} socket对象
  */

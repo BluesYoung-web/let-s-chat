@@ -60,21 +60,27 @@ const login_to_service = function(args){
                 ket: `${prefix}.account`,
                 value: user
             });
-            // socket 写完之后删除
-            success && success({
-                user,
-                benew: res.benew
-            });
-            /*
             // 连接websocket
             net.init(() => {
-                // 连接成功之后,正式返回
+                // 连接成功之后,立即验证token
+                net.send({
+                    cmd: 0,
+                    data: {
+                        uid: user.uid,
+                        sign: user.sign
+                    },
+                    success: (res) => {
+                        console.log(res);
+                    },
+                    fail: (code, err) => {
+                        console.log(code, err);
+                    }
+                });
                 success && success({
                     user,
                     benew: res.benew
                 });
             });
-            */
         },
         fail
     });

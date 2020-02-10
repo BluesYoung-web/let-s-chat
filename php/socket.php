@@ -83,6 +83,7 @@ class SocketServer
                         $bytes = socket_recv($socket, $buffer, 2048, 0);
                         // 客户端端口连接
                         if ($bytes <= 6) {
+                            // 如果客户端断开了，则断开连接(清除记录)
                             $this -> _disConnect($socket);
                             continue;
                         };
@@ -91,7 +92,7 @@ class SocketServer
                             // 协议升级（握手）
                             $this -> _handshake($socket, $buffer);
                         } else {
-                            $buffer = $this->_decode($buffer);
+                            $buffer = $this-> _decode($buffer);
                             //字符串转对象
                             $tp=json_decode(json_decode(json_encode($buffer)),true);
                             $cmd = $tp['cmd'] or null;
@@ -278,24 +279,26 @@ class SocketServer
     }
     /**
      * 握手动作
-     * @param $socket
-     * @param $buffer
+     * @param resource $socket 套接字
+     * @param string $buffer 字节码
      */
     private function _handshake($socket, $buffer)
     {
-        //握手动作信息
+        // 获取KEY及生成新的KEY
         $buf = substr($buffer, strpos($buffer, 'Sec-WebSocket-Key:') + 18);
         $key = trim(substr($buf, 0, strpos($buf, "\r\n")));
         $new_key = base64_encode(sha1($key . "258EAFA5-E914-47DA-95CA-C5AB0DC85B11", true));
+        // 返回HTTP协议头部信息
         $new_message = "HTTP/1.1 101 Switching Protocols\r\n";
         $new_message .= "Upgrade: websocket\r\n";
         $new_message .= "Sec-WebSocket-Version: 13\r\n";
         $new_message .= "Connection: Upgrade\r\n";
         $new_message .= "Sec-WebSocket-Accept: " . $new_key . "\r\n\r\n";
 
-        //记录握手动作
+        // 把数据写入套接字中(向客户端发送数据) 套接字，字符串，字符串的长度
         socket_write($socket, $new_message, strlen($new_message));
-        $this->handshake = true;
+        // 握手完成
+        $this-> handshake = true;
     }
 
     /**
@@ -304,7 +307,10 @@ class SocketServer
      */
     private function _disConnect($socket)
     {
-        $index = array_search($socket, $this->sockets);
+        $index = array_search($socket, $this -> sockets);
+        $key = array_search($socket, $this -> users);
+        // 删除token验证记录
+        unset($this -> users[$key]);
         socket_close($socket);
         if ($index >= 0) {
             array_splice($this->sockets, $index, 1);
@@ -314,26 +320,25 @@ class SocketServer
 
     /**
      * 发送信息（私聊）
-     * @param  $buffer 要发送的数据
+     * @param string  $buffer 要发送的数据
      * @param resource $target 目标套接字
      */
     private function _sendMsgPrivate($buffer, $target)
     {
-        $send_buffer = $this->_frame($buffer);
+        $send_buffer = $this-> _frame($buffer);
         socket_write($target, $send_buffer, strlen($send_buffer));
     }
 
     /**
      * 发送信息（群聊）
-     * @param $buffer
-     * @param $client
+     * @param string $buffer 要发送的数据
+     * @param resource $client 发送者
      */
     private function _sendMsg($buffer, $client)
     {
-        $send_buffer = $this->_frame($buffer);
-        foreach ($this->sockets as $socket) {
-            // echo $socket;
-            if ($socket != $this->master && $socket != $client) { 
+        $send_buffer = $this-> _frame($buffer);
+        foreach ($this -> sockets as $socket) {
+            if ($socket != $this -> master && $socket != $client) { 
                 //广播发送（除了自己）
                 socket_write($socket, $send_buffer, strlen($send_buffer));
             }
@@ -342,7 +347,7 @@ class SocketServer
 
     /**
      * 解析数据帧
-     * @param $buffer 字节码
+     * @param string $buffer 字节码
      * @return null|string
      */
     private function _decode($buffer)
@@ -366,8 +371,8 @@ class SocketServer
     }
 
     /**
-     * 处理返回帧
-     * @param $buffer
+     * 处理数据帧
+     * @param string $buffer
      * @return string
      */
     private function _frame($buffer)

@@ -81,6 +81,7 @@ class SocketServer
                     } else {
                         //接收信息
                         $bytes = socket_recv($socket, $buffer, 2048, 0);
+                        // 客户端端口连接
                         if ($bytes <= 6) {
                             $this -> _disConnect($socket);
                             continue;
@@ -184,28 +185,56 @@ class SocketServer
         }else{
             $uid = $data['uid'];
             $sign = $data['sign'];
-            if(array_key_exists($uid, $this -> users)){
-                // 异地登录，挤号
+            // 验证签名
+            if($this -> _signCheck($uid, $sign)){
+                // 是否已经登录过
+                if(array_key_exists($uid, $this -> users)){
+                    // 异地登录，挤号
+                    $tp['status'] = -1;
+                    $tp['msg'] = "异地登录";
+                    $tips = $this -> _pushFormat(100, 1, 0, $tp);
+                    $toClose = $this -> users[$uid];
+                    $this -> _sendMsgPrivate($tips, $toClose);
+                    sleep(1);
+                    $this -> _disConnect($toClose);
+                }
+                $this -> users[$uid] = $socket;
+                $arr['msg'] = "已成功验证token，欢迎".$socket;
+                $tips = $this -> _resFormat(0, $arr, null, null);
+                $this -> _sendMsgPrivate($tips, $socket);
+            }else{
+                // 签名验证失败
                 $tp['status'] = -1;
-                $tp['msg'] = "异地登录";
-                $tips = $this -> _pushFormat(100, 1, 0, $tp);
+                $tp['msg'] = "签名错误，请重新登录";
+                $tips = $this -> _pushFormat(100, 2, 0, $tp);
                 $toClose = $this -> users[$uid];
                 $this -> _sendMsgPrivate($tips, $toClose);
                 sleep(1);
                 $this -> _disConnect($toClose);
             }
-            $this -> users[$uid] = $socket;
-            $arr['msg'] = "已成功验证token，欢迎".$socket;
-            $tips = $this -> _resFormat(0, $arr, null, null);
-            $this -> _sendMsgPrivate($tips, $socket);
         }
-        
     }
     /**
      * 其他操作的处理
+     * @param resource $socket 套接字
+     * @param number $cmd 操作码
+     * @param array $data 用户发送的包含uid和签名的数组
+     * @param number $cbk 回调函数id
+     * @param array $extra 透传参数
      */
     private function _Operation($socket, $cmd, $data, $cbk, $extra){
         $this -> _sendMsgPrivate(json_encode($data), $socket);
+    }
+    /**
+     * 签名校验
+     * @param number $uid 用户uid
+     * @param number $sign 用户签名
+     * @return boolean $res 验证结果
+     */
+    private function _signCheck($uid, $sign){
+        $token = $this -> redis -> get('token');
+        $sg = md5($uid.$token);
+        return $sg == $sign ? true : false ;
     }
     /**
      * 用于socket主动推送消息的处理函数

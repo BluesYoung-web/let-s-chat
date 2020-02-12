@@ -9,7 +9,7 @@
 		</view>
 		<!-- 头像 -->
 		<view class="avatar mg-tp20" @tap="checkImg">
-			<image :src="user.avatarUrl" mode="aspectFill" v-if="user.avatarUrl"></image>
+			<image :src="user.avatar" mode="aspectFill" v-if="user.avatar"></image>
 			<!-- 默认头像 -->
 			<image src="/static/img/defaultHead.jpg" mode="aspectFill" v-else></image>
 		</view>
@@ -18,13 +18,13 @@
 		<view class="messageContent mg-tp60 flex flex-direction-column flex-vc">
 			<!-- 昵称 -->
 			<view class="name ft-36 font-weight-600 color-344955 one-line-ellipsis">
-				<text v-if="user.name">{{user.name}}</text>
+				<text v-if="user.nick">{{user.nick}}</text>
 				<text v-else class="">用户昵称</text>
 			</view>
 			<!-- 来聊账号 -->
 			<view class="account ft-26 color-889aa3 mg-tp15">
 				<text>来聊账号：</text>
-				<text v-if="user.account">{{user.account}}</text>
+				<text v-if="user.uid">{{user.uid}}</text>
 				<text v-else>未绑定手机号，请先去设置页绑定</text>
 			</view>
 			<!-- 签名 -->
@@ -59,11 +59,14 @@
 </template>
 
 <script>
-	import request from '@/request/request.js';
-	// 存储用户信息，获取用户信息
-	import {mapMutations,mapState} from 'vuex';
+	import data from '@/data.js';
 	export default {
 		onLoad() {
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
 		},
 		data() {
 			return{
@@ -83,37 +86,6 @@
 		
 		// 
 		onShow() {
-			let userInfo = this.userInfo;
-			
-			// 如果存在则获取数据
-			if (userInfo) {
-				this.user=userInfo;
-			}
-			
-			//动态获取我的发表动态数量
-			request.getMyFinds(this.user.account,(data)=>{
-				if(data){
-					// 存到state
-					this.addMyFinds(data);
-					// 显示数量
-					this.myRelease=data.length;
-				}
-			});
-			// 动态获取我被赞的个数
-			request.getLikesNum(this.user.account,(data)=>{
-				let count=0;
-				for (let i in data) {
-					count+=Number(data[i].countNum);
-				}
-				this.myCommend=count;
-				this.addLikes(data);
-			});
-			// 动态获取关注我的人
-			request.getFollowMe(this.user.account,(data)=>{
-				this.myFocus=data.length;
-				this.addFocus(data);
-			});
-			
 		},
 		// 监听设置按钮的点击事件
 		onNavigationBarButtonTap(e){
@@ -125,17 +97,12 @@
 				complete: () => {}
 			});
 		},
-		computed:{
-			...mapState(['userInfo','serverUrl'])
-		}, 
 		methods: {
 			checkImg(){
 				uni.previewImage({
 					urls: [this.user.avatarUrl]
 				});
 			},
-			// 存储用户信息的方法
-			...mapMutations(['setInfo','addLikes','addFocus','addMyFinds']),
 			// 跳转到编辑资料页面
 			toMyInformation(){
 				// 先判断是否绑定了手机号

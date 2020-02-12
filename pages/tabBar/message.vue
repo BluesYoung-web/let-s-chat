@@ -1,15 +1,31 @@
 <template>
 	<!-- 消息页面  -->
 	<view>
+		<!-- 聊天列表组件 -->
 		<chat-item :dataList = "dataList" @clickInto = "onClickInto" @clickChoice = "onClickChoice"></chat-item>
+		<!-- 小游戏弹出框 -->
+		<uni-popup :show="showGame" @change="popupChange">
+			<view class="popup bg-fff">
+				<view class="game">
+					<image src="/static/img/gobang.jpg" mode=""></image>
+					<text>五子棋</text>
+				</view>
+				<view class="game">
+					<image src="/static/img/add.png" mode=""></image>
+					<text>添加</text>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import chatItem from '@/components/young-chat-item/young-chat-item.vue';
+	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	export default {
 		data(){
 			return {
+				showGame: false,
 				dataList: [{
 					"imgUrl":"http://106.15.53.15:8808/data/head/15.jpg",
 					"nick":"Mike",
@@ -33,8 +49,82 @@
 		},
 		components:{
 			chatItem,
+			uniPopup
+		},
+		onLoad(){
+			/**
+			 * 获取消息列表
+			 */
+			
+			/**
+			 * 改变tabBar角标
+			 */
+			uni.setTabBarBadge({
+				index: 0,
+				text: this.countMsg + ''
+			});
+		},
+		/**
+		 * 是否显示小游戏弹出框
+		 * @param {Object} e
+		 */
+		onNavigationBarButtonTap(e) {
+			if (this.showGame == false) {
+				this.showGame = true;
+			} else {
+				this.showGame = false;
+			}
+		},
+		// 观察者
+		watch: {
+			// 深度观察(任何一个属性变化都会触发)
+			dataList: {
+				handler(newValue, oldValue) {
+					// 缓存写入
+					// 动态改变消息数
+					this.changMsgNum();
+				},
+				deep: true
+			}
 		},
 		methods:{
+			/**
+			 * 改变弹出层状态
+			 * @param {Object} e
+			 */
+			popupChange(e) {
+				if (!e.show) {
+					this.showGame = false;
+				};
+			},
+			/**
+			 * 跳转至对应的游戏界面
+			 * @param {Object} game
+			 */
+			playGame(game){
+				uni.navigateTo({
+					url: `/pages/games/${game}/${game}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			/**
+			 * 改变未读消息数
+			 */
+			changMsgNum() {
+				const num = this.countMsg;
+				if (num == 0) {
+					uni.removeTabBarBadge({
+						index: 0
+					});
+				} else {
+					uni.setTabBarBadge({
+						index: 0,
+						text: num + ''
+					});
+				}
+			},
 			/**
 			 * 消息置顶
 			 */
@@ -152,11 +242,63 @@
 						break;
 				}
 			}
+		},
+		computed:{
+			/**
+			 * 计算未读消息条数
+			 */
+			countMsg() {
+				let msgCount = 0;
+				for (let i in this.dataList) {
+					msgCount += this.dataList[i].msgNum;
+				}
+				msgCount = msgCount > 99 ? '99+' : msgCount;
+				return msgCount;
+			},
+		},
+		/**
+		 * 下拉刷新
+		 */
+		onPullDownRefresh() {
+			// 刷新页面
+			// 关闭下拉刷新动画
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		}
 	}
 </script>
 
 
 <style>
-	
+	/*小游戏弹出框 */
+	.popup {
+		max-width: 500upx;
+		padding: 10upx;
+		border-radius: 50upx;
+		float: left;
+	}
+
+	.game {
+		float: left;
+		margin: 10upx;
+		padding: 0;
+		width: 120upx;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.game image {
+		width: 100upx;
+		height: 100upx;
+		border-radius: 50%;
+		background-color: #344955;
+	}
+
+	.game text {
+		display: flex;
+		justify-content: center;
+		width: 100upx;
+		font-size: 20upx;
+	}
 </style>

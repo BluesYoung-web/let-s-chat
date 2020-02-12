@@ -1,7 +1,3 @@
-/* 
-提取出来的常用的公共样式
- */
-
 .navBar{
 	display: flex;
 		width: 100%;
@@ -9,32 +5,21 @@
 		background-color: #344955;
 		position: fixed;
 		top: 0;
-	}
+}
 .content {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 	}
-nline-block{
-  display: inline-block;
-}
-.block{
-     display:block;
-}
+
 .underline{
      text-decoration:underline;
 }
 .line-through{
      text-decoration:line-through #999;
 }
-.clearfix:after {
-  content: ".";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
-}
+
 
 
 
@@ -92,16 +77,16 @@ view,a,text,input,button {
 .absolute{
 	position:absolute;
 }
-left0{
+.left0{
   left:0;
 }
-right0{
+.right0{
   right: 0;
 }
-top0{
+.top0{
   top: 0;
 }
-bottom0{
+.bottom0{
   bottom: 0;
 }
 
@@ -112,9 +97,7 @@ bottom0{
 .pull-left {
   	float: left;
 }
-.line-through{
-	text-decoration:line-through;
-}
+
 
 /* 宽高 */
 .width50{
@@ -123,8 +106,23 @@ bottom0{
 .width-20{
 	width: 20upx;
 }
+.width-30{
+	width: 30upx;
+}
+.width-40{
+	width: 40upx;
+}
 .width-50{
 	width: 50upx;
+}
+.width-60{
+	width: 60upx;
+}
+.width-64{
+	width: 64upx;
+}
+.width-74{
+	width: 74upx;
 }
 .width-80{
 	width: 80upx;
@@ -132,14 +130,38 @@ bottom0{
 .width-100{
 	width: 100upx;
 }
+.width-120{
+	width: 120upx;
+}
+.width-140{
+	width: 140upx;
+}
 .width-150{
 	width: 150upx;
+}
+.width-180{
+	width: 180upx;
 }
 .width-200{
 	width: 200upx;
 }
+.width-250{
+	width: 250upx;
+}
+.width-300{
+	width: 300upx;
+}
+.width-340{
+	width: 340upx;
+}
+.width-355{
+	width: 355upx;
+}
 .width-400{
 	width: 400upx;
+}
+.width-450{
+	width: 450upx;
 }
 .width-500{
 	width: 500upx;
@@ -147,20 +169,47 @@ bottom0{
 .width-600{
 	width: 600upx;
 }
+.width-640{
+	width: 640upx;
+}
 .width-750{
 	width: 750upx;
 }
 .width-full {
     width: 100%;
 }
-.w{
-	color: red;
+.width-auto{
+	width: auto;
+}
+.height-30{
+	height: 30upx;
+}
+.height-40{
+	height: 40upx;
 }
 .height-50{
 	height: 50upx;
 }
+.height-60{
+	height: 60upx;
+}
+.height-64{
+	height: 64upx;
+}
+.height-74{
+	height: 74upx;
+}
+.height-80{
+	height: 80upx;
+}
 .height-100{
 	height: 100upx;
+}
+.height-120{
+	height: 120upx;
+}
+.height-140{
+	height: 140upx;
 }
 .height-150{
 	height: 150upx;
@@ -168,11 +217,20 @@ bottom0{
 .height-200{
 	height: 200upx;
 }
+.height-300{
+	height: 300upx;
+}
 .height-600{
 	height: 600upx;
 }
+.height-640{
+	height: 640upx;
+}
 .height-full{
 	height: 100%;
+}
+.height-auto{
+	height: auto;
 }
 
 /* 字号 */
@@ -206,6 +264,9 @@ bottom0{
 .ft-40{
 	font-size:40upx;
 }
+.ft-50{
+	font-size:50upx;
+}
 /* 字体颜色 */
 .color-red{
 	color: red;
@@ -237,19 +298,14 @@ bottom0{
 .color-f9aa33{
 	color: #F9AA33;
 }
-.color-1BB723{
-	color: #1BB723;
-}
 /* 主题色 */
-.color-344955{
-	color: #344955;
+.color-theme{//青蓝
+	color: @bgcolorT;
 }
-.color-889aa3{
-	color: #889AA3;
+.color-1CCFCF{
+	color: #1CCFCF;
 }
-.color-4A6572{
-	color: #4A6572;
-}
+
 /* 字体 */
 
 
@@ -257,32 +313,25 @@ bottom0{
 .bg-fff{
   	background-color: #ffffff;
 }
-.bg-f9aa33{
-	background-color: #f9aa33;
-}
-.bg-849aa5{
-	background-color: #849aa5;
-}
 .bg-999{
   	background-color: #999;
 }
 .bg-ccc{
   	background-color: #ccc;
 }
-.bg-f4f4f4{
-	background-color:#f4f4f4;
+
+//主题背景色
+.bg-theme{//青蓝
+	background-color: @bgcolorT;
 }
-.bg-344955{
-	background-color: #344955;
-}
-.bg-889aa3{
-	background-color: #889aa3;
-}
-.bg-edf0f2{
-	background-color: #EDF0F2;
+.bg-1CCFCF{
+	background-color: #1CCFCF;
 }
 
 /* 边框 */
+.bd-gainsboro{
+	border: 1px solid #F1F1F1;
+}
 .bd-bt-gainsboro{
 	border-bottom: 1px solid #F1F1F1;
 }
@@ -296,6 +345,9 @@ bottom0{
 }
 .bd-rd50{
   border-radius: 50%;
+}
+.bd-rd80{
+  border-radius: 80upx;
 }
 
 /* 外边距 */
@@ -335,6 +387,9 @@ bottom0{
 .mg-tp80{
   margin-top: 80upx;
 }
+.mg-tp150{
+  margin-top: 150upx;
+}
 .mg-tp250{
   margin-top: 250upx;
 }
@@ -364,6 +419,9 @@ bottom0{
 }
 .mg-bt50{
   margin-bottom: 50upx;
+}
+.mg-lt4{
+  margin-left: 4upx;
 }
 .mg-lt10{
   margin-left: 10upx;
@@ -697,6 +755,9 @@ bottom0{
 .h100{
   height: 100upx;
 }
+.h120{
+  height: 120upx;
+}
 
 
 /* 行高 */
@@ -751,7 +812,9 @@ bottom0{
 .line-h100{
   line-height: 100upx;
 }
-
+.line-h120{
+  line-height: 120upx;
+}
 /* flex布局属性集 */
 .flex {
     display: box; /* OLD - Android 4.4- */
@@ -772,6 +835,9 @@ bottom0{
 }
 .nowrap{
   flex-wrap:nowrap!important;
+}
+.wrap{
+	flex-wrap:wrap!important;
 }
 /* 水平居中 */
 .flex-hc {

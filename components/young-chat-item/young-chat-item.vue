@@ -1,49 +1,56 @@
 <template>
 	<view>
-		<view v-for="(item,index) in dataList" :key="index">
-			<uni-swipe-action>
-				<!-- 如果没有置顶 -->
-				<uni-swipe-action-item v-if="item.isTop == 0" :options="options" @click="onClickChoice($event, item, index)">
-					<view class="height-200 flex flex-direction-row flex-vc pd-lr20" @click="onClickInto(item)">
-						<!-- 朋友头像框 -->
-						<view class="message-head relative">
-							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
-							<!-- 未读消息的角标 -->
-							<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
-							<text v-if="item.msgNum > 99" class="icon">99+</text>
-						</view>
-						<!-- 消息内容 -->
-						<view class="message-body flex flex-direction-column flex-jc pd-lt15">
-							<view class="message-informatin flex flex-jsb">
-								<span class="ft-34">{{item.nick}}</span>
-								<span class="color-ccc">{{item.time}}</span>
+		<scroll-view scroll-y="true" >
+			<view class="flex flex-direction-column flex-vc" v-if="!dataList[0]">
+				<image src="/static/img/emptylogo.png" mode="aspectFit"></image>
+				<text class="color-344955">空空如也~</text>
+				<text class="ft-26 color-999">赶快去聊天吧</text>
+			</view>
+			<view v-for="(item,index) in dataList" :key="index">
+				<uni-swipe-action>
+					<!-- 如果没有置顶 -->
+					<uni-swipe-action-item v-if="item.isTop == 0" :options="options" @click="onClickChoice($event, item, index)">
+						<view class="height-200 flex flex-direction-row flex-vc pd-lr20" @click="onClickInto(item)">
+							<!-- 朋友头像框 -->
+							<view class="message-head relative">
+								<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
+								<!-- 未读消息的角标 -->
+								<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
+								<text v-if="item.msgNum > 99" class="icon">99+</text>
 							</view>
-							<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
-						</view>
-					</view>
-				</uni-swipe-action-item>
-				<!-- 已经置顶了 -->
-				<uni-swipe-action-item v-else :options="options1" @click="onClickChoice($event, item, index)">
-					<view :style="{'backgroundColor':(item.isTop == 1 ? 'aliceblue' : '#fff')}" class="height-200 flex flex-direction-row flex-vc pd-lr20">
-						<!-- 朋友头像框 -->
-						<view class="message-head relative">
-							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
-							<!-- 未读消息的角标 -->
-							<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
-							<text v-if="item.msgNum > 99" class="icon">99+</text>
-						</view>
-						<!-- 消息内容 -->
-						<view class="message-body flex flex-direction-column flex-jc pd-lt15">
-							<view class="message-informatin flex flex-jsb">
-								<span class="ft-34">{{item.nick}}</span>
-								<span class="color-ccc">{{item.time}}</span>
+							<!-- 消息内容 -->
+							<view class="message-body flex flex-direction-column flex-jc pd-lt15">
+								<view class="message-informatin flex flex-jsb">
+									<span class="ft-34">{{item.nick}}</span>
+									<span class="color-ccc">{{item.time}}</span>
+								</view>
+								<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
 							</view>
-							<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
 						</view>
-					</view>
-				</uni-swipe-action-item>
-			</uni-swipe-action>
-		</view>
+					</uni-swipe-action-item>
+					<!-- 已经置顶了 -->
+					<uni-swipe-action-item v-else :options="options1" @click="onClickChoice($event, item, index)">
+						<view :style="{'backgroundColor':(item.isTop == 1 ? 'aliceblue' : '#fff')}" class="height-200 flex flex-direction-row flex-vc pd-lr20">
+							<!-- 朋友头像框 -->
+							<view class="message-head relative">
+								<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
+								<!-- 未读消息的角标 -->
+								<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
+								<text v-if="item.msgNum > 99" class="icon">99+</text>
+							</view>
+							<!-- 消息内容 -->
+							<view class="message-body flex flex-direction-column flex-jc pd-lt15">
+								<view class="message-informatin flex flex-jsb">
+									<span class="ft-34">{{item.nick}}</span>
+									<span class="color-ccc">{{item.time}}</span>
+								</view>
+								<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
+							</view>
+						</view>
+					</uni-swipe-action-item>
+				</uni-swipe-action>
+			</view>
+		</scroll-view>
 	</view>
 </template>
 

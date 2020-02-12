@@ -1,9 +1,10 @@
 <?php
 /**
- * 用户模块 
+ * socket服务器
  * @author 张扬
  * @copyright http://github.com/BluesYoung-web
  */
+include_once('./common/sql.php');
 class SocketServer
 {
     /**
@@ -224,7 +225,15 @@ class SocketServer
      * @param array $extra 透传参数
      */
     private function _Operation($socket, $cmd, $data, $cbk, $extra){
-        $this -> _sendMsgPrivate(json_encode($data), $socket);
+        switch($cmd){
+            case 100:{
+                $uid = array_search($socket, $this -> users);
+                $my = new mySql($uid);
+                $info = $my -> get_info();
+                $tips = $this -> _resFormat(0, $info, $cbk, $extra);
+                $this -> _sendMsgPrivate($tips, $socket);
+            }
+        }
     }
     /**
      * 签名校验

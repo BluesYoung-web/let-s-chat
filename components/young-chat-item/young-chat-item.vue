@@ -4,7 +4,7 @@
 			<uni-swipe-action>
 				<!-- 如果没有置顶 -->
 				<uni-swipe-action-item v-if="item.isTop == 0" :options="options" @click="onClickChoice($event, item, index)">
-					<view class="height-200 flex flex-direction-row flex-vc pd-lr20" @tap="onClick(item)">
+					<view class="height-200 flex flex-direction-row flex-vc pd-lr20" @click="onClickInto(item)">
 						<!-- 朋友头像框 -->
 						<view class="message-head relative">
 							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
@@ -24,7 +24,7 @@
 				</uni-swipe-action-item>
 				<!-- 已经置顶了 -->
 				<uni-swipe-action-item v-else :options="options1" @click="onClickChoice($event, item, index)">
-					<view :style="{'backgroundColor':(item.isTop == 1 ? 'aliceblue' : '#fff')}" class="height-200 flex flex-direction-row flex-vc pd-lr20" @tap="onClick(item)">
+					<view :style="{'backgroundColor':(item.isTop == 1 ? 'aliceblue' : '#fff')}" class="height-200 flex flex-direction-row flex-vc pd-lr20">
 						<!-- 朋友头像框 -->
 						<view class="message-head relative">
 							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
@@ -56,7 +56,7 @@
 		 */
 		name: "chatItem",
 		/**
-		 * 第三方组件
+		 * 依赖第三方组件
 		 */
 		components: {
 			uniSwipeAction,
@@ -75,19 +75,103 @@
 			options: {
 				type: Array,
 				default(){
-					return []
+					return [{
+						text: '置顶',
+						style: {
+							backgroundColor: 'rgb(199, 198, 205)'
+						}
+					},{
+						text: '标记为已读',
+						style: {
+							backgroundColor: 'rgb(254, 156, 1)'
+						}
+					},{
+						text: '删除',
+						style: {
+							backgroundColor: 'rgb(255,58,49)'
+						}
+					}]
 				}
 			},
 			options1: {
 				type: Array,
 				default(){
-					return []
+					return [{
+						text: '取消置顶',
+						style: {
+							backgroundColor: 'rgb(199, 198, 205)'
+						}
+					},{
+						text: '标记为已读',
+						style: {
+							backgroundColor: 'rgb(254, 156, 1)'
+						}
+					},{
+						text: '删除',
+						style: {
+							backgroundColor: 'rgb(255,58,49)'
+						}
+					}]
 				}
-			}
+			},
 		},
 		data(){
 			return {}
-		}
+		},
+		/**
+		 * 处理显示的时间
+		 */
+		created(){
+			for (let i in this.dataList) {
+				this.dataList[i].time = this.timeFormat(this.dataList[i].ot);
+			}
+		},
+		methods: {
+			/**
+			 * 将时间戳转换成特定格式的时间
+			 * @param {timestamp} timestamp 时间戳
+			 * @return {string} str 处理后的时间
+			 */
+			timeFormat(timestamp){
+				if(!Number(timestamp)){
+					return timestamp;
+				}
+				const nowTime = Date.parse(new Date());
+				let d = nowTime - timestamp;
+				let str = '';
+				if(d < 86400000){
+					// 显示时间
+					str = new Date(timestamp).toTimeString().substr(0,5);
+					
+				}else if(d > 86400000 && d < 172800000){
+					// 显示昨天+时间
+					str = "昨天"+new Date(timestamp - 86400000).toTimeString().substr(0,5);
+				}else{
+					// 直接显示日期+时间
+					let t = new Date(timestamp);
+					str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日`;
+				}
+				return str;
+			},
+			/**
+			 * 直接点击聊天项
+			 * @param {Object} item
+			 */
+			onClickInto(item){
+				// 触发父级组件的监听
+				this.$emit("clickInto", item);
+			},
+			/**
+			 * 滑动选项
+			 * @param {Object} $event
+			 * @param {Object} item
+			 * @param {Object} index
+			 */
+			onClickChoice(event, item, index){
+				// 触发父级组件的监听
+				this.$emit("clickChoice", event, item, index);
+			}
+		},
 	}
 </script>
 
@@ -116,6 +200,4 @@
 	.message-content{
 		width: 500upx;
 	}
-	/* 常用样式 */
-	
 </style>

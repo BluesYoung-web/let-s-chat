@@ -71,27 +71,23 @@
 		data() {
 			return{
 				user:{
-					name:"", //昵称 
+					nick:"", //昵称 
 					motto:"",//签名 
-					account:'',//账号 
-					phone:'', //手机号
-					avatarUrl:"",//头像地址 /static/img/avatar.png
-					wxId:'' //微信id
+					uid:'',//账号 
+					tel:'', //手机号
+					avatar:"",//头像地址 /static/img/avatar.png
+					wxid:'' //微信id
 				},
 				myCommend:0,//赞数
 				myFocus:0,//关注
 				myRelease:0,//发表
 			}
 		},
-		
-		// 
-		onShow() {
-		},
 		// 监听设置按钮的点击事件
 		onNavigationBarButtonTap(e){
 			// 跳转到设置页面
 			uni.navigateTo({
-				url: `../../mySubpackage/setting/setting`,
+				url: `/pages/mySubpackage/setting/setting`,
 				success: res => {},
 				fail: () => {},
 				complete: () => {}
@@ -100,34 +96,23 @@
 		methods: {
 			checkImg(){
 				uni.previewImage({
-					urls: [this.user.avatarUrl]
+					urls: [this.user.avatar]
 				});
 			},
 			// 跳转到编辑资料页面
 			toMyInformation(){
-				// 先判断是否绑定了手机号
-				if (this.user.account) {
-					uni.navigateTo({
-						url: `../../mySubpackage/myInformation/myInformation`,
-						success: res => {},
-						fail: () => {},
-						complete: () => {}
-					});
-				} else{
-					uni.showToast({
-						title:"请先去设置页绑定手机号",
-						icon:"none"
-					})
-				}
-				
+				uni.navigateTo({
+					url: `/pages/mySubpackage/myInformation/myInformation`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			},
-			
-			
 			//---------下方的赞&关注&发表--------
 			// 跳转到我收到的赞的页面
 			toMyCommend(){
 				uni.navigateTo({
-					url: '../../mySubpackage/myCommend/myCommend',
+					url: '/pages/mySubpackage/myCommend',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -136,7 +121,7 @@
 			// 跳转到关注我的页面
 			toMyFocus(){
 				uni.navigateTo({
-					url: '../../mySubpackage/myFocus/myFocus',
+					url: '/pages/mySubpackage/myFocus',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -145,7 +130,7 @@
 			// 跳转到我收到的赞的页面
 			toMyRelease(){
 				uni.navigateTo({
-					url: '../../mySubpackage/myRelease/myRelease',
+					url: '/pages/mySubpackage/myRelease',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

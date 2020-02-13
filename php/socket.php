@@ -252,7 +252,7 @@ class SocketServer
             }
             case 101:{
                 // 设置当前用户信息
-                $res = $store -> set_info($data['info']);
+                $res = $store -> set_info($data);
                 if ($res) {
                     // 设置成功
                     $info['msg'] = "用户信息设置成功";

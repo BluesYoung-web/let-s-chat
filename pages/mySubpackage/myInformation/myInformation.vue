@@ -5,20 +5,20 @@
 			<view class="avatarItem" @click="openPopup">
 				<text>用户头像</text>
 				<view class="flex flex-vc">
-					<image class="avatar" :src="user.avatarUrl" mode="aspectFill"></image>
+					<image class="avatar" :src="user.avatar" mode="aspectFill"></image>
 					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
 				</view>
 			</view>
 			<view class="nameItem" @tap="toChangeName">
 				<text>昵称</text>
 				<view class="flex flex-ac">
-					<text class="inline-block width-400 one-line-ellipsis text-right ">{{user.name}}</text>
+					<text class="inline-block width-400 one-line-ellipsis text-right ">{{user.nick}}</text>
 					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
 				</view>
 			</view>
 			<view class="accountItem" @longpress="accountCopy">
 				<text>来聊账号</text>
-				<text>{{user.account}}</text>
+				<text>{{user.uid}}</text>
 			</view>
 			<view class="mottoItem" @tap="toChangeMotto">
 				<text>个性签名</text>
@@ -56,63 +56,35 @@
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import ImageCropper from "@/components/invinbg-image-cropper/invinbg-image-cropper.vue";
-	// 获取用户信息，修改用户信息
-	import {mapState,mapMutations} from 'vuex';
-	// 缓存用户信息
-	import service from '@/service.js';
-	// 请求抽离
-	import request from '@/request/request.js';
+	import data from '@/data.js';
 	export default {
 		data() {
 			return {
 				user:{
-					name:"",//昵称
+					nick:"",//昵称
 					motto:"",//签名
-					account:'',//账号
-					avatarUrl: "", //头像的地址
+					uid:'',//账号
+					avatar: "", //头像的地址
 					phone:'', //手机号
-					wxId:'' //微信id
+					wxid:'' //微信id
 				},
 				showPopup: false, //控制弹出框是否显示
 				tempFilePath: '',//要裁剪图片的路径
 				cropFilePath: '',//裁剪后图片的路径
 			}
 		},
-		watch:{
-			user:{
-				// 如果信息更新了则上传服务器
-				handler(newValue,oldValue){
-					if(newValue != oldValue){
-						request.setUserInfo((data)=>{
-							if(data==1){
-								console.log("已成功同步到数据库");
-								// 将修改后的用户信息写入缓存
-								service.addUser(this.user);
-							}else{
-								console.log("同步到数据库失败");
-							}
-						});
-					}
-				},
-				deep:true
-			}
-		},
 		onShow() {
-			// 接收上个页面传过来的参数
-			if(this.userInfo){
-				this.user=this.userInfo;
-			}
-		},
-		computed:{
-			...mapState(['userInfo','serverUrl'])
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
 		},
 		methods: {
-			// 存储用户信息的方法
-			...mapMutations(['setInfo']),
 			//去修改昵称的页面
 			toChangeName(){
 				uni.navigateTo({
-					url: `changeName/changeName?name=${this.user.name}`,
+					url: `changeName?nick=${this.user.nick}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -121,7 +93,7 @@
 			// 去修改签名的页面
 			toChangeMotto(){
 				uni.navigateTo({
-					url: `changeMotto/changeMotto?motto=${this.user.motto}`,
+					url: `changeMotto?motto=${this.user.motto}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -145,7 +117,7 @@
 			accountCopy(){
 				uni.setClipboardData({
 					// data 必须是 string
-					data:`${this.user.account}`,
+					data:`${this.user.uid}`,
 					success: () => {
 						console.log('复制账号成功');
 					}
@@ -153,18 +125,43 @@
 			},
 			// 拍照
 			takePhoto(){
-				request.chooseImg(this,'camera');
+				this.chooseImg('camera');
 			},
 			// 从相册选择
 			photoAlbum(){
-				request.chooseImg(this,'album');
+				this.chooseImg('album');
+			},
+			chooseImg(type){
+				uni.chooseImage({
+					count: 1,
+					sourceType:[type],
+					success: res => {
+						// console.log(JSON.stringify(res.tempFilePaths));
+						//裁剪图片的路径
+						this.tempFilePath = res.tempFilePaths.shift();
+					},
+					fail: res => {
+						uni.showToast({
+							title:"用户取消或加载超时",
+							icon:"none"
+						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
+					},
+				});
 			},
 			// 保存用户头像信息到state
 			saveLogo(){
-				let temp = {
-					avatarUrl : this.avatarUrl
-				}
-				this.setInfo(temp);
+				data.user.set_info({
+					data: this.user,
+					success: (res) => {
+						console.log(res);
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
 			},
 			
 			// 裁剪图片的相关方法
@@ -173,18 +170,28 @@
 				this.tempFilePath = ''
 				this.cropFilePath = e.detail.tempFilePath;
 				// 将裁剪后的图片上传到服务器
-				uni.uploadFile({
-					url:`${this.serverUrl}?op=upload&file=img`,
+				data.user.upload({
 					filePath:this.cropFilePath,
 					name:"img",
 					success:(res) => {
-						this.avatarUrl=res.data;
-						this.saveLogo();
-						console.log(res.data);
+						console.log(res);
+						if(res.status == 0){
+							// 上传成功
+							let url = res.data.url;
+							this.user.avatar = url;
+							this.saveLogo();
+							uni.showToast({
+								title:"更换成功！"
+							});
+						}else{
+							uni.showToast({
+								title:"更换失败！"
+							});
+						}
 						this.showPopup = false;
-						uni.showToast({
-							title:"更换成功！"
-						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
 					}
 				});
 			},

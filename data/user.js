@@ -148,16 +148,14 @@ const login_out = function (args) {
 /**
  * 用户上传文件(图片、语言)的函数
  * @param {object} args 
- * @param {number} args.uid 当前用户uid
  * @param {string} args.filePath 文件本地路径
  * @param {string} args.name 文件对象中的键名 img/audio
  * @param {function} args.success 上传成功的回调函数 
  * @param {function} args.fail 上传失败的回调函数
  */
 const upload = function(args){
-	let {uid, filePath, name, success, fail} = {...args};
+	let {filePath, name, success, fail} = {...args};
 	net.upload({
-		uid, 
 		path: path.upload + '?fileType=' + name,
 		filePath,
 		name,

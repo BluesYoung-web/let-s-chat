@@ -45,10 +45,10 @@
          * @param array $arr 包含用户信息的数组
          */
         public function set_info($arr){
-            $name = $arr['name'];
+            $nick = $arr['nick'];
             $motto = $arr['motto'];
             $avatar = $arr['avatar'];
-            $sql = "update user set name = '$name', motto = '$motto', avatar = '$avatar' where uid = $uid";
+            $sql = "update user set nick = '$nick', motto = '$motto', avatar = '$avatar' where uid = ".$this -> uid;
             $res = mysqli_query($this -> conn, $sql);
             return $res;
         }

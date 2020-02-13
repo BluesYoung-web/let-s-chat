@@ -16,7 +16,8 @@
 
         // 将文件存到服务器
         move_uploaded_file($filePath, "../".$f."/".$fileName);
-        $url = "http://117.78.0.214/".$f."/".$fileName;
+        // $url = "http://117.78.0.214/".$f."/".$fileName;
+        $url = "http://www.bluesyoung-web.com/".$f."/".$fileName;
         
         $arr = [];
         $arr['url'] = $url;

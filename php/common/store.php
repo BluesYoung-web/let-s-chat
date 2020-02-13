@@ -82,9 +82,8 @@ class Store{
         if($res){
             // 更新redis，数组转字符串
             $this -> redis -> set('user_'.$this -> uid.'_info', json_encode($arr));
-        }else{
-            return $res;
         }
+        return $res;
     }
 }
 ?>

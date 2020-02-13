@@ -10,11 +10,12 @@
          */
         private $conn;
         /**
-         * 存放用户uid
+         * 存放当前用户uid
          */
         private $uid;
         /**
          * 构造函数
+         * @param number $uid 当前用户的uid
          */
         public function __construct($uid){
             header("Content-Type:text/html; charset=utf-8");
@@ -32,12 +33,24 @@
         public function __destruct(){
         }
         /**
-         * 获取用户信息
+         * 获取当前用户信息
          */
         public function get_info(){
             $sql = "select * from user where uid = ".$this -> uid;
             $res = mysqli_query($this -> conn, $sql);
             return mysqli_fetch_assoc($res);
+        }
+        /**
+         * 设置当前用户信息
+         * @param array $arr 包含用户信息的数组
+         */
+        public function set_info($arr){
+            $name = $arr['name'];
+            $motto = $arr['motto'];
+            $avatar = $arr['avatar'];
+            $sql = "update user set name = '$name', motto = '$motto', avatar = '$avatar' where uid = $uid";
+            $res = mysqli_query($this -> conn, $sql);
+            return $res;
         }
     }
 ?>

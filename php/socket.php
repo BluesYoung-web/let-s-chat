@@ -4,7 +4,7 @@
  * @author 张扬
  * @copyright http://github.com/BluesYoung-web
  */
-include_once('./common/sql.php');
+include_once('./common/store.php');
 class SocketServer
 {
     /**
@@ -23,6 +23,10 @@ class SocketServer
      * 当前在线用户数组(uid => #R5...)
      */
     private $users = [];
+    /**
+     * 当前在线用户的存储对象数组(uid => obj)
+     */
+    private $stores = [];
     /**
      * 读写redis数据库
      */
@@ -225,15 +229,44 @@ class SocketServer
      * @param array $extra 透传参数
      */
     private function _Operation($socket, $cmd, $data, $cbk, $extra){
+        // 获取当前用户uid
+        $uid = array_search($socket, $this -> users);
+        // 如果存储对象不存在则实例化
+        if (!$this -> stores[$uid]) {
+            $this -> stores[$uid] = new Store($uid);
+        }
+        $store = $this -> stores[$uid];
         switch($cmd){
             case 100:{
-                $uid = array_search($socket, $this -> users);
-                $my = new mySql($uid);
-                $info = $my -> get_info();
-                $tips = $this -> _resFormat(0, $info, $cbk, $extra);
-                $this -> _sendMsgPrivate($tips, $socket);
+                // 获取当前用户信息
+                $info = $store -> get_info();
+                if ($info === null) {
+                    // 如果拿不到信息
+                    $info['msg'] = "找不到该用户的信息";
+                    $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
+                } else {
+                    // 如果拿到了信息
+                    $tips = $this -> _resFormat(0, $info, $cbk, $extra);
+                }
+                break;
+            }
+            case 101:{
+                // 设置当前用户信息
+                $res = $store -> set_info($data['info']);
+                if ($res) {
+                    // 设置成功
+                    $info['msg'] = "用户信息设置成功";
+                    $tips = $this -> _resFormat(0, $info, $cbk, $extra);
+                } else {
+                    // 设置失败
+                    $info['msg'] = "用户信息设置失败";
+                    $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
+                }
+                break;
             }
         }
+        // 结果返回
+        $this -> _sendMsgPrivate($tips, $socket);
     }
     /**
      * 签名校验

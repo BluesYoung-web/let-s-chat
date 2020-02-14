@@ -73,9 +73,9 @@
 			}
 		},
 		{
-			"path": "pages/tabBar/profile",
+			"path": "pages/tabBar/my",
 			"style": {
-				"navigationBarTitleText": "我",
+				"navigationBarTitleText": "我的",
 				"app-plus": {
 					"bounce": "none", //关闭窗口回弹效果
 					"titleNView": {
@@ -252,9 +252,9 @@
 				"text": "好友圈"
 			},
 			{
-				"pagePath": "pages/tabBar/profile",
-				"iconPath": "static/img/tabBar/profile.png",
-				"selectedIconPath": "static/img/tabBar/profile_active.png",
+				"pagePath": "pages/tabBar/my",
+				"iconPath": "static/img/tabBar/my.png",
+				"selectedIconPath": "static/img/tabBar/my_active.png",
 				"text": "我的"
 			}
 		]

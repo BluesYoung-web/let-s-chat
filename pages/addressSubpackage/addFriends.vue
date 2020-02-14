@@ -93,7 +93,7 @@
 					// 如果是搜索自己，直接跳转我的页面
 					if (this.inputMsg==this.account || this.inputMsg==this.phone) {
 						uni.reLaunch({
-						    url: '/pages/tabBar/profile/profile'
+						    url: '/pages/tabBar/my/my'
 						});
 						return ;
 					}

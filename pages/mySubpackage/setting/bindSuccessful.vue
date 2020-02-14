@@ -35,7 +35,7 @@
 			isFinished(){
 				// 跳转到我的页面
 				uni.reLaunch({
-					url: '../../../tabBar/profile/profile',
+					url: '../../../tabBar/my/my',
 					success: res => {
 					},
 					fail: () => {},

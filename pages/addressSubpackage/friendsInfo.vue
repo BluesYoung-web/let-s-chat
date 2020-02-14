@@ -88,7 +88,7 @@
 			// 如果是自己
 			if(uid==this.userInfo.account){
 				uni.reLaunch({
-					url:"/pages/tabBar/profile/profile"
+					url:"/pages/tabBar/my/my"
 				});
 			}
 			// 是否为好友

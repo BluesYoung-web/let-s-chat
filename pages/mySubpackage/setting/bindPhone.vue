@@ -81,7 +81,7 @@
 				});
 				// 返回我的页面
 				uni.reLaunch({
-					url:"/pages/tabBar/profile/profile"
+					url:"/pages/tabBar/my/my"
 				});
 			}
 		},

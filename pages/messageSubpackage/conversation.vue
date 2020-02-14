@@ -454,7 +454,7 @@
 			toMyInfo(){
 				console.log('aaa')
 				uni.switchTab({
-					url: '../tabBar/profile/profile',
+					url: '../tabBar/my/my',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

@@ -2,47 +2,61 @@
 <template>
 	<view>
 		<view class="">
-			<input class="width-750 height-100 bg-fff pd-lt30" v-model="name" type="text" value="" maxlength="30"/>
+			<input class="width-750 height-100 bg-fff pd-lt30" v-model="user.nick" type="text" value="" maxlength="30"/>
 		</view>
 	</view>
 </template>
 
 <script>
-	// 存储用户信息
-	import {mapMutations} from 'vuex';
+	import data from '@/data.js';
 	export default {
 		data() {
 			return {
-				name:'',
+				user: {},
 			}
 		},
-		onLoad(e) {
-			// 接收上个页面传过来的昵称
-			this.name = e.name;
+		onShow() {
+			// 从缓存中获取用户数据
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
 		},
 		// 监听下一步按钮的点击事件
 		onNavigationBarButtonTap(e){
 			this.submitName();
 		},
 		methods: {
-			// 存储用户信息的方法
-			...mapMutations(['setInfo']),
 			// 提交成功的提示
 			submitName(){
-				let temp = {
-					name : this.name
-				};
-				this.setInfo(temp);
+				data.user.set_info({
+					data: this.user,
+					success: (res) => {
+						console.log(res);
+						uni.showToast({
+							icon:"none",
+							title:"修改成功！"
+						});
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+						uni.showToast({
+							icon:"none",
+							title:"修改失败！"
+						});
+					}
+				});
  				// 跳转回编辑资料的页面
 				uni.navigateBack();
-				uni.showToast({
-					title:"修改成功！"
-				})
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 			}
 		},
 		computed:{
 			canSubmit:function(){
-				return this.name.length > 0 ? false : true;
+				return this.user.name.length > 0 ? false : true;
 			}
 		}
 	}

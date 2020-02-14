@@ -45,6 +45,8 @@
     }
 
     $arr['user'] = $rs;
+    // 更新redis用户信息的缓存
+    $redis -> set("user_".$rs['uid']."_info", json_encode($rs));
     // 秘钥
     $key = 'www.bluesyoung-web.com';
     // 生成token

@@ -7,6 +7,8 @@
     include_once('../common/token.php');
     // 引入redis
     include_once('../common/redis.php');
+    // 允许跨域
+    header("Access-Control-Allow-Origin: *");
     // 接收post传参
     $tel = $_POST['tel'] or '';
     $wxid = $_POST['wxid'] or '';

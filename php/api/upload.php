@@ -1,5 +1,7 @@
 <?php
     include_once('../common/respond.php');
+    // 允许跨域
+    header("Access-Control-Allow-Origin: *");
     $f = $_GET['fileType'];
     // var_dump($_FILES);
     // 获取上传文件对应的字典（对象）

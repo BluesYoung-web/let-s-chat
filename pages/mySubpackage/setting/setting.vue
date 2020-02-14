@@ -5,7 +5,7 @@
 			<view class="setList">
 				<!-- 更换手机号 -->
 				<view class="changePhoneItem flex flex-jsb flex-vc pd-lr30" @tap="toChangePhone">
-					<text v-if="phone">更换手机号</text>
+					<text v-if="user.tel">更换手机号</text>
 					<text v-else>绑定手机号</text>
 					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
 				</view>
@@ -68,42 +68,28 @@
 </template>
 
 <script>
-	import uniPopup from "@/components/uni-popup/uni-popup.vue"
-	// 登录状态管理
-	import {mapState, mapMutations} from 'vuex';
-	import service from '@/service.js';
-	import request from '@/request/request.js';
+	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import data from '@/data.js';
 	export default {
-		computed: {
-		    ...mapState(['userInfo','serverUrl'])
-		},
 		data() {
 			return {
 				showsignOutPopup:false, //是否弹出退出登录面板
 				showclearChatLogPopup:false, //是否弹出清空聊天记录面板
-				account:'',//账号
-				phone:'', //手机号
+				user: {}
 			}
 		},
 		onShow() {
-			// 如果存在则获取数据
-			if (this.userInfo) {
-				let userInfo = this.userInfo;
-				this.phone = userInfo.phone;
-				this.account = userInfo.account || request.generate8();
-				// 将生成的uid存入state
-				let temp = {
-					account:this.account
-				};
-				this.setInfo(temp);
-			}
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
 		},
 		methods: {
-			...mapMutations(['setInfo','deleteConversationMessage']),
 			// 跳转到关于来聊的页面
 			toAboutUs(){
 				uni.navigateTo({
-					url: 'aboutUs/aboutUs',
+					url: 'aboutUs',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -111,9 +97,9 @@
 			},
 			// 跳转更换/绑定手机号页面
 			toChangePhone(){
-				let isBind = this.phone ? "changePhone" : "bindPhone";
+				let isBind = this.user.tel ? "changePhone" : "bindPhone";
 				uni.navigateTo({
-					url: `changePhone/${isBind}`,
+					url: `${isBind}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -127,23 +113,18 @@
 					content:"确定要清除聊天记录吗?",
 					success: (res) => {
 						if(res.confirm == true){
+							// ....
 							uni.showToast({
 								title:"清除成功"
 							});
-							// 清除聊天记录的缓存
-							this.deleteConversationMessage();
-							uni.removeStorage({
-							    key: service.keyList.CONVERSATION,
-							    success: ()=> {
-							        console.log('清除聊天记录成功');
-							    }
-							});
+							setTimeout(() => {
+								uni.hideToast();
+							}, 1000);
 							// 跳转到消息页
 							uni.reLaunch({
 								url: "/pages/tabBar/message/message"
 							});
 						};
-						this.showclearChatLogPopup = false;
 					},
 					fail: (res) => {
 						uni.showToast({
@@ -151,6 +132,7 @@
 						});
 					}
 				});
+				this.showclearChatLogPopup = false;
 			},
 			
 			// 退出登录
@@ -160,13 +142,7 @@
 					content:"确定要退出登录吗?",
 					success: (res) => {
 						if(res.confirm == true){
-							// 清除账号缓存
-							uni.removeStorage({
-							    key: service.keyList.USERS_KEY,
-							    success: ()=> {
-							        console.log('清除账号缓存成功');
-							    }
-							});
+							data.user.login_out();
 							uni.reLaunch({
 								url: "../../common/login/login"
 							});

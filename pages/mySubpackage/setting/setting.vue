@@ -4,24 +4,13 @@
 		<view class="">
 			<view class="setList">
 				<!-- 更换手机号 -->
-				<view class="changePhoneItem flex flex-jsb flex-vc pd-lr30" @tap="toChangePhone">
-					<text v-if="user.tel">更换手机号</text>
-					<text v-else>绑定手机号</text>
-					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
-				</view>
+				<edit-item type="1" :title="user.tel ? '更换手机号' : '绑定手机号'" @toChange="toChangePhone"></edit-item>
 				<!-- 关于来聊 -->
-				<view class="aboutItem flex flex-jsb flex-vc pd-lr30" @tap="toAboutUs">
-					<text>关于来聊</text>
-					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
-				</view>
+				<edit-item type="1" title="关于来聊" @toChange="toAboutUs"></edit-item>
 				<!-- 清空聊天记录 -->
-				<view class="clearItem flex flex-hc flex-vc" @tap="showPopup" data-open="clearChatLogPopup">
-					<text>清空聊天记录</text>
-				</view>
+				<edit-item type="3" content="清空聊天记录" @poupChange="showPopup('clearChatLogPopup')"></edit-item>
 				<!-- 退出登录 -->
-				<view class="signOutItem flex flex-hc flex-vc" @tap="showPopup" data-open="signOutPopup">
-					<text>退出登录</text>
-				</view>
+				<edit-item type="3" content="退出登录" @poupChange="showPopup('signOutPopup')"></edit-item>
 			</view>
 		</view>
 		
@@ -57,7 +46,7 @@
 					<text class="color-red ft-36">退出登录</text>
 				</view>
 				
-				<!-- 关闭弹出框 -->
+				<!--关闭弹出框 -->
 				<view class="item mg-tp20" @click="closePopup"  data-cancel="signOutPopup">
 					<text class="color-344955 ft-34 font-weight-550">取消</text>
 				</view>
@@ -69,6 +58,7 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import editItem from '@/components/young-edit-item/young-edit-item.vue';
 	import data from '@/data.js';
 	export default {
 		data() {
@@ -161,7 +151,7 @@
 			// ------------------底部弹出层有关的函数-----------------------
 			// 弹出底部面板：清空聊天记录 & 退出登录
 			showPopup(e){
-				let a = 'show' + e.currentTarget.dataset.open;
+				let a = 'show' + e;
 				this[a] = true;
 			},
 			// 点击取消
@@ -178,7 +168,10 @@
 				}
 			},
 		},
-		components: {uniPopup},
+		components: {
+			uniPopup,
+			editItem,
+			},
 	}
 </script>
 

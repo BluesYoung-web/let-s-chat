@@ -2,32 +2,10 @@
 <template>
 	<view class="body">
 		<view class="content flex flex-direction-column">
-			<view class="avatarItem" @click="openPopup">
-				<text>用户头像</text>
-				<view class="flex flex-vc">
-					<image class="avatar" :src="user.avatar" mode="aspectFill"></image>
-					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
-				</view>
-			</view>
-			<view class="nameItem" @tap="toChangeName">
-				<text>昵称</text>
-				<view class="flex flex-ac">
-					<text class="inline-block width-400 one-line-ellipsis text-right ">{{user.nick}}</text>
-					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
-				</view>
-			</view>
-			<view class="accountItem" @longpress="accountCopy">
-				<text>来聊账号</text>
-				<text>{{user.uid}}</text>
-			</view>
-			<view class="mottoItem" @tap="toChangeMotto">
-				<text>个性签名</text>
-				<view class="flex flex-ac">
-					<text class="inline-block width-400 one-line-ellipsis text-right ">{{user.motto}}</text>
-					<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
-				</view>
-			</view>
-			
+			<edit-item type="0" title="用户头像" :avatar="user.avatar" @poupChange="openPopup"></edit-item>
+			<edit-item type="1" title="昵称" :content="user.nick" @toChange="toChangeName"></edit-item>
+			<edit-item type="2" title="来聊账号" :content="user.uid" @cpoy="accountCopy"></edit-item>
+			<edit-item type="1" title="个性签名" :content="user.motto" @toChange="toChangeMotto"></edit-item>
 		</view>
 		
 		<!-- 更换头像的弹出框 -->
@@ -56,6 +34,7 @@
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import ImageCropper from "@/components/invinbg-image-cropper/invinbg-image-cropper.vue";
+	import editItem from '@/components/young-edit-item/young-edit-item.vue';
 	import data from '@/data.js';
 	export default {
 		data() {
@@ -196,7 +175,11 @@
 				});
 			},
 		},
-		components: {uniPopup,ImageCropper},
+		components: {
+			uniPopup,
+			ImageCropper,
+			editItem
+		},
 	}
 </script>
 

@@ -30,6 +30,7 @@ const model = 100;
 const cmds = {
     get_info: 100,
     set_info: 101,
+    change_tel: 102
 }
 
 /**
@@ -192,14 +193,16 @@ const get_info = function(args){
  * 设置当前用户信息
  * @param {object} args
  * @param {object} args.data 用户信息
+ * @param {object} args.extra 透传参数
  * @param {function} args.success 设置成功的回调函数 
  * @param {function} args.fail 设置失败的回调函数
  */
 const set_info = function(args){
-    let {data, success, fail} = {...args};
+    let {data, extra, success, fail} = {...args};
     let req = {
 		cmd: cmds.set_info,
-		data,
+        data,
+        extra
 	}
 	let res = store.set({
         key: `${prefix}.info`,
@@ -210,10 +213,11 @@ const set_info = function(args){
     });
 	return res;
 }
+
 export default{
     login,
     login_out,
     upload,
     get_info,
-    set_info
+    set_info,
 }

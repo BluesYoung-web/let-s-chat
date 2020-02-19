@@ -18,8 +18,6 @@
 </template>
 
 <script>
-	// 存储用户信息
-	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -35,17 +33,10 @@
 			isFinished(){
 				// 跳转到我的页面
 				uni.reLaunch({
-					url: '../../../tabBar/my/my',
-					success: res => {
-					},
-					fail: () => {},
-					complete: () => {}
+					url: '/pages/tabBar/my',
 				});
 			},
 		},
-		computed:{
-			...mapState(['userInfo'])
-		}
 	}
 </script>
 

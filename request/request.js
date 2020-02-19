@@ -194,10 +194,10 @@ const chooseImg=function(that,src){
 			that.tempFilePath = res.tempFilePaths.shift()
  		},
  		fail: res => {
- 			uni.showToast({
- 				title:"用户取消或加载超时",
- 				icon:"none"
- 			});
+ 			// uni.showToast({
+ 			// 	title:"用户取消或加载超时",
+ 			// 	icon:"none"
+ 			// });
  		},
  	}
  	

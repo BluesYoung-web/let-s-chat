@@ -52,5 +52,14 @@
             $res = mysqli_query($this -> conn, $sql);
             return $res;
         }
+        /**
+         * 修改手机号
+         * @param string $tel 新的手机号
+         */
+        public function change_tel($tel){
+            $sql = "update user set tel = $tel where uid = ".$this -> uid;
+            $res = mysqli_query($this -> conn, $sql);
+            return $res;
+        }
     }
 ?>

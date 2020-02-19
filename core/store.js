@@ -81,10 +81,10 @@ const get = function(args){
  * @param {function} args.fail 设置失败的回调函数
  */
 const set = function(args){
-    let {key, value, req, success, fail} = {...args};
+    let {key, data, req, success, fail} = {...args};
     // 如果没有要求同步到服务器，直接存在本地
     if(!req){
-        store.set(key, value);
+        store.set(key, data);
         success && success(key+"存储成功");
     }else{
         // 先存到服务器，再更新本地存储
@@ -93,7 +93,7 @@ const set = function(args){
             data: req.data,
             extra: req.extra,
             success: (res) => {
-                store.set(key, res);
+                store.set(key, data);
                 success && success(res);
                 return res;
             },

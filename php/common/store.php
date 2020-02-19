@@ -55,7 +55,7 @@ class Store{
             $info = $this -> sql -> get_info();
             // 如果拿到了
             if ($info) {
-                echo "从mysql获取";
+                echo "从mysql获取\n";
                 // 写入redis, 数组转字符串
                 $this -> redis -> set('user_'.$this -> uid.'_info', json_encode($info));
                 // 返回
@@ -66,7 +66,7 @@ class Store{
                 return null;
             }
         }else{
-            echo "从redis获取";
+            echo "从redis获取\n";
             // 字符串转数组
             return json_decode($info, true);
         }
@@ -74,13 +74,38 @@ class Store{
     /**
      * 设置当前用户信息
      * @param array $arr 包含用户信息的数组
+     * @param string $extra 额外的消息
      */
-    public function set_info($arr){
+    public function set_info($arr, $extra){
+        if ($extra == 'changePhone') {
+            // 修改手机号
+            $res = $this -> change_tel($arr['tel']);
+        } else {
+            // 修改常规信息
+            // 首先写入mysql
+            $res = $this -> sql -> set_info($arr);
+            // 如果写入成功
+            if($res){
+                // 更新redis，数组转字符串
+                $this -> redis -> set('user_'.$this -> uid.'_info', json_encode($arr));
+            }
+        }
+        return $res;
+    }
+    /**
+     * 修改手机号
+     * @param string $tel 新的手机号
+     */
+    public function change_tel($tel){
         // 首先写入mysql
-        $res = $this -> sql -> set_info($arr);
+        $res = $this -> sql -> change_tel($tel);
         // 如果写入成功
         if($res){
+            // 获取用户信息
+            $arr = $this -> redis -> get('user_'.$this -> uid.'_info');
+            $arr = json_decode($arr, true);
             // 更新redis，数组转字符串
+            $arr['tel'] = $tel;
             $this -> redis -> set('user_'.$this -> uid.'_info', json_encode($arr));
         }
         return $res;

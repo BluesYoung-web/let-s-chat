@@ -240,33 +240,57 @@ class SocketServer
             case 100:{
                 // 获取当前用户信息
                 $info = $store -> get_info();
-                if ($info === null) {
-                    // 如果拿不到信息
-                    $info['msg'] = "找不到该用户的信息";
-                    $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
-                } else {
-                    // 如果拿到了信息
-                    $tips = $this -> _resFormat(0, $info, $cbk, $extra);
-                }
+                $tips = $this -> _setInfoByInfo($info, "找不到该用户的信息", $cbk, $extra);
                 break;
             }
             case 101:{
                 // 设置当前用户信息
-                $res = $store -> set_info($data);
-                if ($res) {
-                    // 设置成功
-                    $info['msg'] = "用户信息设置成功";
-                    $tips = $this -> _resFormat(0, $info, $cbk, $extra);
-                } else {
-                    // 设置失败
-                    $info['msg'] = "用户信息设置失败";
-                    $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
-                }
+                $res = $store -> set_info($data, $extra);
+                $tips = $this -> _setInfoByRes($res, "用户信息设置", $cbk, $extra);
                 break;
             }
         }
         // 结果返回
         $this -> _sendMsgPrivate($tips, $socket);
+    }
+    /**
+     * 根据获取到的值，设置返回信息
+     * @param boolean $info 获取结果
+     * @param string $fail 失败的提示信息
+     * @param number $cbk 回调函数id
+     * @param array $extra 透传参数
+     * @return array $tips 最终要发送的数组
+     */
+    private function _setInfoByInfo($info, $fail, $cbk, $extra){
+        if ($info === null) {
+            // 如果拿不到信息
+            $info['msg'] = $fail;
+            $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
+        } else {
+            // 如果拿到了信息
+            $tips = $this -> _resFormat(0, $info, $cbk, $extra);
+        }
+        return $tips;
+    }
+    /**
+     * 根据设置的返回值，设置返回信息
+     * @param boolean $res 操作结果
+     * @param string $msg 提示信息
+     * @param number $cbk 回调函数id
+     * @param array $extra 透传参数
+     * @return array $tips 最终要发送的数组
+     */
+    private function _setInfoByRes($res, $msg, $cbk, $extra){
+        if ($res) {
+            // 设置成功
+            $info['msg'] = $msg.'成功';
+            $tips = $this -> _resFormat(0, $info, $cbk, $extra);
+        } else {
+            // 设置失败
+            $info['msg'] = $msg.'失败';
+            $tips = $this -> _resFormat(-1, $info, $cbk, $extra);
+        }
+        return $tips;
     }
     /**
      * 签名校验
@@ -431,6 +455,6 @@ class SocketServer
 }
 
 // 开启websocket服务器 ,ip一定要先看ipconfig  ！！！！！！！！！！！！
-$socket = new SocketServer('192.168.1.4', 8080);
+$socket = new SocketServer('192.168.1.7', 8080);
 $socket -> run();
 ?>

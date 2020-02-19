@@ -30,7 +30,6 @@ const model = 100;
 const cmds = {
     get_info: 100,
     set_info: 101,
-    change_tel: 102
 }
 
 /**
@@ -59,7 +58,7 @@ const login_to_service = function(args){
             user.sign = sign;
             store.set({
                 key: `${prefix}.account`,
-                value: user
+                data: user
             });
             // 连接websocket
             net.init(() => {
@@ -213,11 +212,26 @@ const set_info = function(args){
     });
 	return res;
 }
-
+/**
+ * 微信登录（强制绑定手机号）
+ * @param {object} args 
+ * @param {object} args.data 用户信息
+ * @param {function} args.success 绑定成功的手机号 
+ * @param {function} args.fail 绑定失败的手机号 
+ */
+const bind_tel = function(args){
+    let {data, success, fail} = {...args};
+    login_to_service({
+        params: data,
+        success,
+        fail
+    });
+}
 export default{
     login,
     login_out,
     upload,
     get_info,
     set_info,
+    bind_tel
 }

@@ -20,16 +20,33 @@
     // 用于存放要返回的数据
     $arr = [];
     if ($rs = mysqli_fetch_assoc($res)) {
+        // 如果老用户首次使用微信登录，合并账户数据
+        if($tel){
+            $s = "update user set wxid = '$wxid' where tel = $tel";
+            $res = mysqli_query($conn, $s);
+            if($res){
+                $res = mysqli_query($conn, $sql);
+                $rs = mysqli_fetch_assoc($res);
+            }else{
+                // 合并失败
+                respond(-1, null, "combin fail");
+                return;
+            }
+        }
         // 老用户，返回用户信息
         $arr['benew'] = 0;
     } else {
         // 新用户，注册并返回用户信息
-        if(!$tel){
+        if($tel && $wxid){
             // 传入的是wxid（微信登录）
-            $s = "insert into user(wxid) values('$wxid');";
-        }else{
+            $s = "insert into user(tel,wxid) values($tel,'$wxid');";
+        }else if($tel){
             // 传入的是tel（手机号登录）
             $s = "insert into user(tel) values($tel);";
+        }else{
+            $myarr['msg'] = 'not bind tel';
+            respond(-1, $myarr, "not bind tel");
+            return;
         }
         // 新用户，返回用户信息
         $r=mysqli_query($conn, $s);

@@ -66,14 +66,7 @@
 				currtime: 60, //倒计时
 				fullHeight: "", //用来获取手机屏幕大小便于底部协议底部绝对布局
 				code:'',
-				user:{
-					tel:'',
-					uid:'', //uid
-					nick:'', //昵称
-					motto:'', //个性签名
-					avatar:'', //头像
-					wxid:'' //微信id
-				}
+				user:{}
 			}
 		},
 		// 挂载时动态获取手机的屏幕大小然后赋值给根元素实现动态布局
@@ -94,24 +87,48 @@
 							icon: "none",
 							title: "登陆成功"
 						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
 						uni.reLaunch({
 							url: "/pages/tabBar/message"
 						});
 					},
 					fail: (code, err) => {
 						console.log(code, err);
+						if(err.msg == 'not bind tel'){
+							uni.showModal({
+								showCancel: false,
+								title: "未绑定手机号",
+								content: "请绑定手机号之后再使用!!!",
+								success: (res) => {
+									if(res.confirm){
+										uni.reLaunch({
+											url: `/pages/mySubpackage/setting/bindPhone?wxid=${this.user.wxid}`
+										});
+									}
+								}
+							});
+						}
 						uni.showToast({
 							icon: "none",
 							title: "登陆失败"
 						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
 					}
 				});
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			},
 			// 微信登录
 			wxlogin() {
+				// #ifdef H5
+				this.toMain({
+					openId: '111',
+					// openId:'oRrdQt0VnoxDYW9K8HdI9Cuoklyw'
+				});
+				return;
+				// #endif
 				let config={
 					provider: 'weixin',
 					success: (res) => {
@@ -163,16 +180,19 @@
 							icon: 'none',
 							title: "获取验证码成功"
 						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
 					}, 1000);
 				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
+					setTimeout(() => {
+						uni.hideToast();
+					}, 1000);
 				}
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			},
 
 			// 登陆验证
@@ -183,6 +203,9 @@
 							icon: "none",
 							title: "请输入六位数的验证码"
 						});
+						setTimeout(() => {
+							uni.hideToast();
+						}, 1000);
 					} else {
 						// 从服务器验证用户是否存在，存在则登录
 						this.login();
@@ -192,10 +215,10 @@
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
+					setTimeout(() => {
+						uni.hideToast();
+					}, 1000);
 				}
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			},
 
 			//---------------------------弹出层------------------------

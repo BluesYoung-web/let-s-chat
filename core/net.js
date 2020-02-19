@@ -191,7 +191,7 @@ const http = function(args){
 			if(res.data.status == 0){
 				success && success(res.data.data);
 			}else{
-				fail && fail(res.data);
+				fail && fail(res.data.status, res.data.data);
 			}
         },
         /**

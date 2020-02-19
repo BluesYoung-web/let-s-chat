@@ -123,9 +123,6 @@
 					uni.reLaunch({
 						url: "/pages/common/login"
 					});
-					setTimeout(() => {
-						uni.hideToast();
-					}, 1000);
 				}
 			});
 		}

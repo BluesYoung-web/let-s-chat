@@ -87,9 +87,6 @@
 							icon: "none",
 							title: "登陆成功"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 						uni.reLaunch({
 							url: "/pages/tabBar/message"
 						});
@@ -112,11 +109,8 @@
 						}
 						uni.showToast({
 							icon: "none",
-							title: "登陆失败"
+							title: "登陆失败",
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 					}
 				});
 			},
@@ -180,18 +174,12 @@
 							icon: 'none',
 							title: "获取验证码成功"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 					}, 1000);
 				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
-					setTimeout(() => {
-						uni.hideToast();
-					}, 1000);
 				}
 			},
 
@@ -203,9 +191,6 @@
 							icon: "none",
 							title: "请输入六位数的验证码"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 					} else {
 						// 从服务器验证用户是否存在，存在则登录
 						this.login();
@@ -215,9 +200,6 @@
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
-					setTimeout(() => {
-						uni.hideToast();
-					}, 1000);
 				}
 			},
 

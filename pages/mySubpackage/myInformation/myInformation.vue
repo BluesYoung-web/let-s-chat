@@ -124,9 +124,6 @@
 							title:"用户取消或加载超时",
 							icon:"none"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 					},
 				});
 			},
@@ -168,9 +165,6 @@
 							});
 						}
 						this.showPopup = false;
-						setTimeout(() => {
-							uni.hideToast();
-						}, 1000);
 					}
 				});
 			},

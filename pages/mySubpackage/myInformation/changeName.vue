@@ -49,9 +49,6 @@
 				});
  				// 跳转回编辑资料的页面
 				uni.navigateBack();
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			}
 		},
 		computed:{

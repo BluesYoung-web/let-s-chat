@@ -38,6 +38,9 @@
 						title: '加载中',
 						mask:true,
 					});
+					setTimeout(() => {
+						uni.hideLoading();
+					}, 1000);
 					this.user.tel = this.newPhone;
 					data.user.set_info({
 						data: this.user,
@@ -57,7 +60,7 @@
 							uni.showToast({
 								icon: 'none',
 								title: '手机号绑定失败,该手机号已经被绑定！',
-							})
+							});
 						}
 					});
 				} else{
@@ -66,10 +69,7 @@
 						title: '请输入有效手机号！',
 					});
 				}
-				setTimeout(() => {
-					uni.hideLoading();
-					uni.hideToast();
-				}, 1000);
+				
 			}
 		},
 	}

@@ -119,9 +119,6 @@
 						});
 					}
 				});
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 				this.showclearChatLogPopup = false;
 			},
 			
@@ -141,13 +138,10 @@
 					},
 					fail: (res) => {
 						uni.showToast({
-							title:"网络延迟"
-						})
+							title:"退出登录失败"
+						});
 					}
 				});
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			},
 			
 			// ------------------底部弹出层有关的函数-----------------------

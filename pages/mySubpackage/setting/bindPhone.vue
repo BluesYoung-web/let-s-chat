@@ -41,9 +41,6 @@
 							uni.navigateTo({
 								url:`bindSuccessful?phone=${this.user.tel}`
 							});
-							setTimeout(() => {
-								uni.hideToast();
-							}, 1000);
 						}
 					});
 				}else{
@@ -51,9 +48,6 @@
 						icon: 'none',
 						title: '请输入有效手机号！',
 					});
-					setTimeout(() => {
-						uni.hideToast();
-					}, 1000);
 				}
 			}
 		},

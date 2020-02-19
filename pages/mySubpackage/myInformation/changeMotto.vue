@@ -39,22 +39,19 @@
 						console.log(res);
 						uni.showToast({
 							icon:"none",
-							title:"修改成功！"
+							title:"修改成功！",
 						});
 					},
 					fail: (code, err) => {
 						console.log(code, err);
 						uni.showToast({
 							icon:"none",
-							title:"修改失败！"
+							title:"修改失败！",
 						});
 					}
 				});
 				// 跳转回编辑资料的页面
 				uni.navigateBack();
-				setTimeout(() => {
-					uni.hideToast();
-				}, 1000);
 			}
 		},
 		computed:{

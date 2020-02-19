@@ -107,9 +107,6 @@
 							uni.showToast({
 								title:"清除成功"
 							});
-							setTimeout(() => {
-								uni.hideToast();
-							}, 1000);
 							// 跳转到消息页
 							uni.reLaunch({
 								url: "/pages/tabBar/message/message"
@@ -122,6 +119,9 @@
 						});
 					}
 				});
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 				this.showclearChatLogPopup = false;
 			},
 			
@@ -144,8 +144,10 @@
 							title:"网络延迟"
 						})
 					}
-					
-				})
+				});
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 			},
 			
 			// ------------------底部弹出层有关的函数-----------------------

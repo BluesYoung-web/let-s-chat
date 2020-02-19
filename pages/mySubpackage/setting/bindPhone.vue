@@ -41,6 +41,7 @@
 		onNavigationBarButtonTap(e){
 			this.phoneChange();
 		},
+		/*
 		methods: {
 			// 存储用户信息的方法
 			...mapMutations(['setInfo']),
@@ -85,6 +86,7 @@
 				});
 			}
 		},
+		*/
 		computed:{
 			...mapState(['userInfo','serverUrl'])
 		}

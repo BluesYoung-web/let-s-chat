@@ -93,6 +93,7 @@
 				});
 			}
 		},
+		/*
 		methods: {
 			//弹出删除提示框
 			deleteActive(item){
@@ -174,6 +175,7 @@
 				});
 			}
 		}
+		*/
 	}
 </script>
 

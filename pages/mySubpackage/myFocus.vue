@@ -55,6 +55,7 @@
 		computed:{
 			...mapState(['followMe','myFriends'])
 		},
+		/*
 		methods: {
 			...mapMutations(['addFriend','deleteFriend']),
 			toInfo(item){
@@ -116,6 +117,7 @@
 				}
 			}
 		},
+		*/
 	}
 </script>
 

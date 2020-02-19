@@ -125,15 +125,15 @@
 					});
 					setTimeout(() => {
 						uni.hideToast();
-					}, 500);
+					}, 1000);
 				}
 			});
 		}
 	}
 </script>
 
-<style>
+<style lang="less">
 	/*每个页面公共css */
-	@import url("common/common.css");
+	@import '~@/common/common.less';
 	
 </style>

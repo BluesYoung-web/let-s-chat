@@ -141,6 +141,7 @@
 		computed:{
 			...mapState(['tempInfo','myFriends','serverUrl','userInfo'])
 		},
+		/*
 		methods: {
 			...mapMutations(['addFriend','deleteFriend','setInfoTemp','addLikes','addFocus']),
 			//跳转到消息界面
@@ -220,6 +221,7 @@
 				});
 			},
 		}
+		*/
 	}
 </script>
 

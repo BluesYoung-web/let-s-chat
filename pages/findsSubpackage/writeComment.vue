@@ -37,6 +37,7 @@
 				content:'',//输入框的内容
 			}
 		},
+		/*
 		methods: {
 			//返回评论列表界面
 			back(){
@@ -63,6 +64,7 @@
 				
 			},
 		},
+		*/
 		computed:{
 			canPutUp:function(){
 				return this.content.length>0 ? false : true ;

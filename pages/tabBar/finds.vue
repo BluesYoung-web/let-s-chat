@@ -188,6 +188,7 @@
 			//调用回到顶部方法
 			this.goTop();
 		},
+		/*
 		methods: {
 			...mapMutations(['addFinds']),
 			//前往好友资料页面
@@ -269,7 +270,7 @@
 						uni.showToast({
 							icon: "none",
 							title: "取消或设备请求超时"
-						})
+						});
 					}
 				});
 			},
@@ -383,7 +384,7 @@
 				});
 			},
 		},
-		
+		*/
 	}
 </script>
 

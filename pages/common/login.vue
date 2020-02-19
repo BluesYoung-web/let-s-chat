@@ -97,9 +97,6 @@
 						uni.reLaunch({
 							url: "/pages/tabBar/message"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 500);
 					},
 					fail: (code, err) => {
 						console.log(code, err);
@@ -107,11 +104,11 @@
 							icon: "none",
 							title: "登陆失败"
 						});
-						setTimeout(() => {
-							uni.hideToast();
-						}, 500);
 					}
 				});
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 			},
 			// 微信登录
 			wxlogin() {
@@ -173,6 +170,9 @@
 						title: '请输入有效手机号！',
 					});
 				}
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 			},
 
 			// 登陆验证
@@ -193,6 +193,9 @@
 						title: '请输入有效手机号！',
 					});
 				}
+				setTimeout(() => {
+					uni.hideToast();
+				}, 1000);
 			},
 
 			//---------------------------弹出层------------------------
@@ -230,15 +233,15 @@
 	@import "~@/common/common.less";
 	/* 注册view */
 	.register {
-		width: 6*@u100;
-		height: @u100;
+		width: 600upx;
+		height: 100upx;
 	}
 	/* 底部协议提示 */
 	.bottomTip {
-		bottom: 0.6*@u100;
+		bottom: 60upx;
 	}
 	/* 微信登录的绿色 */
 	.wx-green{
-		color: @colorWx;
+		color: #1BB723;
 	}
 </style>

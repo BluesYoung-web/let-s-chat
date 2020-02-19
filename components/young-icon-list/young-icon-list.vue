@@ -39,9 +39,9 @@
 	}
 </script>
 
-<style>
-	/* 引入公共样式 */
-	@import url("./common.css");
+<style lang="less">
+    /* 引入公共样式 */
+    @import '~@/common/common.less';
 	.rightIcon{
 		height: 30upx;
 		width: 30upx;

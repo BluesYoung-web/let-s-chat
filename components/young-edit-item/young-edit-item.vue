@@ -64,8 +64,9 @@
 	}
 </script>
 
-<style>
-	@import url("./common.css");
+<style lang="less">
+    /* 引入公共样式 */
+    @import '~@/common/common.less';
 	.avatarItem{
 		width: 750upx;
 		display: flex;

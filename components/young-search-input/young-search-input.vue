@@ -53,18 +53,18 @@
 	}
 </script>
 
-<style>
-	/* 引入公共样式 */
-	@import url("./common.css");
+<style lang="less">
+    /* 引入公共样式 */
+    @import '~@/common/common.less';
 	/* 引入字体图标 */
 	@font-face {
 	  font-family: 'iconfont';
-	  src: url('/static/ttf/iconfont.eot');
-	  src: url('/static/ttf/iconfont.eot?#iefix') format('embedded-opentype'),
-	      url('/static/ttf/iconfont.woff2') format('woff2'),
-	      url('/static/ttf/iconfont.woff') format('woff'),
-	      url('/static/ttf/iconfont.ttf') format('truetype'),
-	      url('/static/ttf/iconfont.svg#iconfont') format('svg');
+	  src: url('/static/ttf/input/iconfont.eot');
+	  src: url('/static/ttf/input/iconfont.eot?#iefix') format('embedded-opentype'),
+	      url('/static/ttf/input/iconfont.woff2') format('woff2'),
+	      url('/static/ttf/input/iconfont.woff') format('woff'),
+	      url('/static/ttf/input/iconfont.ttf') format('truetype'),
+	      url('/static/ttf/input/iconfont.svg#iconfont') format('svg');
 	}
 	.iconfont {
 	  font-family: "iconfont" !important;

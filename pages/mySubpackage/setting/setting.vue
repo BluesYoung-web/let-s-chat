@@ -134,7 +134,7 @@
 						if(res.confirm == true){
 							data.user.login_out();
 							uni.reLaunch({
-								url: "../../common/login/login"
+								url: "/pages/common/login"
 							});
 						};
 						

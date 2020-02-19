@@ -11,7 +11,6 @@
 
 <script>
 	import data from '@/data.js';
-	// 常用工具函数抽离
 	import tools from '@/core/tools.js';
 	export default {
 		data() {

@@ -197,80 +197,80 @@
 	}
 
 	.top-contacts {
-		height: 2.4*@u100;
-		padding-left: 0.3*@u100;
-		padding-top: 0.2*@u100;
+		height: 240upx;
+		padding-left: 30upx;
+		padding-top: 20upx;
 		background-color: @colorF;
 	}
 
 	.top-contacts-text {
-		font-size: 0.2*@u100;
+		font-size: 20upx;
 		color: @codeBorder;
-		height: 0.5*@u100;
+		height: 50upx;
 	}
 
 	.top-contacts-head image {
 		float: left;
-		height: 1.5*@u100;
-		width: 1.5*@u100;
-		margin-right: 0.25*@u100;
+		height: 150upx;
+		width: 150upx;
+		margin-right: 25upx;
 	}
 
 	.nameIndex {
-		padding-left: 0.3*@u100;
+		padding-left: 30upx;
 	}
 
 	.friends-lists {
-		width: 7.5*@u100;
+		width: 750upx;
 	}
 
 	.friends-lists-text {
-		font-size: 0.2*@u100;
+		font-size: 20upx;
 		color: @codeBorder;
 	}
 
 	.friends-row {
-		padding-left: 0.3*@u100;
+		padding-left: 30upx;
 		display: flex;
-		width: 7.5*@u100;
-		height: 1.2*@u100;
+		width: 750upx;
+		height: 120upx;
 		border-bottom: 1px solid @bgcolor;
 	}
 
 	.friends-head {
-		width: 0.9*@u100;
-		height: 0.9*@u100;
+		width: 90upx;
+		height: 90upx;
 	}
 
 	.friends-head image {
-		width: 0.9*@u100;
-		height: 0.9*@u100;
+		width: 90upx;
+		height: 90upx;
 		border: 1px solid @codeBorder;
-		border-radius: 0.5*@p100;
+		border-radius: 50%;
 	}
 
 	.friends-username {
 		display: inline-block;
-		height: @u100;
-		line-height: @u100;
-		font-size: 0.25*@u100;
+		height: 100upx;
+		line-height: 100upx;
+		font-size: 25upx;
 		font-weight: bold;
-		padding-left: 0.2*@u100;
+		padding-left: 20upx;
 	}
 
 	.username-search {
 		position: fixed;
 		z-index: 1;
-		// height: @p100;
+		// height: 100%;
 		right: 0;
-		bottom: 0.5*@u100;
+		bottom: 50upx;
 	}
 
 	.word-search {
-		width: 0.5*@u100;
-		height: 0.36*@u100;
-		line-height: 0.32*@u100;
-		font-size: 0.24*@u100;
+		width: 50upx;
+		height: 36upx;
+		line-height: 32upx;
+		font-size: 24upx;
 		text-align: center;
 	}
 </style>

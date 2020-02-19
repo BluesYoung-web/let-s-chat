@@ -230,9 +230,9 @@
 	@import "~@/common/common.less";
 	
 	.addFrends button{
-		width: 6.5*@u100 !important;
-		height: 0.7*@u100;
-		line-height: 0.7*@u100;
-		font-size: 0.3*@u100;
+		width: 650upx !important;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: 30upx;
 	}
 </style>

@@ -40,8 +40,8 @@
 						mask:true,
 					});
 					this.user.tel = this.newPhone;
-					data.user.setInfo({
-						data: user,
+					data.user.set_info({
+						data: this.user,
 						extra: 'changePhone',
 						success: (res) => {
 							console.log(res);

@@ -532,36 +532,36 @@
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
 	.conversationContent{
-		width: @p100;
+		width: 100%;
 	}
 	.cancelVoice{
-		width: 2.5*@u100;
-		height: 2.5*@u100;
+		width: 250upx;
+		height: 250upx;
 		color: @colorF;
-		font-size: 0.25*@u100;
+		font-size: 25upx;
 		background-color: @bgcolor;
 		position: fixed;
-		bottom: 5*@u100;
-		left: 2.5*@u100;
+		bottom: 200upx;
+		left: 250upx;
 		z-index: 5;
 	}
 	.cancelVoice image{
-		width: 2*@u100;
-		height: 2*@u100;
+		width: 200upx;
+		height: 200upx;
 	}
 	.facesHead{
-		width: @p100;
-		height: 0.8*@u100;
+		width: 1005;
+		height: 80upx;
 		background-color: @colorF;
 	}
 	.type{
-		width: 0.8*@u100;
-		height: 0.8*@u100;
+		width: 80upx;
+		height: 80upx;
 		float: left;
 	}
 	.type image{
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 		border-radius: 50%;
 	}
 	.bg{
@@ -571,144 +571,144 @@
 	// 	background-color: @codeBorder;
 	// }
 	.backspace{
-		width: 0.8*@u100;
-		height: 0.8*@u100;
+		width: 80upx;
+		height: 80upx;
 		float: right;
 	}
 	.backspace image{
-		width: 0.6*@u100;
-		height: 0.6*@u100;
+		width: 60upx;
+		height: 60upx;
 	}
 	.facesContent{
-		height: 5.2*@u100;
+		height: 520upx;
 	}
 	.facesBox{
-		width: @p100;
-		height: 6*@u100; //后期与键盘高度统一
+		width: 100%;
+		height: 600upx; //后期与键盘高度统一
 		background-color: @bgcolor;
 		position: fixed;
 		bottom: 0;
 	}
 	.face{
-		width: 0.83*@u100;
-		height: @u100;
+		width: 83upx;
+		height: 100upx;
 		text-align: center;
-		line-height: @u100;
+		line-height: 100upx;
 		display: inline-block;
 	}
 	.messageTime{
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 0.6*@u100;
-		width: @p100;
+		height: 60upx;
+		width: 100%;
 	}
 	.messageTime text{
-		font-size: 0.2*@u100;
+		font-size: 20upx;
 		color: @msgTimeColor;
 	}
 	.message{
-		width: @p100;
+		width: 100%;
 		display: flex;
-		border-bottom: 0.2*@u100 solid @colorF;
+		border-bottom: 20upx solid @colorF;
 	}
 	.friendMessage{
 		justify-content: flex-start;
-		padding-right: 2*@u100;
+		padding-right: 200upx;
 	}
 	.myMessage{
 		justify-content: flex-end;
-		padding-left: 2*@u100;
+		padding-left: 200upx;
 	}
 	.messageContent{
 		background-color: @bgcolor;
 		display: flex;
-		border-radius: 0.1*@u100;
+		border-radius: 10upx;
 		/* max-width: 500upx; */
 		height: auto;
 	}
 	.messageContent text{
-		font-size: 0.25*@u100;
-		margin: 0.2*@u100 0.1*@u100;
+		font-size: 25upx;
+		margin: 20upx 10upx;
 		
 	}
 	.messageContent image{
-		margin-right: 0.1*@u100;
+		margin-right: 10upx;
 	}
 	.messageHead{
 		display: flex;
 		justify-content: center;
-		padding: 0 0.2*@u100;
+		padding: 0 20upx;
 	}
 	.messageHead image{
-		width: 0.8*@u100;
-		height: 0.8*@u100;
+		width: 80upx;
+		height: 80upx;
 	}
 	.conversationBottom{
 		position: fixed;
 		/* z-index: 1; */
-		width: @p100;
+		width: 100%;
 		/* height:100upx; */
 		display: flex;
 		align-items: flex-end;
 		background-color: @codeBorder;
-		padding-top: 0.1*@u100;
-		padding-bottom: 0.2*@u100;
+		padding-top: 10upx;
+		padding-bottom: 20upx;
 	}
 	.voice{
-		width: 1.2*@u100;
+		width: 120upx;
 		display: flex;
 		justify-content: center;
 	}
 	.voice image{
-		width: 0.6*@u100;
-		height: 0.6*@u100;
+		width: 60upx;
+		height: 60upx;
 	}
 	.keyboardInput{
 		background-color: @colorF;
-		border: 0.01*@u100 solid @codeBorder;
-		width: 4*@u100;
+		border: 1upx solid @codeBorder;
+		width: 400upx;
 		/* height: auto; */
-		border-radius: 0.15*@u100;
+		border-radius: 15upx;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 	.keyboardInput textarea{
-		width: 4*@u100;
-		min-height: 0.4*@u100;
-		max-height: 1.5*@u100;
-		font-size: 0.3*@u100;
-		padding-top: 0.15*@u100;
-		padding-bottom: 0.15*@u100;
+		width: 400upx;
+		min-height: 40upx;
+		max-height: 150upx;
+		font-size: 30upx;
+		padding-top: 15upx;
+		padding-bottom: 15upx;
 		/* line-height: 65upx; */
 	}
 	.keyboardInput button{
-		width: 4*@u100;
-		height: 0.65*@u100;
-		line-height: 0.65*@u100;
+		width: 400upx;
+		height: 65upx;
+		line-height: 65upx;
 	}
 	.faces{
-		width: 1.1*@u100;
+		width: 110upx;
 		display: flex;
 		justify-content: center;
 	}
 	.faces image{
-		width: 0.7*@u100;
-		height: 0.7*@u100;
+		width: 70upx;
+		height: 70upx;
 	}
 	.messageSend{
-		height: 0.7*@u100;
-		width: 0.7*@u100;
+		height: 70upx;
+		width: 70upx;
 		border: 1upx solid @codeBorder;
-		border-radius: 0.5*@p100;
+		border-radius: 50%;
 		background-color: @sendMsgBtn;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 	.messageSend image{		
-		height: 0.35*@u100;
-		width: 0.35*@u100;
+		height: 35upx;
+		width: 35upx;
 	}
 </style>

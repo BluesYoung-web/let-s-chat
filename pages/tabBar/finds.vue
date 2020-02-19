@@ -392,18 +392,18 @@
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
 	.content {
-		width: @p100;
+		width: 100%;
 	}
 
 	.finds-body {
-		width: @p100;
+		width: 100%;
 		display: flex;
 		flex-direction: column;
-		border-bottom: 0.2*@u100 solid @bgcolor;
+		border-bottom: 20upx solid @bgcolor;
 	}
 
 	.dynamic-information {
-		height: 1.2*@u100;
+		height: 120upx;
 	}
 
 	.friends-head {
@@ -411,54 +411,54 @@
 		justify-content: center;
 		align-items: center;
 		float: left;
-		width: 1.5*@u100;
-		height: @p100;
+		width: 150upx;
+		height: 100%;
 	}
 
 	.friends-head image {
-		width: 0.9*@u100;
-		height: 0.9*@u100;
-		border-radius: 0.5*@p100;
+		width: 90upx;
+		height: 90upx;
+		border-radius: 50%;
 	}
 
 	.friends-information {}
 
 	.friends-username {
-		height: 0.55*@u100;
+		height: 55upx;
 		display: flex;
 		align-items: flex-end;
-		font-size: 0.3*@u100;
+		font-size: 30upx;
 		font-weight: bold;
 	}
 
 	.dynamic-time {
-		height: 0.65*@u100;
+		height: 65upx;
 		display: flex;
 	}
 
 	.dynamic-time image {
-		width: 0.26*@u100;
-		height: 0.26*@u100;
+		width: 26upx;
+		height: 26upx;
 	}
 
 	.dynamic-time span {
-		font-size: 0.24*@u100;
+		font-size: 24upx;
 
 	}
 
 	.dynamic-img {
-		width: @p100;
-		height: 5*@u100;
+		width: 100%;
+		height: 50upx;
 	}
 
 	.dynamic-img image {
-		height: @p100;
-		width: @p100;
+		height: 100%;
+		width: 100%;
 	}
 
 	.likes-comments {
-		height: @u100;
-		width: @p100;
+		height: 100upx;
+		width: 100%;
 		display: flex;
 		justify-content: space-between;
 	}
@@ -467,32 +467,32 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 0.5*@p100;
-		height: @p100;
+		width: 50%;
+		height: 100%;
 	}
 
 	.likes image {
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 	}
 
 	.comments {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 0.5*@p100;
-		height: @p100;
+		width: 50%;
+		height: 100%;
 	}
 
 	.comments image {
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 	}
 
 	/* 发布 取消按钮 */
 	.btn {
-		font-size: 0.32*@u100;
-		width: 0.5*@p100;
+		font-size: 32upx;
+		width: 50%;
 	}
 
 	.btn::after {
@@ -500,6 +500,7 @@
 	}
 	
 	.loading{
-		text-align:center; line-height:80px;
+		text-align:center; 
+		line-height:80px;
 	}
 </style>

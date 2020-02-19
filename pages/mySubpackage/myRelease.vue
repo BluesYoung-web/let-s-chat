@@ -183,21 +183,21 @@
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
 	.release{
-		width: @p100;
+		width: 100%;
 		border-bottom: 10px solid @colorD;
-		padding: 0.2*@u100 0;
+		padding: 20upx 0;
 	}
 	.releaseTime{
-		width: @p100;
-		height: 0.7*@u100;
-		font-size: 0.3*@u100;
+		width: 100%;
+		height: 70upx;
+		font-size: 30upx;
 	}
 	.myRelease image{
-		width: @p100;
+		width: 100%;
 	}
 	.likes-comments {
-		height: 0.7*@u100;
-		width: @p100;
+		height: 70upx;
+		width: 100%;
 		display: flex;
 		justify-content: space-between;
 	}
@@ -206,38 +206,38 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 0.33*@p100;
-		height: @p100;
+		width: 33%;
+		height: 100%;
 	}
 
 	.likes image {
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 	}
 
 	.comments {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 0.33*@p100;
-		height: @p100;
+		width: 33%;
+		height: 100%;
 	}
 
 	.comments image {
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 	}
 	.delete {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 0.33*@p100;
-		height: @p100;
+		width: 33%;
+		height: 100%;
 	}
 	
 	.delete image {
 		padding-top: 5upx;
-		width: 0.45*@u100;
-		height: 0.45*@u100;
+		width: 45upx;
+		height: 45upx;
 	}
 </style>

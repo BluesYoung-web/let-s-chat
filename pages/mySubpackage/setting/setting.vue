@@ -184,25 +184,25 @@
 		background-color: @bgcolor;
 	}
 	.changePhoneItem, .aboutItem, .clearItem, .signOutItem{
-		height: @u100;
+		height: 100upx;
 		background-color: @colorF;
-		margin-bottom: 0.2*@u100;
+		margin-bottom: 20upx;
 	}
 	
 	/* 右图标 */
 	.rightIcon{
-		width: 0.3*@u100;
-		height: 0.3*@u100;
-		margin-left: 0.3*@u100;
+		width: 30upx;
+		height: 30upx;
+		margin-left: 30upx;
 	}
 	
 	
 	/* 弹出层样式集合 */
 	.item{
 		background-color: @colorF;
-		width: @p100;
-		height: @u100;
-		line-height: @u100;
+		width: 100%;
+		height: 100upx;
+		line-height: 100upx;
 		display: flex;
 		justify-content: center;
 	}

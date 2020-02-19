@@ -54,8 +54,8 @@
 	@import "~@/common/common.less";
 	.finishBtn{
 		border: 2px solid @codeBorder;
-		border-radius: 0.08*@u100;
-		width: 3.2*@u100;
+		border-radius: 8upx;
+		width: 320upx;
 		color: @codeBorder;
 	}
 </style>

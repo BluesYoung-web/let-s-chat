@@ -170,58 +170,58 @@
 		position: fixed;
 		z-index: 1;
 		top: 0;
-		height: 0.7*@u100;
-		width: @p100;
-		font-size: 0.3*@u100;
+		height: 70upx;
+		width: 100%;
+		font-size: 30upx;
 		color: @codeBorder;
-		padding: 0 0.25*@u100;
+		padding: 0 25upx;
 		display: flex;
 		justify-content: space-between;
 	}
 	.commentsTop .left{
-		height: @p100;
+		height: 100%;
 		display: flex;
 		align-items: flex-end;
 	}
 	.commentsTop .right{
-		height: @p100;
+		height: 100%;
 		display: flex;
 		align-items: flex-end;
 	}
 	.contentRow{
-		width: @p100;
-		margin-top: 0.35*@u100;
+		width: 100%;
+		margin-top: 35upx;
 	}
 	.userHead{
-		width: @u100;
-		height: @u100;
+		width: 100upx;
+		height: 100upx;
 	}
 	.userHead image{
-		height: 0.65*@u100;
-		width: 0.65*@u100;
-		border: 0.01*@u100 solid @codeBorder;
-		border-radius: 0.5*@p100;
+		height: 65upx;
+		width: 65upx;
+		border: 1upx solid @codeBorder;
+		border-radius: 50%;
 	}
 	.commentsContent{
 		position: absolute;
-		width: @p100;
-		height: 10.1*@u100;
-		top: 0.7*@u100;
+		width: 100%;
+		height: 1010upx;
+		top: 70upx;
 	}
 	.commentContent{
-		padding: 0 0.1*@u100;
+		padding: 0 10upx;
 	} 
 	.userName{
-		height: 0.5*@u100;
+		height: 50upx;
 	}
 	.comment{
-		width: 6*@u100;
-		padding: 0.2*@u100;
+		width: 600upx;
+		padding: 20upx;
 		background-color: @bgcolor;
-		font-size: 0.25*@u100;
+		font-size: 25upx;
 	}
 	.userName text{
-		font-size: 0.25*@u100;
+		font-size: 25upx;
 		color: @codeBorder;
 	}
 </style>

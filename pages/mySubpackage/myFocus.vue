@@ -128,36 +128,36 @@
 		
 	}
 	.focusRow{
-		width: @p100;
-		height: 2*@u100;
+		width: 100%;
+		height: 200upx;
 		border-bottom: 1px solid @colorD;
 	}
 	.focusHead{
-		width: 3.6*@u100;
-		height: 2*@u100;
+		width: 360upx;
+		height: 200upx;
 	}
 	.focusHead image{
-		width: @u100;
-		height: @u100;
+		width: 100upx;
+		height: 100upx;
 		/* border: 1px solid #344955; */
-		border-radius: 0.5*@p100;
-		margin-left: 0.5*@u100;
+		border-radius: 50%;
+		margin-left: 50upx;
 	}
 	.focusHead text{
-		margin-right: 0.5*@u100;
+		margin-right: 50upx;
 	}
 	.focusUsername{
 		display: inline-block;
-		height: 2*@u100;
-		line-height: 2*@u100;
-		font-size: 0.3*@u100;
+		height: 200upx;
+		line-height: 200upx;
+		font-size: 30upx;
 		font-weight: bold;
 	}
 	.addFocus{
-		width: 1.4*@u100;
-		margin-right: 0.7*@u100;
+		width: 140upx;
+		margin-right: 70upx;
 		/* border: 1px solid #344955; */
-		border-radius: 0.2*@u100;
+		border-radius: 20upx;
 		background-color: @codeBorder;
 		color: white;
 	}

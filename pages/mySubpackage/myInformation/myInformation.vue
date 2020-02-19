@@ -188,56 +188,56 @@
 	@import "~@/common/common.less";
 	/* 设置页面背景色 */
 	page{
-		width: @p100;
-		height: @p100;
+		width: 100%;
+		height: 1005;
 		background-color: @bgcolor;
 	}
 	.avatarItem,.nameItem, .accountItem,.mottoItem{
-		width: @p100;
+		width: 100%;
 		display: flex;
 		align-items: center;
 		color: @codeBorder;
-		padding-left: 0.2*@u100;
+		padding-left: 20upx;
 		background-color: white;
 		justify-content: space-between;
-		padding-right: 0.3*@u100;
+		padding-right: 30upx;
 	}
 	/* 头像项 */
 	.avatarItem{
-		height: 2*@u100;
+		height: 200upx;
 		
 	}
 	.avatar{
-		width: 1.5*@u100;
-		height: 1.5*@u100;
-		line-height: 1.5*@u100;
-		border-radius: 0.08*@u100;
+		width: 150upx;
+		height: 150upx;
+		line-height: 150upx;
+		border-radius: 8upx;
 	}
 	/* 昵称、账号、个性签名项 */
 	.nameItem, .accountItem,.mottoItem{
-		height: @u100;
-		margin-top: 0.2*@u100;
+		height: 100upx;
+		margin-top: 20upx;
 	}
 	
 	/* 右图标 */
 	.rightIcon{
-		width: 0.3*@u100;
-		height: 0.3*@u100;
-		margin-left: 0.3*@u100;
+		width: 30upx;
+		height: 30upx;
+		margin-left: 30upx;
 	}
 	
 	
 	/* 更换头像的弹出框 */
 	.takePhoto, .photoAlbum, .cancel{
 		background-color: @colorF;
-		width: @p100;
-		height: @u100;
-		line-height: @u100;
+		width: 100%;
+		height: 100upx;
+		line-height: 100upx;
 		display: flex;
 		justify-content: center;
 		color:@codeBorder;
 	}
 	.cancel{
-		margin-top: 0.2*@u100;
+		margin-top: 20upx;
 	}
 </style>

@@ -127,39 +127,39 @@
 	@import "~@/common/common.less";
 	@colorButton:@codeBorder;
 	.search{
-		height: 0.6*@u100;
+		height: 60upx;
 		background-color: @colorF;
-		margin-left: 0.5*@u100;
+		margin-left: 50upx;
 	}
 	.search image{
-		margin-left: 0.2*@u100;
-		margin-right: 0.2*@u100;
-		width: 0.3*@u100;
-		height: 0.3*@u100;
+		margin-left: 20upx;
+		margin-right: 20upx;
+		width: 30upx;
+		height: 30upx;
 	}
 	.search input{
-		height: 0.5*@u100;
-		width: 4.5*@u100;
-		font-size: 0.3*@u100;
+		height: 50upx;
+		width: 450upx;
+		font-size: 30upx;
 		color: @colorButton;
 		background: @colorF;
 	}
 	.navBar text{
-		margin-left: 0.3*@u100;
-		font-size: 0.35*@u100;
+		margin-left: 30upx;
+		font-size: 35upx;
 		background-color: @colorButton;
 		color: @colorF;
 	}
 	.inputActive{
-		margin-top: @u100;
+		margin-top: 100upx;
 		background-color: @colorE;
 	}
 	.img{
-		width: @u100;
-		height: @u100;
+		width: 100upx;
+		height: 100upx;
 	}
 	.img image{
-		width: 0.5*@u100;
-		height: 0.5*@u100;
+		width: 50upx;
+		height: 50upx;
 	}
 </style>

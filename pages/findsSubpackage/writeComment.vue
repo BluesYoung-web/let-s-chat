@@ -77,56 +77,58 @@
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
 	.navBarCancel{
-		width: @p33;
+		width: 33%;
 		color: @colorF;
-		padding-left: 0.1*@u100;
+		padding-left: 10upx;
 	}
 	.navBarTitle{
-		width: @p33;
+		width: 33%;
 		color: @colorF;
-		font-size: 0.4*@u100;
+		font-size: 40upx;
 	}
 	.navBarCancel image{
-		height: 0.4*@u100;
-		width: 0.4*@u100;
+		height: 40upx;
+		width: 40upx;
 	}
 	.navBarBtn{
-		width: @p33;
-		padding-right: 0.1*@u100;
+		width: 33%;
+		padding-right: 10upx;
 	}
-	button::after{ border: none;}
+	button::after{ 
+		border: none;
+	}
 	.navBarBtn button[disabled]{
 		background-color: @disableBtn;
-		border: 0.01*@u100 solid @borderColor;
-		height: 0.6*@u100;
-		width: @u100;
-		line-height: 0.6*@u100;
+		border: 10upx solid @borderColor;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
 		border-radius: 0;
 		color: @borderColor;
 	}
 	.navBarBtn button{
 		background-color: @codeBorder;
-		border: 0.01*@u100 solid @borderColor;
-		height: 0.6*@u100;
-		width: @u100;
-		line-height: 0.6*@u100;
+		border: 10upx solid @borderColor;
+		height: 60upx;
+		width: 100upx;
+		line-height: 60upx;
 		border-radius: 0;
 		color: @borderColor;
 	}
 	.writeComment{
-		margin-top: @u100;
+		margin-top: 100upx;
 	}
 	textarea{
-		height: 3.5*@u100;	
-		font-size: 0.3*@u100;	
-		padding-top: 0.35*@u100;
-		padding-left: 0.25*@u100;
+		height: 350upx;	
+		font-size: 30upx;	
+		padding-top: 35upx;
+		padding-left: 25upx;
 	}
 	
 	/* 字数限制的样式 */
 	.countLimit{
-		bottom: 0.2*@u100;
-		right: 0.3*@u100;
+		bottom: 20upx;
+		right: 30upx;
 	}
 </style>
 

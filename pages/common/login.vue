@@ -37,7 +37,7 @@
 		<uni-popup :show="popup" type="center" @change="popupChange">
 			<view class="relative" style=" height: 1200upx;">
 				<scroll-view scroll-y="true" style="height: 90%;">
-					<image style="height: 3000upx;" src="/static/img/agreement.jpg" mode="scaleToFill"></image>
+					<image style="height: 1500upx;" src="/static/img/agreement.jpg" mode="scaleToFill"></image>
 				</scroll-view>
 				<view class="text-center mg-tp20">
 					<uni-icons type="clear" color="#fff" size="30" @click="closePopup()" />

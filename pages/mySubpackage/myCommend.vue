@@ -64,30 +64,30 @@
 	}
 
 	.likesSum {
-		width: @p100;
+		width: 100%;
 	}
 
 	.time {
-		width: @p100;
-		height: 0.7*@u100;
-		font-size: 0.3*@u100;
+		width: 100%;
+		height: 70upx;
+		font-size: 30upx;
 	}
 
 	.likesList {
-		padding: 0.1*@u100;
+		padding: 10upx;
 		background-color: @colorF;
-		height: 1.5*@u100;
+		height: 150upx;
 	}
 
 	.likesList image {
 		display: inline-block;
-		margin: 0.1*@u100;
-		width: @u100;
-		height: @u100;
+		margin: 10upx;
+		width: 100upx;
+		height: 100upx;
 		border: 1px solid @codeBorder;
-		border-radius: 0.5*@p100;
+		border-radius: 50%;
 	}
 	.friend_name {
-		width: 4*@u100;
+		width: 400upx;
 	}
 </style>

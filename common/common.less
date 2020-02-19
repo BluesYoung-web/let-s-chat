@@ -1,6 +1,3 @@
-@u100:100upx;
-@p33:33%;
-@p100:100%;
 @bdcolor:#2C405A;
 @bgcolor:#edf0f2;
 @msgTimeColor:#4d6774;
@@ -20,41 +17,41 @@
 /* 个人信息与好友信息 */
 /* 首部头像下的背景颜色 */
 	.topBg{
-		height: 3.5*@u100;
+		height: 350upx;
 		top: 0;
 		z-index: -1;
 	}
 	.settingIcon{
-		margin-top: -@u100;
+		margin-top: -100upx;
 	}
 	/* 头像 */
 	.avatar{
-		width: 5*@u100;
-		height: 5*@u100;
-		box-shadow:0 0.02*@u100 0.5*@u100 0 @codeBorder;
+		width: 500upx;
+		height: 500upx;
+		box-shadow:0 2upx 50upx 0 @codeBorder;
 	}
 	.avatar image{
-		width: 5*@u100;
-		height: 5*@u100;
+		width: 500upx;
+		height: 500upx;
 	}
 	/* 编辑资料按钮 */
 	.editInfoBtn,.editInformation{
 		border: 1px solid @codeBorder;
-		border-radius: 0.08*@u100;
-		width: 3.2*@u100;
+		border-radius: 8upx;
+		width: 320upx;
 		color: @codeBorder;
 	}
 	/* 赞 关注 发表 */
 	.myCommend,.myFocus,.myRelease{
-		width: @p33;
-		height: 2*@u100;
+		width: 33%;
+		height: 200upx;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
 	.name, .motto{
-		width: 4*@u100;
+		width: 400upx;
 		text-align: center;
 	}
 //***********************************************************
@@ -71,91 +68,90 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 1.1*@u100;
+		height: 110upx;
 	}
 	.friendsInfoBottom button,.commentsBottom button{
-		width: 3.25*@u100;
-		height: 0.7*@u100;
-		line-height: 0.7*@u100;
-		font-size: 0.3*@u100;
+		width: 325upx;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: 30upx;
 	}
 //***********************************************************
 /* 添加好友，写评论，我的发布 */
 	.popup{
-		width: 5*@u100;
-		height: 2.3*@u100;
+		width: 500upx;
+		height: 230upx;
 		background-color: @colorF;
 		border-radius: 5px;
 		text-align: center;
 	}
 	.popup text{
-		height: @u100;
-		line-height: @u100;		
+		height: 100upx;
+		line-height: 100upx;		
 	}
 	.popup button{
-		height: @u100;
+		height: 100upx;
 		background: @codeBorder;
 	}
 //***********************************************************
 /* 登录页与注册页 */
 	.logo {
-		padding-top: @u100;
-		padding-bottom: 0.5*@u100;
+		padding-top: 100upx;
+		padding-bottom: 50upx;
 	}
 	
 	.logo image {
-		width: 2*@u100;
-		height: 2*@u100;
+		width: 200upx;
+		height: 200upx;
 	}
-	
-	.loginContentView {}
-	
 	/* 登录整体内容的view */
+	.loginContentView{
+		
+	}
 	.loginContentView input {
-		height: @u100;
+		height: 100upx;
 		border: @bdcolor 1px solid;
 		border-radius: 6px;
-		padding-left: 0.2*@u100;
-		padding-left: 0.6*@u100;
+		padding-left: 60upx;
 		background-repeat: no-repeat;
-		background-size: 0.4*@u100 0.4*@u100;
+		background-size: 40upx 40upx;
 	}
 	
 	.phoneInput {
-		width: 6*@u100;
+		width: 600upx;
 		background-image: url("@{imgurl}phone.png");
-		background-position: 0.18*@u100 0.3*@u100;
+		background-position: 18upx 30upx;
 	}
 	
 	.passwordInput {
-		width: 3.6*@u100;
+		width: 360upx;
 		background-image: url("@{imgurl}message.png");
-		background-position: 0.14*@u100 0.3*@u100;
+		background-position: 14upx 30upx;
 	}
 	
 	/* 验证码的view */
 	.identifying-code {
 		border: 1px solid @codeBorder;
 		border-radius: 6px;
-		width: 2.1*@u100;
-		height: @u100;
-		line-height: @u100;
+		width: 210upx;
+		height: 100upx;
+		line-height: 100upx;
 		background-color: @colorF;
 	}
 	
 	/* 登录、注册按钮 */
 	.loginBtn,.registerBtn {
-		width: 6*@u100;
-		height: @u100;
-		margin-top: @u100;
+		width: 600upx;
+		height: 100upx;
+		margin-top: 100upx;
 	}
 //***********************************************************
 /* 绑定手机号与更换手机号 */
 	.pre-86{
 		position: absolute;
 		float: left;
-		top: 0.25*@u100;
-		left: 0.1*@u100;
+		top: 25upx;
+		left: 10upx;
   }
   
 // 、、、、、、、、、、、、、、
@@ -166,11 +162,6 @@
 /* 
 提取出来的常用的公共样式
  */
-// .border(@a) when (@a>10),(@a<3){
- 
-//   border:@a solid blue;
-// }
-// .con1{.border(5px)}
 .navBar{
 	display: flex;
 	width: 100%;

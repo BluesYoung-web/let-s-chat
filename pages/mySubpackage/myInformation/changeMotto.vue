@@ -73,14 +73,14 @@
 	}
 	textarea{
 		background-color: @colorF;
-		height: 3.5*@u100;
-		padding-top: 0.2*@u100;
-		padding-left: 0.2*@u100;
+		height: 350upx;
+		padding-top: 20upx;
+		padding-left: 20upx;
 	}
 	
 	/* 字数限制的样式 */
 	.countLimit{
-		bottom: 0.2*@u100;
-		right: 0.3*@u100;
+		bottom: 20upx;
+		right: 30upx;
 	}
 </style>

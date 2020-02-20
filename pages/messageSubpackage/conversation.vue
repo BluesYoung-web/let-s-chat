@@ -3,8 +3,6 @@
 	<view>
 		<scroll-view scroll-y="true" :scroll-top="scrollTop" class="conversationContent" :style="{height:scrollHeight + 'px'}">
 			<view class="scroll" @tap="takeBack">
-
-
 				<view v-for="(item,index) in messages" :key="index">
 					<view class="messageTime" v-if="item.ifShow">
 						<text>{{item.showTime}}</text>
@@ -254,48 +252,48 @@
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
 			});
-			// 接收f_uid
-			if(e.f_uid){
-				this.fuid=e.f_uid;
-				// 修改导航栏
-				uni.setNavigationBarTitle({
-				    title: e.name
-				});
-				return;
-				// 从服务器获取好友信息(后期可优化成从暂存获取)
-				request.getUserInfo(this.fuid,(data)=>{
-					let avatarUrl=data.avatarUrl;
-					// 修改用户头像
-					for (let i in this.messages) {
-						if(this.messages[i].sign=='other' || this.messages[i].sign=='otherVoice'){
-							this.messages[i].head=avatarUrl;
-						}else if(this.messages[i].sign=='me' || this.messages[i].sign=='meVoice'){
-							this.messages[i].head=this.avatarUrl;
-						}
-					}
-				});
-			}
+			// // 接收f_uid
+			// if(e.f_uid){
+			// 	this.fuid=e.f_uid;
+			// 	// 修改导航栏
+			// 	uni.setNavigationBarTitle({
+			// 	    title: e.name
+			// 	});
+			// 	return;
+			// 	// 从服务器获取好友信息(后期可优化成从暂存获取)
+			// 	request.getUserInfo(this.fuid,(data)=>{
+			// 		let avatarUrl=data.avatarUrl;
+			// 		// 修改用户头像
+			// 		for (let i in this.messages) {
+			// 			if(this.messages[i].sign=='other' || this.messages[i].sign=='otherVoice'){
+			// 				this.messages[i].head=avatarUrl;
+			// 			}else if(this.messages[i].sign=='me' || this.messages[i].sign=='meVoice'){
+			// 				this.messages[i].head=this.avatarUrl;
+			// 			}
+			// 		}
+			// 	});
+			// }
 			
 		},
 		onBackPress() {
-			// 删除消息数
-			this.clearMsgNum(this.fuid);
-			// 暂存对话消息
-			let temp={
-				fid:this.fuid,
-				messages:this.messages
-			}
-			this.addConversationMessage(temp);
-			// 修改消息页面显示的content
-			let content=this.messages[this.messages.length-1].content;
-			let time=this.messages[this.messages.length-1].time;
-			time=tools.showTime(time);
-			let obj={
-				account:this.fuid,
-				content:content,
-				time:time
-			}
-			this.changeContent(obj);
+			// // 删除消息数
+			// this.clearMsgNum(this.fuid);
+			// // 暂存对话消息
+			// let temp={
+			// 	fid:this.fuid,
+			// 	messages:this.messages
+			// }
+			// this.addConversationMessage(temp);
+			// // 修改消息页面显示的content
+			// let content=this.messages[this.messages.length-1].content;
+			// let time=this.messages[this.messages.length-1].time;
+			// time=tools.showTime(time);
+			// let obj={
+			// 	account:this.fuid,
+			// 	content:content,
+			// 	time:time
+			// }
+			// this.changeContent(obj);
 		},
 		methods:{
 			...mapMutations(['addConversationMessage','clearMsgNum','addMessageListFirst','changeContent']),
@@ -350,45 +348,45 @@
 			},
 			// 发送数据
 			sendMsg(id, friendid, Data, ws) {
-				let Json = {
-					'ID': id,
-					'FID': friendid,
-					'Data': Data,
-					'Op':'privateChat'
-				};
-				ws.send({
-					data: JSON.stringify(Json),
-					success:()=> {
-						console.log("消息发送成功");
-					},
-					fail:()=> {
-						console.log("消息发送失败");
-					},
-				});
+				// let Json = {
+				// 	'ID': id,
+				// 	'FID': friendid,
+				// 	'Data': Data,
+				// 	'Op':'privateChat'
+				// };
+				// ws.send({
+				// 	data: JSON.stringify(Json),
+				// 	success:()=> {
+				// 		console.log("消息发送成功");
+				// 	},
+				// 	fail:()=> {
+				// 		console.log("消息发送失败");
+				// 	},
+				// });
 				//发送一条消息，消息始终在最底部
 				this.scrollTop = this.getScrollTop();
-				if(this.is_from_address){
-					// 如果消息页面有对应的数组项
-					for (let i in this.conversationMessageList) {
-						if(this.conversationMessageList[i].account==this.tempInfo.account){
-							return;
-						}
-					}
-					// message页面添加数组项
-					let msg={
-						imgUrl:this.tempInfo.avatarUrl,
-						username:this.tempInfo.name,
-						time:Data.showTime,
-						content:Data.content,
-						right: 0,
-						msgNum:0,
-						account:this.tempInfo.account,
-						intervalTime:Data.intervalTime,
-						realContent:Data.realContent,
-						conversation:this.messages
-					}
-					this.addMessageListFirst(msg);
-				}
+				// if(this.is_from_address){
+				// 	// 如果消息页面有对应的数组项
+				// 	for (let i in this.conversationMessageList) {
+				// 		if(this.conversationMessageList[i].account==this.tempInfo.account){
+				// 			return;
+				// 		}
+				// 	}
+				// 	// message页面添加数组项
+				// 	let msg={
+				// 		imgUrl:this.tempInfo.avatarUrl,
+				// 		username:this.tempInfo.name,
+				// 		time:Data.showTime,
+				// 		content:Data.content,
+				// 		right: 0,
+				// 		msgNum:0,
+				// 		account:this.tempInfo.account,
+				// 		intervalTime:Data.intervalTime,
+				// 		realContent:Data.realContent,
+				// 		conversation:this.messages
+				// 	}
+				// 	this.addMessageListFirst(msg);
+				// }
 			},
 			//获取键盘高度
 			getKeyboardHight(e){

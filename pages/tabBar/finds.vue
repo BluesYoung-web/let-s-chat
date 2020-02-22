@@ -3,60 +3,11 @@
 	<view class="content">
 		<scroll-view enable-back-to-top="true" scroll-y="true" :scroll-top="scrollTop" :style="{height:scrollHeight + 'px'}"
 		 @scroll="scroll">		 	
-		 
-			<view class="scroll">
-				<!-- 一个朋友圈动态 -->
-				<view class="finds-body" v-for="(item,index) in findsList" :key="index">
-					<!-- 好友动态信息 -->
-					<view class="dynamic-information">
-						<!-- 好友头像 -->
-						<view class="friends-head" @tap="toFriendsInfo(item.userId)">
-							<image lazy-load="true" :src="item.avatar" mode="aspectFill"></image>
-						</view>
-						<!-- 好友信息 -->
-						<view class="friends-information">
-							<!-- 好友昵称 -->
-							<view class="friends-username">
-								<span>{{item.name}}</span>
-							</view>
-							<!-- 好友发布动态时间 -->
-							<view class="dynamic-time flex flex-vc">
-								<image src="/static/img/clock.png" mode=""></image>
-								<span class="mg-lt10 inline-block">{{item.showTime}}</span>
-							</view>
-						</view>
-					</view>
-					<!-- 动态图片 -->
-					<view class="dynamic-img" @tap="checkImg(item)">
-						<image :src="item.dynamicImg" mode="aspectFit"></image>
-					</view>
-					<!-- 赞与留言 -->
-					<view class="likes-comments">
-						<!-- 点赞 -->
-						<view class="likes" @tap="like(item)">
-							<view class="flex flex-vc width-80 flex-jsb">
-								<view class="height-50">
-									<image v-if="item.likeAction == 0" src="/static/img/heart.png" mode=""></image>
-									<image v-else src="/static/img/heart2.png" mode=""></image>
-								</view>
-								<span class="inline-block width-20">{{item.likesNum}}</span>
-							</view>
-						</view>
-						<!-- 评论 -->
-						<view class="comments" @tap="comment(item)">
-							<view class="flex flex-vc width-80 flex-jsb">
-								<view class="height-50">
-									<image src="/static/img/comment.png" mode=""></image>
-								</view>
-								<span class="inline-block width-20">{{item.commentsNum}}</span>
-							</view>
-						</view>
-					</view>
-				</view>
+			<!-- 一个朋友圈动态 -->
+			<view class="finds-body" v-for="(item,index) in findsList" :key="index">
+				<find-item :item="item" @watchImg="watchImg" @like="like" @comment="comment"></find-item>
 			</view>
-			
-			<view class="loading" @tap="getnewsList">{{loadingText}}</view>
-			
+			<edit-item type="3" :content="loadingText"></edit-item>
 		</scroll-view>
 
 		<!-- 发表动态弹出层 -->
@@ -93,19 +44,13 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
-	// 状态管理
-	import {mapState,mapMutations} from 'vuex';
-	// 请求抽取
-	import request from '@/request/request.js';
-	// 缓存
-	import service from '@/service.js';
-	
+	import findItem from "@/components/young-find-item/young-find-item.vue";
+	import editItem from "@/components/young-edit-item/young-edit-item.vue";
 	export default {
-		computed: {
-			...mapState(['serverUrl', 'userInfo', 'findLists','windowHeight'])
-		},
 		components: {
-			uniPopup
+			uniPopup,
+			findItem,
+			editItem
 		},
 		mounted() {
 			// 根据时间排序
@@ -121,25 +66,37 @@
 			return {
 				page:1,
 				//点击加载更多
-				loadingText:'',
+				loadingText:'加载更多...',
 				scrollHeight: '',
 				scrollTop: 0,
 				old: {
 					scrollTop: 0
 				},
 				findsList: [ //空间发表动态的列表
-					// {
-					// 	id:1,
-					// 	userId: 12345678,
-					// 	avatar: "/static/img/finds_01.jpg",
-					// 	name: "小美",
-					// 	time: 1576199585544,
-					// 	showTime:new Date(1576199585544).toTimeString().substr(0, 5),
-					// 	dynamicImg: "/static/img/finds_01.jpg", //发布的动态图片
-					// 	likesNum: 9, //点赞数
-					// 	commentsNum: 15, //评论数
-					// 	likeAction: 0, //是否给他点赞
-					// },
+					{
+						id:1,
+						userId: 12345678,
+						avatar: "/static/img/finds_01.jpg",
+						name: "小美",
+						time: 1576199585544,
+						showTime:new Date(1576199585544).toTimeString().substr(0, 5),
+						dynamicImg: "/static/img/finds_01.jpg", //发布的动态图片
+						likesNum: 9, //点赞数
+						commentsNum: 15, //评论数
+						likeAction: 0, //是否给他点赞
+					},
+					{
+						id:1,
+						userId: 12345678,
+						avatar: "/static/img/finds_01.jpg",
+						name: "小美",
+						time: 1576199585544,
+						showTime:new Date(1576199585544).toTimeString().substr(0, 5),
+						dynamicImg: "/static/img/finds_01.jpg", //发布的动态图片
+						likesNum: 9, //点赞数
+						commentsNum: 15, //评论数
+						likeAction: 0, //是否给他点赞
+					},
 				],
 				popup: false, //拍照面板是否显示
 				color1: '', //拍照弹出框拍摄view颜色
@@ -148,20 +105,6 @@
 				toast: false, //确认发表提示框
 				findsImgUrl: "/static/img/avatar.png", //发表的图片路径
 			}
-		},
-		watch: {
-			findsList(newValue, oldValue) {
-				if(newValue != oldValue){
-					service.addFinds(this.findLists);
-				}
-			}
-		},
-		onLoad() {
-			this.getnewsList(1);
-		},
-		onShow() {
-			// 动态改变评论和赞的个数以及赞的状态
-			this.findsList = JSON.parse(JSON.stringify(this.findLists));
 		},
 		
 		// 下拉刷新
@@ -182,15 +125,13 @@
 			this.popup = true;
 		},
 		// 监听底部按钮点击事件
-		onTabItemTap() {
-			// 相当于下拉刷新
-			uni.startPullDownRefresh();
-			//调用回到顶部方法
-			this.goTop();
-		},
-		/*
+		// onTabItemTap() {
+		// 	// 相当于下拉刷新
+		// 	uni.startPullDownRefresh();
+		// 	//调用回到顶部方法
+		// 	this.goTop();
+		// },
 		methods: {
-			...mapMutations(['addFinds']),
 			//前往好友资料页面
 			toFriendsInfo(uid){
 				uni.navigateTo({
@@ -210,26 +151,25 @@
 					this.scrollTop = 0
 				});
 			},
-			// 点赞
+			/**
+			 * 点赞
+			 * @param {object} e 单条朋友圈对象
+			 */
 			like(e) {
 				// 样式改变
 				e.likeAction = (e.likeAction == 1 ? 0 : 1);
 				e.likeAction ? e.likesNum++ : e.likesNum--;
 				// 服务器相关操作
-				request.clickLike(e.id, e.likeAction, (data) => {
-					if (data == 1) {
-						// 暂存好友圈
-						this.addFinds(this.findsList);
-					}
-				});
 
 			},
-
-			// 评论
+			/**
+			 * 评论
+			 * @param {object} e 单条朋友圈对象
+			 */
 			comment(e) {
 				// 跳转到评论详情页
 				uni.navigateTo({
-					url: `../../findsSubpackage/comments/comments?id=${e.id}&likesNum=${e.likesNum}`,
+					url: `/pages/findsSubpackage/comments?id=${e.id}&likesNum=${e.likesNum}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -243,71 +183,71 @@
 				this['color' + flag] = '#E5E5E5'
 			},
 			takepho(flag) {
-				this['color' + flag] = '#fff'
+				// this['color' + flag] = '#fff'
 
-				uni.chooseImage({
-					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: [flag == 1 ? 'camera' : 'album'], //根据传入的flag判断是否从相册选择
-					success: (res) => {
-						//console.log(res.tempFilePaths);
-						this.findsImgUrl = res.tempFilePaths[0];
-						// 将图片上传到服务器
-						uni.uploadFile({
-							url: `${this.serverUrl}?op=upload&file=img`,
-							filePath: this.findsImgUrl,
-							name: "img",
-							success: (res) => {
-								this.findsImgUrl = res.data;
-								console.log(res.data);
-							}
-						});
-						this.popup = false;
-						this.toast = true;
-					},
-					fail: (res) => {
-						this.popup = false;
-						uni.showToast({
-							icon: "none",
-							title: "取消或设备请求超时"
-						});
-					}
-				});
+				// uni.chooseImage({
+				// 	count: 1, //默认9
+				// 	sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+				// 	sourceType: [flag == 1 ? 'camera' : 'album'], //根据传入的flag判断是否从相册选择
+				// 	success: (res) => {
+				// 		//console.log(res.tempFilePaths);
+				// 		this.findsImgUrl = res.tempFilePaths[0];
+				// 		// 将图片上传到服务器
+				// 		uni.uploadFile({
+				// 			url: `${this.serverUrl}?op=upload&file=img`,
+				// 			filePath: this.findsImgUrl,
+				// 			name: "img",
+				// 			success: (res) => {
+				// 				this.findsImgUrl = res.data;
+				// 				console.log(res.data);
+				// 			}
+				// 		});
+				// 		this.popup = false;
+				// 		this.toast = true;
+				// 	},
+				// 	fail: (res) => {
+				// 		this.popup = false;
+				// 		uni.showToast({
+				// 			icon: "none",
+				// 			title: "取消或设备请求超时"
+				// 		});
+				// 	}
+				// });
 			},
 
 			// 确认发表
 			submitFinds() {
-				this.toast = false;
-				uni.showLoading({
-					title: "发布中"
-				});
-				let put = {
-					userId: this.userInfo.account,
-					// 获取当前时间戳
-					time: (new Date()).valueOf(),
-					dynamicImg: this.findsImgUrl, //发布的动态图片
-					// 仅为了本地暂存
-					name: this.userInfo.name,
-					avatar: this.userInfo.avatarUrl,
-					showTime: "刚刚",
-					likesNum: 0, //点赞数
-					commentsNum: 0, //评论数
-					likeAction: 0, //是否给他点赞
-				};
-				this.findsList.unshift(put);
-				// 好友圈上传数据库
-				request.putUpFinds(put, (data) => {
-					// 隐藏加载动画
-					uni.hideLoading();
-					uni.showToast({
-						icon: "none",
-						title: "发表成功"
-					});
-					// 好友圈添加暂存
-					this.addFinds(this.findsList);
-				});
-				// 发表之后自动刷新
-				uni.startPullDownRefresh();
+				// this.toast = false;
+				// uni.showLoading({
+				// 	title: "发布中"
+				// });
+				// let put = {
+				// 	userId: this.userInfo.account,
+				// 	// 获取当前时间戳
+				// 	time: (new Date()).valueOf(),
+				// 	dynamicImg: this.findsImgUrl, //发布的动态图片
+				// 	// 仅为了本地暂存
+				// 	name: this.userInfo.name,
+				// 	avatar: this.userInfo.avatarUrl,
+				// 	showTime: "刚刚",
+				// 	likesNum: 0, //点赞数
+				// 	commentsNum: 0, //评论数
+				// 	likeAction: 0, //是否给他点赞
+				// };
+				// this.findsList.unshift(put);
+				// // 好友圈上传数据库
+				// request.putUpFinds(put, (data) => {
+				// 	// 隐藏加载动画
+				// 	uni.hideLoading();
+				// 	uni.showToast({
+				// 		icon: "none",
+				// 		title: "发表成功"
+				// 	});
+				// 	// 好友圈添加暂存
+				// 	this.addFinds(this.findsList);
+				// });
+				// // 发表之后自动刷新
+				// uni.startPullDownRefresh();
 			},
 			// 取消发表
 			cancelSubmit() {
@@ -326,9 +266,9 @@
 			},
 
 			// 查看图片
-			checkImg(item) {
+			watchImg(src) {
 				uni.previewImage({
-					urls: [item.dynamicImg],
+					urls: [src],
 					longPressActions: {
 						itemList: ['保存图片'],
 						success: (data)=>{
@@ -360,31 +300,30 @@
 		
 			//服务器拉取朋友圈数据
 			getnewsList(p){
-				if(Number(p)){
-					this.page=p;
-				}
-				uni.showNavigationBarLoading();
-				request.getLatestFinds(this.page,(data) => {
-					if (data) {
-						this.page++;
-						let sum=data.pop();
-						for (let i in data) {
-							this.findsList.push(data[i]);
-						}
-						// 好友圈添加暂存
-						this.addFinds(this.findsList);
-						if(this.page > sum){
-							this.loadingText = '已经到底啦';
-						}else{
-							this.loadingText = '点击加载更多';
-						}
-						uni.hideNavigationBarLoading();
-						uni.stopPullDownRefresh();
-					}
-				});
+				// if(Number(p)){
+				// 	this.page=p;
+				// }
+				// uni.showNavigationBarLoading();
+				// request.getLatestFinds(this.page,(data) => {
+				// 	if (data) {
+				// 		this.page++;
+				// 		let sum=data.pop();
+				// 		for (let i in data) {
+				// 			this.findsList.push(data[i]);
+				// 		}
+				// 		// 好友圈添加暂存
+				// 		this.addFinds(this.findsList);
+				// 		if(this.page > sum){
+				// 			this.loadingText = '已经到底啦';
+				// 		}else{
+				// 			this.loadingText = '点击加载更多';
+				// 		}
+				// 		uni.hideNavigationBarLoading();
+				// 		uni.stopPullDownRefresh();
+				// 	}
+				// });
 			},
 		},
-		*/
 	}
 </script>
 
@@ -394,101 +333,13 @@
 	.content {
 		width: 100%;
 	}
-
+	/* 好友圈主体 */
 	.finds-body {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
 		border-bottom: 20upx solid @bgcolor;
 	}
-
-	.dynamic-information {
-		height: 120upx;
-	}
-
-	.friends-head {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		float: left;
-		width: 150upx;
-		height: 100%;
-	}
-
-	.friends-head image {
-		width: 90upx;
-		height: 90upx;
-		border-radius: 50%;
-	}
-
-	.friends-information {}
-
-	.friends-username {
-		height: 55upx;
-		display: flex;
-		align-items: flex-end;
-		font-size: 30upx;
-		font-weight: bold;
-	}
-
-	.dynamic-time {
-		height: 65upx;
-		display: flex;
-	}
-
-	.dynamic-time image {
-		width: 26upx;
-		height: 26upx;
-	}
-
-	.dynamic-time span {
-		font-size: 24upx;
-
-	}
-
-	.dynamic-img {
-		width: 100%;
-		height: 50upx;
-	}
-
-	.dynamic-img image {
-		height: 100%;
-		width: 100%;
-	}
-
-	.likes-comments {
-		height: 100upx;
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.likes {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 50%;
-		height: 100%;
-	}
-
-	.likes image {
-		width: 50upx;
-		height: 50upx;
-	}
-
-	.comments {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 50%;
-		height: 100%;
-	}
-
-	.comments image {
-		width: 50upx;
-		height: 50upx;
-	}
-
 	/* 发布 取消按钮 */
 	.btn {
 		font-size: 32upx;
@@ -497,10 +348,5 @@
 
 	.btn::after {
 		border: none;
-	}
-	
-	.loading{
-		text-align:center; 
-		line-height:80px;
 	}
 </style>

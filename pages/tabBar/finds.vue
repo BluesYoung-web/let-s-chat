@@ -56,7 +56,7 @@
 			// 根据时间排序
 			// this.findsList.sort((a, b) => b.time - a.time);
 			//高度自适应
-			this.scrollHeight = this.windowHeight;
+			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
 		},
 		beforeUpdate() {
 			// 根据时间排序

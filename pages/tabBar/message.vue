@@ -1,31 +1,46 @@
 <template>
 	<!-- 消息页面  -->
 	<view>
+		<!-- 自定义导航栏 -->
+		<uni-nav-bar title="消息" background-color="#344955" color="#ffffff"
+		right-icon="plusempty" @clickRight="clickPlus"></uni-nav-bar>
+		<!-- 下拉气泡菜单 -->
+		<bubble-menu :ifShow="isShowbubble" x='342' y="5" theme="dark" 
+		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 聊天列表组件 -->
 		<chat-item :dataList = "dataList" @clickInto = "onClickInto" @clickChoice = "onClickChoice"></chat-item>
-		<!-- 小游戏弹出框 -->
-		<uni-popup :show="showGame" @change="popupChange">
-			<view class="popup bg-fff">
-				<view class="game">
-					<image src="/static/img/gobang.jpg" mode=""></image>
-					<text>五子棋</text>
-				</view>
-				<view class="game">
-					<image src="/static/img/add.png" mode=""></image>
-					<text>添加</text>
-				</view>
-			</view>
-		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import chatItem from '@/components/young-chat-item/young-chat-item.vue';
-	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
+	import bubbleMenu from "@/components/young-bubble-menu/young-bubble-menu.vue";
 	export default {
+		components:{
+			chatItem,
+			uniNavBar,
+			bubbleMenu
+		},
 		data(){
 			return {
-				showGame: false,
+				isShowbubble: false,
+				popData: [{
+					title: '发起群聊',
+					icon: 'chatbubble',
+				}, {
+					title: '添加朋友',
+					icon: 'personadd',
+				}, {
+					title: '扫一扫',
+					icon: 'scan'
+				}, {
+					title: '分享给朋友',
+					icon: 'upload'
+				}, {
+					title: '帮助与反馈',
+					icon: 'email'
+				}],
 				dataList: [{
 					"imgUrl":"http://106.15.53.15:8808/data/head/15.jpg",
 					"nick":"Mike",
@@ -47,10 +62,6 @@
 				}],
 			}
 		},
-		components:{
-			chatItem,
-			uniPopup
-		},
 		onLoad(){
 			/**
 			 * 获取消息列表
@@ -63,17 +74,6 @@
 				index: 0,
 				text: this.countMsg + ''
 			});
-		},
-		/**
-		 * 是否显示小游戏弹出框
-		 * @param {Object} e
-		 */
-		onNavigationBarButtonTap(e) {
-			if (this.showGame == false) {
-				this.showGame = true;
-			} else {
-				this.showGame = false;
-			}
 		},
 		// 观察者
 		watch: {
@@ -89,25 +89,22 @@
 		},
 		methods:{
 			/**
-			 * 改变弹出层状态
-			 * @param {Object} e
+			 * 点击右上角加号
 			 */
-			popupChange(e) {
-				if (!e.show) {
-					this.showGame = false;
-				};
+			clickPlus(){
+				this.isShowbubble = true;
 			},
 			/**
-			 * 跳转至对应的游戏界面
-			 * @param {Object} game
+			 * 关闭气泡菜单
 			 */
-			playGame(game){
-				uni.navigateTo({
-					url: `/pages/games/${game}/${game}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+			close(){
+				this.isShowbubble = false;
+			},
+			/**
+			 * 点击气泡菜单
+			 */
+			clickMenu(item){
+				console.log(item);
 			},
 			/**
 			 * 改变未读消息数
@@ -271,34 +268,4 @@
 
 
 <style>
-	/*小游戏弹出框 */
-	.popup {
-		max-width: 500upx;
-		padding: 10upx;
-		border-radius: 50upx;
-		float: left;
-	}
-
-	.game {
-		float: left;
-		margin: 10upx;
-		padding: 0;
-		width: 120upx;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.game image {
-		width: 100upx;
-		height: 100upx;
-		border-radius: 50%;
-		background-color: #344955;
-	}
-
-	.game text {
-		display: flex;
-		justify-content: center;
-		width: 100upx;
-		font-size: 20upx;
-	}
 </style>

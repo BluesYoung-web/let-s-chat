@@ -3,18 +3,8 @@
 		{
 			"path": "pages/tabBar/message",
 			"style": {
-				"navigationBarTitleText": "消息",
-				"enablePullDownRefresh": true, //是否开启下拉刷新
-				"backgroundTextStyle": "dark", //下拉loading的样式（dark:小黑点，light：白色点）
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue649",
-							"fontSize": "25px",
-							"fontSrc": "/static/ttf/game.ttf"
-						}]
-					}
-				}
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true //是否开启下拉刷新
 			}
 		},
 		{

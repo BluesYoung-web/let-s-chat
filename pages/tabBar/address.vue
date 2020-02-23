@@ -31,7 +31,19 @@
 				/**
 				 * 好友列表
 				 */
-				friendsList: [],
+				friendsList: [{
+					avatar: '/static/img/defaultHead.jpg',
+					uid: 10
+				}, {
+					avatar: '/static/img/finds_01.jpg',
+					uid: 12
+				}, {
+					avatar: '/static/img/finds_02.jpeg',
+					uid: 13
+				}, {
+					avatar: '/static/img/avatar.png',
+					uid: 14
+				}],
 				/**
 				 * 最近联系人
 				 */ 

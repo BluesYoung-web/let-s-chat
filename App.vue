@@ -132,5 +132,18 @@
 <style lang="less">
 	/*每个页面公共css */
 	@import '~@/common/common.less';
-	
+	uni-checkbox .uni-checkbox-input {
+		position: relative;
+		margin-left: 20upx;
+		border-radius: 50%; 
+		border: 1rpx solid #C0C0C0; 
+	} 
+	uni-checkbox .uni-checkbox-input.uni-checkbox-input-checked { 
+		background-color: #3CC51F; 
+		color: #FFFFFF !important;
+		border: 1rpx solid #3CC51F; 
+	} 
+	uni-checkbox .uni-checkbox-wrapper { 
+		width: 100%; 
+	}
 </style>

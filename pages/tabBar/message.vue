@@ -104,7 +104,21 @@
 			 * 点击气泡菜单
 			 */
 			clickMenu(item){
-				console.log(item);
+				switch (item.title){
+					case '发起群聊':
+						this.toCreateChatRoom();
+						break;
+					default:
+						break;
+				}
+			},
+			/**
+			 * 去创建群聊
+			 */
+			toCreateChatRoom(){
+				uni.navigateTo({
+					url:"/pages/addressSubpackage/createChatRoom"
+				});
 			},
 			/**
 			 * 改变未读消息数

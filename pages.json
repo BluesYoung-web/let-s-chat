@@ -197,6 +197,11 @@
 				}
 			}
 		}, {
+			"path":"pages/addressSubpackage/createChatRoom",
+			"style": {
+				"navigationStyle":"custom"
+			}
+		}, {
             "path": "pages/games/gobang",
             "style": {
             	"navigationBarTitleText": "五子棋"            

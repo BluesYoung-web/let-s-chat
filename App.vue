@@ -146,4 +146,10 @@
 	uni-checkbox .uni-checkbox-wrapper { 
 		width: 100%; 
 	}
+	uni-view,a,uni-text,uni-button{
+		z-index: 1;
+	}
+	uni-view[data-v-187d6796], a[data-v-187d6796], uni-text[data-v-187d6796], uni-input[data-v-187d6796], uni-button[data-v-187d6796]{
+		z-index: 0;
+	}
 </style>

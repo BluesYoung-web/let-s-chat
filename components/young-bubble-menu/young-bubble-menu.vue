@@ -5,7 +5,7 @@
 			<text :class="dynPlace" :style="{width:'0px',height:'0px'}" v-if="triangle"></text>
 			<view v-for="(item,index) in popData" :key="index" @tap.stop="tapItem(item)" 
 				class="itemChild view" :class="[direction=='row'?'solid-right':'solid-bottom',item.disabled?'disabledColor':'']">
-				<uni-icons color="#FFFFFF" class="icon" :type="item.icon" size="24" :style="{fontWeight: 'bold'}" v-if="item.icon"/>
+				<uni-icons :color="theme == 'light' ? '#ccc' : '#fff'" :type="item.icon" size="24" :style="{fontWeight: 'bold'}" v-if="item.icon"/>
 				<text>{{item.title}}</text>
 				
 			</view>
@@ -333,7 +333,7 @@
 		.disabledColor{
 			color: #c5c8ce;
 		}
-	}
+  }
 	.light{
 		color: #515a6e;
 		box-shadow: 0upx 0upx 30upx rgba(0,0,0,0.2);

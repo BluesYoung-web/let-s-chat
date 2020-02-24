@@ -27,10 +27,10 @@
 				isShowbubble: false,
 				popData: [{
 					title: '发起群聊',
-					icon: 'chatbubble',
+					icon: 'chatbubble-filled',
 				}, {
 					title: '添加朋友',
-					icon: 'personadd',
+					icon: 'personadd-filled',
 				}, {
 					title: '扫一扫',
 					icon: 'scan'

@@ -33,15 +33,19 @@
 				 */
 				friendsList: [{
 					avatar: '/static/img/defaultHead.jpg',
+					nick: '张三丰',
 					uid: 10
 				}, {
 					avatar: '/static/img/finds_01.jpg',
+					nick: '张无忌',
 					uid: 12
 				}, {
 					avatar: '/static/img/finds_02.jpeg',
+					nick: '张卫健',
 					uid: 13
 				}, {
 					avatar: '/static/img/avatar.png',
+					nick: '章金莱',
 					uid: 14
 				}],
 				/**

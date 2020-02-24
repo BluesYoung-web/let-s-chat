@@ -110,5 +110,35 @@ class Store{
         }
         return $res;
     }
+    /**
+     * 搜索用户(模糊搜索)
+     */
+    public function search($data)
+    {
+        // 接收参数
+        $key = $data['key'];
+        // 首先从redis获取
+        $info = $this -> redis -> get($key);
+        if (! $info) {
+            // 如果拿不到，从SQL获取
+            $info = $this -> sql -> search($key);
+            // 如果拿到了
+            if ($info) {
+                echo "从mysql获取\n";
+                // 写入redis, 数组转字符串
+                $this -> redis -> set($key, json_encode($info));
+                // 返回
+                return $info;
+            } else {
+                echo "找不到";
+                // 返回null
+                return null;
+            }
+        }else{
+            echo "从redis获取\n";
+            // 字符串转数组
+            return json_decode($info, true);
+        }
+    }
 }
 ?>

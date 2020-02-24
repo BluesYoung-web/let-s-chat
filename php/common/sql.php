@@ -61,5 +61,22 @@
             $res = mysqli_query($this -> conn, $sql);
             return $res;
         }
+        /**
+         * 搜索用户(模糊搜索)
+         */
+        public function search($key)
+        {
+            if(!intval($key)){
+                $sql = "select * from user where nick = '$key'";
+            }else{
+                $sql = "select * from user where uid = $key or tel = $key";
+            }
+            $res = mysqli_query($this -> conn, $sql);
+            $arr = [];
+            while ($row=mysqli_fetch_assoc($res)) {
+                array_push($arr, $row);
+            }
+            return $arr;
+        }
     }
 ?>

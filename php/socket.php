@@ -249,6 +249,12 @@ class SocketServer
                 $tips = $this -> _setInfoByRes($res, "用户信息设置", $cbk, $extra);
                 break;
             }
+            case 102:{
+                // 搜索用户
+                $info = $store -> search($data);
+                $tips = $this -> _setInfoByInfo($info, "找不到该用户的信息", $cbk, $extra);
+                break;
+            }
         }
         // 结果返回
         $this -> _sendMsgPrivate($tips, $socket);

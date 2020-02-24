@@ -30,6 +30,7 @@ const model = 100;
 const cmds = {
     get_info: 100,
     set_info: 101,
+    search: 102
 }
 
 /**
@@ -227,11 +228,31 @@ const bind_tel = function(args){
         fail
     });
 }
+/**
+ * 搜索用户(模糊查询)
+ * @param {object} args 
+ * @param {number | string} args.key 搜索关键字(uid | nick | tel)
+ * @param {function} success
+ * @param {function} fail
+ */
+const search = function(args){
+    let {key, success, fail} = {...args};
+    let cmd = cmds.search;
+    net.send({
+        cmd,
+        data:{
+            key
+        },
+        success,
+        fail
+    });
+}
 export default{
     login,
     login_out,
     upload,
     get_info,
     set_info,
-    bind_tel
+    bind_tel,
+    search
 }

@@ -32,9 +32,7 @@
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
-	import {mapState,mapMutations} from 'vuex';
-	// 请求抽离
-	import request from '@/request/request.js';
+	import data from "@/data.js";
 	export default{
 		components: {uniPopup},
 		data(){
@@ -42,21 +40,9 @@
 				//找人显示内容
 				inputMsg:'',
 				isShow:false,
-				account:'',
-				phone:''
-			}
-		},
-		computed:{
-			...mapState(['serverUrl','userInfo'])
-		},
-		onLoad(){
-			if (this.userInfo) {
-				this.account=this.userInfo.account;
-				this.phone=this.userInfo.phone;
 			}
 		},
 		methods:{
-			...mapMutations(['setInfoTemp']),
 			// 关闭提示框
 			closePopup(){
 				this.isShow = false;
@@ -71,10 +57,7 @@
 			},
 			// 清空输入框
 			cleanInput(){		
-				// plus.key.hideSoftKeybord();
-				// uni.hideKeyboard();
-				this.inputMsg = ''
-				
+				this.inputMsg = '';
 			},
 			//点击取消，返回通讯录页面
 			toAddress(){
@@ -88,29 +71,14 @@
 			// 跳转至查找的用户资料页面
 			toFriendsInfo(){
 				if(this.inputMsg){
-					let str='';
-					str= this.inputMsg.length==8 ? 'uid' : 'tel';
-					// 如果是搜索自己，直接跳转我的页面
-					if (this.inputMsg==this.account || this.inputMsg==this.phone) {
-						uni.reLaunch({
-						    url: '/pages/tabBar/my/my'
-						});
-						return ;
-					}
 					// 向服务器请求数据，查找用户
-					request.searchUser(str,this.inputMsg,(data)=>{
-						if(data){
-							// 将搜索到的数据存入state
-							this.setInfoTemp(data);
-							// 拿到数据之后
-							uni.navigateTo({
-								url: `friendsInfo/friendsInfo?isF=${data.isF}`,
-								success: res => {},
-								fail: () => {},
-								complete: () => {}
-							});
-						}else{
-							this.isShow=true;
+					data.user.search({
+						key: this.inputMsg,
+						success: (res) => {
+							console.log(res);
+						},
+						fail: (code, err) => {
+							console.log(code, err);
 						}
 					});
 				}else if(inputMsg!=''){

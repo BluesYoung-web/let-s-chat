@@ -141,7 +141,8 @@
 			 * 确认
 			 */
 			clickPromptConfirm(val){
-				console.log(val);
+				this.defaultName = '';
+				// 向服务器发送请求。。。
 			},
 			/**
 			 * 取消

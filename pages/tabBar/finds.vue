@@ -1,7 +1,7 @@
 <template>
 	<!-- 朋友圈界面 -->
 	<view class="content">
-		<scroll-view enable-back-to-top="true" scroll-y="true" :scroll-top="scrollTop" :style="{height:scrollHeight + 'px'}"
+		<scroll-view enable-back-to-top="true" scroll-y="true" :scroll-top="scrollTop" ref="myscroll"
 		 @scroll="scroll">		 	
 			<!-- 一个朋友圈动态 -->
 			<view class="finds-body" v-for="(item,index) in findsList" :key="index">
@@ -55,8 +55,11 @@
 		mounted() {
 			// 根据时间排序
 			// this.findsList.sort((a, b) => b.time - a.time);
-			//高度自适应
-			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
+			console.log(this.$refs.myscroll.$el.clientHeight);
+		},
+		onShow() {
+			console.log(uni.getSystemInfoSync().screenHeight);
+			console.log(this.$refs.myscroll.$el.clientHeight);
 		},
 		beforeUpdate() {
 			// 根据时间排序
@@ -67,7 +70,6 @@
 				page:1,
 				//点击加载更多
 				loadingText:'加载更多...',
-				scrollHeight: '',
 				scrollTop: 0,
 				old: {
 					scrollTop: 0
@@ -96,7 +98,7 @@
 						likesNum: 9, //点赞数
 						commentsNum: 15, //评论数
 						likeAction: 0, //是否给他点赞
-					},
+					}
 				],
 				popup: false, //拍照面板是否显示
 				color1: '', //拍照弹出框拍摄view颜色

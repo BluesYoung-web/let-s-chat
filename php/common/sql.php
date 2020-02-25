@@ -74,6 +74,20 @@
             $res = mysqli_query($this -> conn, $sql);
             $arr = [];
             while ($row=mysqli_fetch_assoc($res)) {
+                // 查询是否为好友，是否关注
+                $row['isF'] = 0;
+                $row['isFocus'] = 1;
+                $sq = "select * from friends where (uid = ".$this -> uid." and fid = ".$row['uid'].
+                        ") or (uid = ".$row['uid']." and fid = ".$this -> uid.")";
+                $st = "select * from focus where uid = ".$this -> uid." and fid = ".$row['uid'];
+                $rs = mysqli_query($this -> conn, $sq);
+                $rt = mysqli_query($this -> conn, $st);
+                if(mysqli_fetch_assoc($rs)){
+                    $row['isF'] = 1;
+                }
+                if(mysqli_fetch_assoc($rt)){
+                    $row['isFocus'] = 1;
+                }
                 array_push($arr, $row);
             }
             return $arr;

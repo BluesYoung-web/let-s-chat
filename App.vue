@@ -152,4 +152,7 @@
 	uni-view[data-v-187d6796], a[data-v-187d6796], uni-text[data-v-187d6796], uni-input[data-v-187d6796], uni-button[data-v-187d6796]{
 		z-index: 0;
 	}
+	.uni-navbar--border[data-v-3f69ffa0]{
+		z-index: 2;
+	}
 </style>

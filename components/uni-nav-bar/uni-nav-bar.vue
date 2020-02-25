@@ -23,7 +23,7 @@
 				</view>
 				<view :class="title.length ? 'uni-navbar__header-btns-right' : ''" @tap="onClickRight" class="uni-navbar__header-btns uni-navbar__content_view">
 					<view class="uni-navbar__content_view" v-if="rightIcon.length">
-						<uni-icons :color="color" :type="rightIcon" size="24" :style="{fontWeight: 'bold'}"/>
+						<uni-icons :color="rc || color" :type="rightIcon" size="24" :style="{fontWeight: 'bold'}"/>
 					</view>
 					<!-- 优先显示图标 -->
 					<view class="uni-navbar-btn-text uni-navbar__content_view" v-if="rightText.length && !rightIcon.length">
@@ -94,6 +94,10 @@
 			border: {
 				type: [String, Boolean],
 				default: true
+			},
+			rc: {
+				type: String,
+				default: ""
 			}
 		},
         mounted() {
@@ -214,11 +218,5 @@
 		/* #ifndef APP-NVUE */
 		box-shadow: 0 1px 6px #ccc;
 		/* #endif */
-	}
-
-	.uni-navbar--border {
-		border-bottom-width: 1rpx;
-		border-bottom-style: solid;
-		border-bottom-color: $uni-border-color;
 	}
 </style>

@@ -14,54 +14,13 @@
 @color93:#939393;
 @imgurl:"~@/static/img/";
 //***********************************************************
-/* 个人信息与好友信息 */
-/* 首部头像下的背景颜色 */
-	.topBg{
-		height: 350upx;
-		top: 0;
-		z-index: -1;
-	}
-	.settingIcon{
-		margin-top: -100upx;
-	}
-	/* 头像 */
-	.avatar{
-		width: 500upx;
-		height: 500upx;
-		box-shadow:0 2upx 50upx 0 @codeBorder;
-	}
-	.avatar image{
-		width: 500upx;
-		height: 500upx;
-	}
-	/* 编辑资料按钮 */
-	.editInfoBtn,.editInformation{
-		border: 1px solid @codeBorder;
-		border-radius: 8upx;
-		width: 320upx;
-		color: @codeBorder;
-	}
-	/* 赞 关注 发表 */
-	.myCommend,.myFocus,.myRelease{
-		width: 33%;
-		height: 200upx;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-	.name, .motto{
-		width: 400upx;
-		text-align: center;
-	}
-//***********************************************************
-/* 好友信息与评论 */
+/* 评论 */
 	.btn{
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
-	.friendsInfoBottom,.commentsBottom{
+	.commentsBottom{
 		position: fixed;
 		z-index: 1;
 		bottom: 0;
@@ -70,7 +29,7 @@
 		align-items: center;
 		height: 110upx;
 	}
-	.friendsInfoBottom button,.commentsBottom button{
+	.commentsBottom button{
 		width: 325upx;
 		height: 70upx;
 		line-height: 70upx;

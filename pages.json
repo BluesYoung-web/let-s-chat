@@ -24,29 +24,15 @@
 		{
 			"path": "pages/tabBar/address",
 			"style": {
-				"navigationBarTitleText": "通讯录",
-				"enablePullDownRefresh": true, //是否开启下拉刷新
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue657",
-							"fontSize": "30px",
-							"fontSrc": "/static/ttf/addFriend.ttf"
-						}]
-					}
-				}
+				"navigationStyle":"custom"
 			}
-		},
-
-		{
+		}, {
 			"path": "pages/addressSubpackage/addFriends",
 			"style": {
 				"navigationStyle": "custom"
 
 			}
-		},
-
-		{
+		}, {
 			"path": "pages/tabBar/finds",
 			"style": {
 				"navigationBarTitleText": "发现",
@@ -61,8 +47,7 @@
 					}
 				}
 			}
-		},
-		{
+		}, {
 			"path": "pages/tabBar/my",
 			"style": {
 				"navigationBarTitleText": "我的",
@@ -149,8 +134,7 @@
 		{
 			"path": "pages/addressSubpackage/friendsInfo",
 			"style": {
-				"navigationBarTitleText": ""
-
+				"navigationStyle":"custom"
 			}
 		}, {
 			"path": "pages/findsSubpackage/writeComment",

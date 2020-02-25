@@ -6,8 +6,10 @@
 				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill" @tap="toFriendInfo(item)"></image>
 				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro" @tap="toFriendInfo(item)">
 					<text class="ft-32">{{item.nick}}</text>
-					<text v-if="item.online" class="ft-28 color-f9aa33">在线</text>
-					<text v-else class="ft-28 color-999">离线</text>
+					<view v-if="showStatus">
+						<text v-if="item.online" class="ft-28 color-f9aa33">在线</text>
+						<text v-else class="ft-28 color-999">离线</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -54,6 +56,15 @@
 				type: Array,
 				default(){
 					return []
+				}
+			},
+			/**
+			 * 是否显示在线状态
+			 */
+			showStatus: {
+				type: [String,Boolean],
+				default(){
+					return true;
 				}
 			}
 		},

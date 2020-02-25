@@ -1,57 +1,88 @@
 <template>
 	<!-- 添加好友 -->
 	<view>	
-			<!-- 自定义导航栏 -->
-			<view class="navBar flex-vc flex-js">
-				<view class="search flex flex-jc flex-vc ">
-					<image src="/static/img/searchFriend.png" mode=""></image>
-					<input type="text" v-model="inputMsg" placeholder="手机号/来聊账号"/>
-					<image src="/static/img/clear.png" @tap="cleanInput"></image>
-				</view>					
-				<text @tap="toAddress()">取消</text>
+		<!-- 自定义导航栏 -->
+		<view class="navBar flex-vc flex-js">
+			<view class="search flex flex-jc flex-vc ">
+				<image src="/static/img/searchFriend.png" mode=""></image>
+				<input type="text" v-model="inputMsg" placeholder="手机号/来聊账号"/>
+				<image src="/static/img/clear.png" @tap="cleanInput"></image>
+			</view>					
+			<text @tap="toAddress()">取消</text>
+		</view>
+		<!-- 同步显示搜索内容 -->
+		<view v-if="ifShowSearch" class="inputActive flex flex-js" @tap="searchUser">
+			<view class="img flex flex-jc flex-vc">
+				<image src="/static/img/friendSearch.png" mode=""></image>
 			</view>
-	
-	<view class="inputActive flex flex-js" @tap="toFriendsInfo">
-		<!-- {{inputMsg}} -->
-		<view class="img flex flex-jc flex-vc">
-			<image src="/static/img/friendSearch.png" mode=""></image>
+			<view class="inputMessage flex flex-vc">
+				<text >找人：{{inputMsg}}</text>
+			</view>
 		</view>
-		<view class="inputMessage flex flex-vc">
-			<text >找人：{{inputMsg}}</text>
+		<!-- 用户不存在提示框 -->
+		<uni-popup :show="ifShowPoup" type="center"  @change="change">
+			<view class="popup flex flex-direction-column flex-vc">
+				<text>该用户不存在</text>
+				<button type="default" style="color: white;width: 50%;" @click="closePopup">确定</button>
+			</view>
+		</uni-popup>
+		<!-- 存在多个用户时以列表显示 -->
+		<view class="bg-fff pd-tp100" v-if="friendsList.length > 0">
+			<address-item :showStatus="false" :friendsList="friendsList" @toFriendInfo="toUserInfo"></address-item>
 		</view>
-	</view>
-	<!-- 用户不存在提示框 -->
-	<uni-popup :show="isShow" type="center"  @change="change">
-		<view class="popup flex flex-direction-column flex-vc">
-			<text>该用户不存在</text>
-			<button type="default" style="color: white;width: 50%;" @click="closePopup">确定</button>
-		</view>
-	</uni-popup>
 	</view>
 </template>
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
+	import addressItem from "@/components/young-address-item/young-address-item.vue";
 	import data from "@/data.js";
 	export default{
-		components: {uniPopup},
+		components: {
+			uniPopup,
+			addressItem
+		},
 		data(){
 			return{
-				//找人显示内容
-				inputMsg:'',
-				isShow:false,
+				/**
+				 * 具体搜索内容
+				 */
+				inputMsg: '',
+				/**
+				 * 是否显示提示层
+				 */
+				ifShowPoup: false,
+				/**
+				 * 是否显示找人按钮
+				 */
+				ifShowSearch: true,
+				/**
+				 * 用户列表(当搜索到的用户大于1个时显示)
+				 */
+				friendsList: [],
+				/**
+				 * 当前用户
+				 */
+				user: {}
 			}
+		},
+		onShow() {
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
 		},
 		methods:{
 			// 关闭提示框
 			closePopup(){
-				this.isShow = false;
+				this.ifShowPoup = false;
 				this.inputMsg='';
 			},
 			// 点击空白处关闭提示框
 			change(e){
 				if (!e.show){
-					this.isShow = false;
+					this.ifShowPoup = false;
 					this.inputMsg='';
 				}
 			},
@@ -61,28 +92,54 @@
 			},
 			//点击取消，返回通讯录页面
 			toAddress(){
-				uni.switchTab({
-					url: '../tabBar/address/address',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});				
+				uni.navigateBack();			
 			},
-			// 跳转至查找的用户资料页面
-			toFriendsInfo(){
+			/**
+			 * 搜索用户
+			 */
+			searchUser(){
 				if(this.inputMsg){
+					// 如果搜索的是自己
+					if(this.inputMsg == this.user.uid){
+						uni.reLaunch({
+							url:"/pages/tabBar/my"
+						});
+						return;
+					}
 					// 向服务器请求数据，查找用户
 					data.user.search({
 						key: this.inputMsg,
 						success: (res) => {
-							console.log(res);
+							// 如果为多个用户
+							if (res.length > 1) {
+								this.ifShowSearch = false;
+								this.friendsList = res;
+							} else{
+								res = res.pop();
+								this.toUserInfo(res);
+							}
 						},
 						fail: (code, err) => {
 							console.log(code, err);
 						}
 					});
 				}else if(inputMsg!=''){
-					this.isShow=true;
+					this.ifShowPoup=true;
+				}
+			},
+			/**
+			 * 进入对应用户页面
+			 */
+			toUserInfo(item){
+				console.log(item);
+				if(item.uid == this.user.uid){
+					uni.reLaunch({
+						url:"/pages/tabBar/my"
+					});
+				}else{
+					uni.navigateTo({
+						url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=${item.isF}&isFocus=${item.isFocus}`
+					});
 				}
 			}
 		}

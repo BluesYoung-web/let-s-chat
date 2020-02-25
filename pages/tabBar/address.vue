@@ -1,6 +1,12 @@
 <template>
 	<!-- 好友列表界面 -->
 	<view>
+		<!-- 自定义导航栏 -->
+		<uni-nav-bar title="通讯录" background-color="#344955" color="#ffffff"
+		right-icon="plusempty" @clickRight="clickPlus"></uni-nav-bar>
+		<!-- 下拉气泡菜单 -->
+		<bubble-menu :ifShow="isShowbubble" x='342' y="5" theme="dark" 
+		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 搜索框 -->
 		<view class="search flex flex-jc bg-fff pd-tp20 pd-bt20">
 			<search-input width="600upx" border="none" backgroundColor="#efeff4" bdRadius="50upx" placeholder="输入好友名称"  @getInputMsg="getInputMsg"></search-input>
@@ -17,6 +23,8 @@
 
 <script>
 	import data from '@/data.js';
+	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
+	import bubbleMenu from "@/components/young-bubble-menu/young-bubble-menu.vue";
 	import closeFriend from '@/components/young-close-friend/young-close-friend.vue';
 	import searchInput from '@/components/young-search-input/young-search-input.vue';
 	import addressItem from '@/components/young-address-item/young-address-item.vue';
@@ -24,7 +32,9 @@
 		components: {
 			closeFriend,
 			searchInput,
-			addressItem
+			addressItem,
+			uniNavBar,
+			bubbleMenu
 		},
 		data() {
 			return {
@@ -64,21 +74,75 @@
 					avatar: '/static/img/avatar.png',
 					uid: 14
 				}],
+				/**
+				 * 是否显示气泡菜单
+				 */
+				isShowbubble: false,
+				/**
+				 * 菜单项
+				 */
+				popData: [{
+					title: '发起群聊',
+					icon: 'chatbubble-filled',
+				}, {
+					title: '添加朋友',
+					icon: 'personadd-filled',
+				}, {
+					title: '扫一扫',
+					icon: 'scan'
+				}, {
+					title: '分享给朋友',
+					icon: 'upload'
+				}, {
+					title: '帮助与反馈',
+					icon: 'email'
+				}],
 			}
 		},
-		/**
-		 * 监听设置按钮的点击事件
-		 */
-		onNavigationBarButtonTap(e) {
-			// 跳转到搜索用户页面
-			uni.navigateTo({
-				url: `../addressSubpackage/addFriends`,
-				success: res => {},
-				fail: () => {},
-				complete: () => {}
-			});
-		},
 		methods: {
+			/**
+			 * 点击右上角加号
+			 */
+			clickPlus(){
+				this.isShowbubble = true;
+			},
+			/**
+			 * 关闭气泡菜单
+			 */
+			close(){
+				this.isShowbubble = false;
+			},
+			/**
+			 * 点击气泡菜单
+			 */
+			clickMenu(item){
+				switch (item.title){
+					case '发起群聊':
+						this.toCreateChatRoom();
+						break;
+					case '添加朋友':
+						this.toUserSearch();
+						break;
+					default:
+						break;
+				}
+			},
+			/**
+			 * 去创建群聊
+			 */
+			toCreateChatRoom(){
+				uni.navigateTo({
+					url:"/pages/addressSubpackage/createChatRoom"
+				});
+			},
+			/**
+			 * 去搜索用户
+			 */
+			toUserSearch(){
+				uni.navigateTo({
+					url:"/pages/addressSubpackage/addFriends"
+				});
+			},
 			/**
 			 * 前往好友资料页面
 			 */

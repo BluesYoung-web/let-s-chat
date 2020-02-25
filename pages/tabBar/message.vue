@@ -108,6 +108,9 @@
 					case '发起群聊':
 						this.toCreateChatRoom();
 						break;
+					case '添加朋友':
+						this.toUserSearch();
+						break;
 					default:
 						break;
 				}
@@ -118,6 +121,14 @@
 			toCreateChatRoom(){
 				uni.navigateTo({
 					url:"/pages/addressSubpackage/createChatRoom"
+				});
+			},
+			/**
+			 * 去搜索用户
+			 */
+			toUserSearch(){
+				uni.navigateTo({
+					url:"/pages/addressSubpackage/addFriends"
 				});
 			},
 			/**

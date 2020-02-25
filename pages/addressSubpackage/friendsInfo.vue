@@ -1,234 +1,170 @@
 <template>
-	<!-- 好友资料页面 -->
-	<view class="content">
-		<!-- 头像后背景颜色 -->
-		<view class="topBg width-full bg-344955 absolute"></view>
-		<!-- 头像 -->
-		<view class="avatar mg-tp20">
-			<image :src="user.avatarUrl" mode="scaleToFill"></image>
-		</view>	
-			
-		<!-- 昵称资料 -->
-		<view class="messageContent mg-tp60 flex flex-direction-column flex-vc">
-			<!-- 昵称 -->
-			<view class="name ft-36 font-weight-600 color-344955 one-line-ellipsis">
-				<text v-if="user.name">{{user.name}}</text>
-				<text v-else class="">用户昵称</text>
-			</view>
-			<!-- 来聊账号 -->
-			<view class="account ft-26 color-889aa3 mg-tp15">
-				<text>来聊账号：</text>
-				<text>{{user.account}}</text>
-			</view>
-			<!-- 签名 -->
-			<view class="motto ft-26 color-889aa3 mg-tp20 one-line-ellipsis">
-				<text v-if="user.motto">{{user.motto}}</text>
-				<text v-else class="">暂未设置签名</text>
-			</view>
-			
-			<!-- 取消关注按钮 -->
-			<button class="editInformation bg-889aa3 color-889aa3 mg-tp60"  plain="true" @tap="toDeleteFriendSuccess"
-			v-text="isLiked? '取消关注' : '关注' "></button>
-			
-			<!-- 赞&关注&发表 -->
-			<view class="flex flex-direction-row flex-hc width-750">
-				<!-- 赞 -->
-				<view class="myCommend" @tap="toMyCommend">
-					<text class="color-889aa3 ft-26">赞</text>
-					<text class="color-4A6572 ft-28 mg-tp15">{{myCommend}}</text>
+	<view>
+		<!-- 自定义导航栏 -->
+		<uni-nav-bar left-icon="back" :right-icon="isF == 1 ? 'trash' : ''" rc="#ff2c2c"
+		background-color="#344955" color="#fff" @clickLeft="back" @clickRight="del"></uni-nav-bar>
+		<!-- 好友资料页面 -->
+		<view class="content">
+			<!-- 个人信息页组件 -->
+			<person-info :user="user" :buttonText="isFocus == 1 ? '取消关注' : '关注'" 
+			:commendNum="myCommend" :focusNum="myFocus" :releaseNum="myRelease" 
+			@toMyCommend="goTo" @toMyFocus="goTo" @toMyRelease="goTo"
+			@clickButton="clickButton" @checkImg="checkImg" ></person-info>
+			<!-- 加好友与发消息 -->
+			<view class="friendsInfoBottom bg-344955 width-full" v-if="isF">
+				<view class="btn width-full height-100" @tap="toConversation(0)">
+					<button class="bg-849aa5 color-fff">发语音消息</button>
 				</view>
-				<!-- 关注 -->
-				<view class="myFocus" @tap="toMyFocus">
-					<text class="color-889aa3 ft-26">关注</text>
-					<text class="color-4A6572 ft-28 mg-tp15">{{myFocus}}</text>
-				</view>
-				<!-- 发表 -->
-				<view class="myRelease" @tap="toMyRelease">
-					<text class="color-889aa3 ft-26">发表</text>
-					<text class="color-4A6572 ft-28 mg-tp15">{{myRelease}}</text>
-				</view>
+				<view class="btn width-full height-100" @tap="toConversation(1)">
+					<button class="bg-f9aa33 color-fff">发消息</button>
+				</view>						
 			</view>
-		</view>
-		<view class="friendsInfoBottom bg-344955 width-full" v-if="isLiked">
-			<view class="btn width-full height-100" @tap="toConversation(0)">
-				<button class="bg-849aa5 color-fff">发语音消息</button>
+			<view class="friendsInfoBottom bg-344955 width-full" v-else>
+				<view class="btn width-full addFrends height-100" @tap="add">
+					<button class="bg-f9aa33 color-fff">加为好友</button>
+				</view>						
 			</view>
-			<view class="btn width-full height-100" @tap="toConversation(1)">
-				<button class="bg-f9aa33 color-fff">发消息</button>
-			</view>						
-		</view>
-		<view class="friendsInfoBottom bg-344955 width-full" v-else>
-			<view class="btn width-full addFrends height-100" @tap="toDeleteFriendSuccess">
-				<button class="bg-f9aa33 color-fff">加为好友</button>
-			</view>						
 		</view>
 	</view>
 </template>
 
 <script>
-	import {mapState,mapMutations} from 'vuex';
-	import request from '@/request/request.js';
+	import personInfo from "@/components/young-person-info/young-person-info.vue";
+	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
+	import data from '@/data.js';
 	export default {
+		/**
+		 * 组件
+		 */
+		components:{
+			personInfo,
+			uniNavBar
+		},
 		data() {
 			return{
-				user:{
-					name:"", //昵称
-					motto:"",//签名
-					account:'',//账号
-					avatarUrl:''//头像地址
-				},
-				myCommend:0,//赞数
-				myFocus:0,//关注
-				myRelease:0,//发表
-				isLiked:false 
+				/**
+				 * 用户信息
+				 */
+				user:{},
+				myCommend:0,
+				myFocus:0,
+				myRelease:0,
+				/**
+				 * 是否是好友
+				 */
+				isF: false,
+				/**
+				 * 是否已关注
+				 */
+				isFocus: false
 			}
 		},
 		onLoad(e) {
-			let uid=e.uid;
-			// 如果是自己
-			if(uid==this.userInfo.account){
-				uni.reLaunch({
-					url:"/pages/tabBar/my/my"
-				});
-			}
-			// 是否为好友
-			let isF=e.isF;
-			if(isF=='true'){
-				this.isLiked=true;
-			}
-			if(uid){
-				// 如果存在
-				let myFriends=this.myFriends;
-				let key=[];
-				for (let i in myFriends) {
-					key.push(myFriends[i][0]);
+			this.isF = e.isF;
+			this.isFocus = e.isFocus;
+			data.user.search({
+				key: e.uid,
+				success: (res) => {
+					this.user = res.pop();
 				}
-				if(key.includes(uid)){
-					// 如果存在于好友列表
-					for (let i in key) {
-						if(uid==key[i]){
-							let tp=myFriends[i][1];
-							this.user=tp;
-							// 为了后续删除好友做准备
-							this.setInfoTemp(tp);
-						}
-					}
+			});
+			//动态获取用户的发表的，关注该用户的，该用户赞过的数量
+						
+		},
+		methods:{
+			/**
+			 * 查看头像
+			 */
+			checkImg(){
+				uni.previewImage({
+					urls: [this.user.avatar]
+				});
+			},
+			/**
+			 * 点击关注、取消关注
+			 */
+			clickButton(){
+				if(this.isFocus == 1){
+					// 取关，服务器操作
+					this.isFocus = 0;
 				}else{
-					request.getUserInfo(uid,(data)=>{
-						this.user=data;
-						// 为了后续删除好友做准备
-						this.setInfoTemp(this.user);
-					});
+					// 关注，服务器操作
+					this.isFocus = 1;
 				}
-			}else{
-				if(this.tempInfo){
-					this.user=this.tempInfo;
-				}
-			}
-			//动态获取我的发表动态数量
-			request.getMyFinds(uid,(data)=>{
-				this.myRelease=data.length;
-			});
-			// 动态获取关注我的人
-			request.getFollowMe(uid,(data)=>{
-				this.myFocus=data.length;
-			});
-			// 动态获取赞的个数
-			request.getLikesNum(uid,(data)=>{
-				this.myCommend=data.length;
-			});
-		},
-		computed:{
-			...mapState(['tempInfo','myFriends','serverUrl','userInfo'])
-		},
-		/*
-		methods: {
-			...mapMutations(['addFriend','deleteFriend','setInfoTemp','addLikes','addFocus']),
-			//跳转到消息界面
+			},
+			/**
+			 * 跳转用户的发表的，关注该用户的，该用户赞过的
+			 */
+			goTo(){
+				uni.showToast({
+					title:"不好意思，只能查看自己的哦",
+					icon:"none"
+				});
+			},
+			/**
+			 * 点击左上角返回
+			 */
+			back(){
+				uni.navigateBack();
+			},
+			/**
+			 * 删好友
+			 */
+			del(){
+				uni.showToast({
+					title:"删好友"
+				});
+				this.isF = 0;
+			},
+			/**
+			 * 加好友
+			 */
+			add(){
+				console.log("add friend");
+				this.isF = 1;
+			},
+			/**
+			 * 跳转到对话页
+			 */
 			toConversation(e){
-				let voiceActive=e;
+				let voiceActive = e;
 				uni.navigateTo({
-					url: `../../messageSubpackage/conversation?voiceActive=${voiceActive}&name=${this.user.name}&f_uid=${this.user.account}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			//点击关注/取消关注按钮
-			toDeleteFriendSuccess(){
-				this.isLiked = !this.isLiked;
-				if (this.isLiked) {
-					// 添加好友到数据库
-					request.addFriend((data)=>{
-						if(data!=0){
-							uni.showToast({
-								icon:"none",
-								title:"好友添加成功"
-							});
-							for (let i in data) {
-								this.tempInfo.key=i;
-								// 添加好友到state
-								this.addFriend(this.tempInfo);
-							}
-						}else{
-							uni.showToast({
-								icon:"none",
-								title:"好友添加失败"
-							});
-						}
-					});
-				} else{
-					// 从数据库删除好友
-					request.deleteFriend((data)=>{
-						if(data==1){
-							uni.showToast({
-								icon:"none",
-								title:"好友删除成功"
-							});
-							// 删除好友
-							this.deleteFriend(this.tempInfo);
-						}else{
-							uni.showToast({
-								icon:"none",
-								title:"好友删除失败"
-							});
-						}
-					});
-				}
-			},
-					
-			
-			//---------下方的赞&关注&发表--------
-			// 跳转到我收到的赞的页面
-			toMyCommend(){
-				uni.showToast({
-					title:"不好意思，只能查看自己的哦",
-					icon:"none"
-				});
-			},
-			// 跳转到关注我的页面
-			toMyFocus(){
-				uni.showToast({
-					title:"不好意思，只能查看自己的哦",
-					icon:"none"
-				});
-			},
-			// 跳转到我收到的赞的页面
-			toMyRelease(){
-				uni.showToast({
-					title:"不好意思，只能查看自己的哦",
-					icon:"none"
+					url: `/pages/messageSubpackage/conversation?voiceActive=${voiceActive}&name=${this.user.nick}&f_uid=${this.user.uid}`,
 				});
 			},
 		}
-		*/
 	}
 </script>
 
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-	
+	.bg-f9aa33{
+		background-color: @sendMsgBtn;
+	}
+	.bg-849aa5{
+		background-color: @borderColor;
+	}
+	.btn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.friendsInfoBottom{
+		position: fixed;
+		z-index: 1;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 110upx;
+	}
+	.friendsInfoBottom button,{
+		width: 325upx;
+		height: 70upx;
+		line-height: 70upx;
+		font-size: 30upx;
+	}
 	.addFrends button{
 		width: 650upx !important;
 		height: 70upx;

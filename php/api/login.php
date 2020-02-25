@@ -21,7 +21,7 @@
     $arr = [];
     if ($rs = mysqli_fetch_assoc($res)) {
         // 如果老用户首次使用微信登录，合并账户数据
-        if($tel){
+        if($tel && $wxid != ''){
             $s = "update user set wxid = '$wxid' where tel = $tel";
             $res = mysqli_query($conn, $s);
             if($res){

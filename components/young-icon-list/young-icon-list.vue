@@ -3,7 +3,8 @@
 	<view>
 		<view @click="btnClick" class="bg-fff pd-lr20 width-750 height-100  flex flex-direction-row flex-vc flex-jsb">
 			<view class="h100 line-h100 flex flex-vc">
-				<image class="width-50 height-50" :src="iconUrl" mode=""></image>
+				<uni-icons v-if="iconType" :type="iconType" :size="size" :color='color'></uni-icons>
+				<image v-if="!iconType" class="width-50 height-50" :src="iconUrl" mode=""></image>
 				<text class="pd-lt10 ft-30 color-333">{{title}}</text>
 			</view>
 			<view class="flex flex-ac">
@@ -14,9 +15,25 @@
 </template>
 
 <script>
+	import uniIcons from "@/components/uni-icons/uni-icons.vue";
 	export default {
 		name: 'iconList',
+		components:{
+			uniIcons
+		},
 		props: {
+			iconType: {
+				type: String,
+				default: ''
+			},
+			size:{
+				type: [String,Number],
+				default: 32
+			},
+			color:{
+				type: [String],
+				default: '#344955'
+			},
 			iconUrl: {
 				type: String,
 				default: '/static/img/message.png',

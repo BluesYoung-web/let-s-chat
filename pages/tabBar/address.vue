@@ -11,6 +11,8 @@
 		<view class="search flex flex-jc bg-fff pd-tp20 pd-bt20">
 			<search-input width="600upx" border="none" backgroundColor="#efeff4" bdRadius="50upx" placeholder="输入好友名称"  @getInputMsg="getInputMsg"></search-input>
 		</view>
+		<!-- 新朋友 -->
+		<icon-list iconType="personadd-filled" color='#1BB723' title="新的朋友" @click="toFriendCheck"></icon-list>
 		<!-- 常用联系人列表 -->
 		<close-friend :closeFriend="closeFriend" @toFriendInfo="toFriendInfo"></close-friend>
 		<!-- 好友列表 -->
@@ -28,13 +30,15 @@
 	import closeFriend from '@/components/young-close-friend/young-close-friend.vue';
 	import searchInput from '@/components/young-search-input/young-search-input.vue';
 	import addressItem from '@/components/young-address-item/young-address-item.vue';
+	import iconList from "@/components/young-icon-list/young-icon-list.vue";
 	export default {
 		components: {
 			closeFriend,
 			searchInput,
 			addressItem,
 			uniNavBar,
-			bubbleMenu
+			bubbleMenu,
+			iconList
 		},
 		data() {
 			return {
@@ -154,6 +158,14 @@
 			 */
 			getInputMsg(e){
 				console.log(e);
+			},
+			/**
+			 * 去好友验证页面
+			 */
+			toFriendCheck(){
+				uni.showToast({
+					title:'去好友验证'
+				});
 			}
 		},
 	}

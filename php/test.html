@@ -8,9 +8,10 @@
         <input type="text" id="value">
         <input type="button" value="发消息" id="btn">
         <script>
-            let socket = new WebSocket('ws://192.168.1.4:8080');
+            let socket = new WebSocket('ws://192.168.0.106:8848?sign=123&uid=456');
             socket.onopen = function (e) {
                 console.log(e,"正常打开");
+                socket.send('张三丰');
             }
             socket.onclose = function (e) {
                 console.log(e,"连接关闭");
@@ -19,8 +20,8 @@
                 console.log(e,"连接出错");
             }
             socket.onmessage = function (e) {
-                console.log(e);
-                console.log(JSON.parse(e.data));
+                console.log(e.data);
+                // console.log(JSON.parse(e.data));
             }
             let btn = document.querySelector("#btn");
             let value = document.querySelector("#value");

@@ -4,40 +4,17 @@
  * @copyright http://github.com/BluesYoung-web
  */
 
- /**
-  * 引入HTTP模块
-  */
-const http = require('http');
 /**
- * 引入url解析模块
+ * 引入HTTP模块
  */
-const url = require('url');
+const httpServer = require('./server/httpServer');
+httpServer.listen(80, () => {
+    console.log('HTTP服务器运行中......')
+});
 /**
  * 引入websocket模块
  */
-const ws = require('nodejs-websocket');
-
-// http.createServer((req, res) => {
-//     res.writeHead(200, {
-//         'Content-Type': 'text/html'
-//     });
-//     res.end('hello word');
-//     let params = url.parse(req.url);
-//     console.log(params);
-// }).listen(8080);
-
-let server = ws.createServer((conn) => {
-    conn.on('text', (str) =>{
-        console.log('msg:'+str);
-        conn.sendText(str);
-    });
-    conn.on('close', (code, reason) => {
-        console.log('socket服务器关闭'+reason);
-    });
-    conn.on('error', (code, reason) => {
-        console.log('服务器异常关闭'+reason);
-    });
-    console.log(conn.path);
-}).listen(8848);
-
-console.log("WebSocket建立完毕");
+const websocketServer = require('./server/websocketServer');
+websocketServer.listen(8080, () => {
+    console.log('websocket服务器运行中.......')
+});

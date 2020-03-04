@@ -10,11 +10,13 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const fs = require('fs');
+const morgan = require('morgan');
 
 /**
- * 引入日志模块
+ * 创建日志写入流
  */
-const log = require('./log/log');
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log' ,'access.log'), { flags: 'a' });
 
 /**
  * 引入子路由模块
@@ -26,7 +28,7 @@ const upload = require('./routes/upload');
 /**
  * 日志模块
  */
-app.use(log);
+app.use(morgan('combined', { stream: accessLogStream }));
 
 /**
  * 托管静态文件，顺序执行，优先级高

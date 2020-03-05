@@ -34,7 +34,7 @@
             }
         }
         // 老用户，返回用户信息
-        $arr['benew'] = 0;
+        $arr['bnew'] = 0;
     } else {
         // 新用户，注册并返回用户信息
         if($tel && $wxid){
@@ -60,7 +60,7 @@
             respond(-1, null, "insert fail");
             return;
         }
-        $arr['benew'] = 1;
+        $arr['bnew'] = 1;
     }
 
     $arr['user'] = $rs;

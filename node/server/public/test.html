@@ -8,7 +8,7 @@
         <input type="text" id="value">
         <input type="button" value="发消息" id="btn">
         <script>
-            let socket = new WebSocket('ws://192.168.1.11:8080?sign=123&uid=456');
+            let socket = new WebSocket('ws://192.168.0.112:8080?sign=b8c640a56b7895ab59e86eee6218b2e6&uid=754433271');
             socket.onopen = function (e) {
                 console.log(e,"正常打开");
                 socket.send('张三丰');

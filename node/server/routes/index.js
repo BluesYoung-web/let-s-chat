@@ -8,8 +8,15 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/:id', (req, res) => {
-    res.send('<h1>来了老弟</h1>'+req.params.id)
+
+
+router.get('/', (req, res) => {
+    const {myredis} = require('../database/conn');
+    myredis.set('奥利给', '大哥').then((data) => {
+        myredis.get('奥利给').then((data) => {
+            res.send(data);
+        });
+    });
 });
 
 /**

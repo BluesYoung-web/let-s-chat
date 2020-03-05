@@ -12,6 +12,7 @@
 import Socket from '@/core/class/socket.js';
 import config from '@/core/config.js';
 import event from '@/core/event.js';
+import store from '@/core/store.js';
 
 /**
  * @type {Socket} socket对象
@@ -102,8 +103,11 @@ const onDisconnect = function(){
  * @param {function} success 初始化完成的回调函数
  */
 const init = function(success){
-    let url = config.websocketUrl;
-    
+    let user = store.get({
+        key: 'user.account'
+    });
+    let {sign, uid} = {...user};
+    let url = `${config.websocketUrl}?sign=${sign}&uid=${uid}`;
     socket = new Socket({
         url,
         params: {

@@ -13,8 +13,8 @@ import tools from '@/core/tools.js';
  * 路由
  */
 const path = {
-    login: '/api/login.php',
-    upload: '/api/upload.php'
+    login: '/login',
+    upload: '/upload'
 }
 /**
  * 存储前缀
@@ -63,23 +63,9 @@ const login_to_service = function(args){
             });
             // 连接websocket
             net.init(() => {
-                // 连接成功之后,立即验证token
-                net.send({
-                    cmd: 0,
-                    data: {
-                        uid: user.uid,
-                        sign: user.sign
-                    },
-                    success: (res) => {
-                        console.log(res);
-                    },
-                    fail: (code, err) => {
-                        console.log(code, err);
-                    }
-                });
                 success && success({
                     user,
-                    benew: res.benew
+                    bnew: res.bnew
                 });
             });
         },

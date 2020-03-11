@@ -66,6 +66,14 @@
 				user: {}
 			}
 		},
+		watch: {
+			inputMsg(newValue, oldValue) {
+				if(newValue.length == 0){
+					this.friendsList.length = 0;
+					this.ifShowSearch = true;
+				}
+			}
+		},
 		onShow() {
 			data.user.get_info({
 				success: (res) => {

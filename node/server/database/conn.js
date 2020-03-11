@@ -59,8 +59,6 @@ const mysqlQuery = async function(sql){
                 });
             }
         });
-    }).catch((err) => {
-        throw err;
     });
 }
 

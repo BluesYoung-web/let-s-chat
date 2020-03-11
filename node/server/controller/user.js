@@ -8,6 +8,7 @@
  * 引入mysql数据库查询方法
  */
 const {mysqlQuery} = require('../database/conn');
+
 /**
  * 引入操作redis的对象
  */
@@ -36,8 +37,8 @@ const login = function(tel, wxid){
     let combin = `update user set wxid = '${wxid}' where tel = ${tel};`;
     let wxReg = `insert into user(tel,wxid) values(${tel},'${wxid}');`;
     let telReg = `insert into user(tel) values(${tel});`
-    let token = makeToken();
     const {respondProcess} = require('../core/tools');
+    let token = makeToken();
     return new Promise((resolve, reject) => {
         mysqlQuery(search).then((data) => {
             if (data.length != 0) {
@@ -108,10 +109,46 @@ const login = function(tel, wxid){
     });
 }
 
+/**
+ * 根据uid获取用户信息
+ */
+const get_info = function(uid) {
+    let sql = `select * from user where uid = ${uid}`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            resolve(data[0]);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+/**
+ * 设置用户信息
+ * @param {object} args 
+ * @param {number} args.uid 用户uid
+ * @param {string} args.avatar 用户头像
+ * @param {string} args.nick 用户昵称 
+ * @param {string} args.motto 用户个性签名 
+ * @param {number} args.tel 用户手机号
+ */
+const set_info = function(args){
+    let {uid, avatar, nick, motto, tel} = {...args};
+    let sql = `update user set nick = '${nick}', motto = '${motto}', avatar = '${avatar}', tel = ${tel}
+                where uid = ${uid};`
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            resolve('修改成功');
+        }).catch((err) => {
+            reject('修改失败');
+        });
+    });
+}
 
 /**
  * 暴露
  */
 module.exports = {
-    login
+    login,
+    get_info,
+    set_info
 }

@@ -11,12 +11,8 @@ const router = express.Router();
 const {login} = require('../controller/user');
 
 router.get('/', (req, res) => {
-    // res.send('<h1>登陆路由</h1>');
     res.setHeader('Access-Control-Allow-Origin', '*');
-
-    login(15171255945, '').then((data) => {
-        res.send(data);
-    });
+    res.send('<h1>登陆路由</h1>');
 });
 
 router.post('/', (req, res) => {
@@ -26,6 +22,9 @@ router.post('/', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     login(tel, wxid).then((data) => {
         res.send(data);
+    }).catch((err) => {
+        res.send(err);
+        throw err;
     });
 });
 

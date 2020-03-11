@@ -5,7 +5,73 @@
  */
 
 class Store{
-    constructor(){
-        
+    /**
+     * 当前用户uid
+     * @param {number} uid 
+     */
+    constructor(uid){
+        this.uid = uid;
     }
+    /**
+     * 获取当前用户信息
+     */
+    get_info(){
+        const {myredis} = require('../database/conn');
+        const user = require('../controller/user');
+        return new Promise((resolve, reject) => {
+            // 首先从redis缓存获取
+            myredis.get(`${this.uid}.info`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: {
+                            source: 'redis缓存'
+                        }
+                    });
+                } else {
+                    // 没有缓存，从mysql数据库获取
+                    user.get_info(this.uid).then((data) => {
+                        if (data) {
+                            // 更新缓存
+                            myredis.set(`${this.uid}.info`, JSON.stringify(data)).then(() => {
+                                // 返回数据
+                                resolve({
+                                    data,
+                                    extra: {
+                                        source: 'mysql'
+                                    }
+                                });
+                            });
+                        } else {
+                            reject('查无此人');
+                        }
+                    }).catch((err) => {
+                        reject('查询出错');
+                    });
+                }
+            });
+        });
+    }
+    /**
+     * 设置当前用户信息
+     */
+    set_info(data){
+        const {myredis} = require('../database/conn');
+        const user = require('../controller/user');
+        return new Promise((resolve, reject) => {
+            // 先写入mysql数据库
+            user.set_info(data).then((msg) => {
+                // 更新缓存
+                myredis.set(`${data.uid}.info`, JSON.stringify(data)).then(() => {
+                    resolve(msg);
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+    
 }
+
+module.exports = Store;

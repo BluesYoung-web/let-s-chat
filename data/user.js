@@ -143,7 +143,7 @@ const login_out = function (args) {
 const upload = function(args){
 	let {filePath, name, success, fail} = {...args};
 	net.upload({
-		path: path.upload + '?fileType=' + name,
+		path: path.upload,
 		filePath,
 		name,
 		success: (res) => {

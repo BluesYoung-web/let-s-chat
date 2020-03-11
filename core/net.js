@@ -261,7 +261,10 @@ const upload = function(args){
 	uni.uploadFile({
 		url,
 		filePath,
-		name,
+        name,
+        formData: {
+            type: name
+        },
 		success: (res) => {
 			success && success(res);
 		},

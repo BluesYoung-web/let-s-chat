@@ -36,7 +36,10 @@ router.post('/', multipartMiddleware, (req, res) => {
     fs.unlink(tempPath, () => {
         console.log('临时文件已删除');
     });
-    res.send(path.join('localhost/', type, name));
+    const {ipAddress} = require('../config');
+    let url = `http://${ipAddress}/${type}/${name}`;
+    const {respondProcess} = require('../core/tools');
+    res.send(respondProcess(0, {url}, '文件上传成功'));
 });
 
 /**

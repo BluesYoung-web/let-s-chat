@@ -145,10 +145,32 @@ const set_info = function(args){
 }
 
 /**
+ * 模糊查询
+ */
+const search = function(key){
+    let sql;
+    if (isNaN(key)) {
+        // 昵称
+        sql = `select * from user where nick like '%${key}%';`;
+    } else {
+        // uid或tel
+        sql = `select * from user where uid = ${key} or tel = ${key};`;
+    }
+    console.log(sql);
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+/**
  * 暴露
  */
 module.exports = {
     login,
     get_info,
-    set_info
+    set_info,
+    search
 }

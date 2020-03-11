@@ -100,6 +100,22 @@
                         cbk
                     }));
                 });
+            case 102:
+                // 搜索用户
+                store.search(data.key).then((data) => {
+                    this.conn.sendText(resFormat({
+                        status: 0,
+                        data: data.data,
+                        cbk,
+                        extra: data.extra
+                    }));
+                }).catch((msg) => {
+                    this.conn.sendText(resFormat({
+                        status: -1,
+                        data: mag,
+                        cbk
+                    }));
+                });
             default:
                 break;
         }

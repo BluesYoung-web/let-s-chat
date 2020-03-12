@@ -8,7 +8,7 @@
         <input type="text" id="value">
         <input type="button" value="发消息" id="btn">
         <script>
-            let socket = new WebSocket('ws://192.168.0.106:8080?sign=c88ac4dd967834a77a863c31d3ea9fa8&uid=754433272');
+            let socket = new WebSocket('ws://192.168.0.109:8080?sign=c88ac4dd967834a77a863c31d3ea9fa8&uid=754433272');
             socket.onopen = function (e) {
                 console.log(e,"正常打开");
             }
@@ -25,9 +25,9 @@
             let value = document.querySelector("#value");
             btn.addEventListener('click',() => {
                 let obj = {
-                    cmd: 100,
+                    cmd: 301,
                     data: {
-                        value: value.value
+                        uid: 754433271
                     },
                     cbk: 1
                 }

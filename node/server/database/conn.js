@@ -10,21 +10,6 @@
 const config = require('../config');
 
 /**
- * 连接MongoDB数据库
- */
-const mongoose = require('mongoose');
-let str = `mongodb://127.0.0.1:27017/${config.dbName}`;
-mongoose.connect(str, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}, (err) => {
-    if (err) {
-        throw err;
-    } else{
-        console.log("MongoDB数据库连接成功");
-    }
-});
-/**
  * mysql查询方法（暴露）
  */
 const mysqlQuery = async function(sql){

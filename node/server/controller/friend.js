@@ -11,11 +11,6 @@ const {mysqlQuery} = require('../database/conn');
 
 
 /**
- * 引入操作MongoDB的类
- */
-const MyMongo = require('../model/mongodb');
-
-/**
  * 根据uid获取用户信息
  * @param {number} uid 当前用户信息
  * @param {number} fid 目标用户信息
@@ -48,52 +43,64 @@ const get_info = function(uid, fid){
     });
 }
 
-const friend_list = new MyMongo({
-    cname: 'friend',
-    struct: {
-        uid: Number,
-        friendsList: Array
-    }
-});
 /**
  * 根据uid获取好友列表
  * @param {number} uid 
  */
 const get_list = function(uid){
     return new Promise((resolve, reject) => {
-        friend_list.find({
-            uid
-        }).then((data) => {
-            resolve(data[0].friendsList);
+        let sql = `select fid from friends where uid = ${uid};`;
+        mysqlQuery(sql).then((data) => {
+            let arr = [];
+            for (const key in data) {
+                arr.push(data[key].fid);
+            }
+            resolve(arr);
         }).catch((err) => {
             reject(err);
         });
     });
 }
-const focus_list = new MyMongo({
-    cname: 'focus',
-    struct: {
-        uid: Number,
-        focusList: Array
-    }
-});
 /**
  * 根据uid获取关注列表
  * @param {number} uid 
  */
 const get_focus_list = function(uid){
     return new Promise((resolve, reject) => {
-        focus_list.find({
-            uid
-        }).then((data) => {
-            resolve(data[0].focusList);
+        let sql = `select fid from focus where uid = ${uid};`;
+        mysqlQuery(sql).then((data) => {
+            let arr = [];
+            for (const key in data) {
+                arr.push(data[key].fid);
+            }
+            resolve(arr);
         }).catch((err) => {
             reject(err);
         });
     });
 }
+/**
+ * 加好友
+ * @param {number} uid 用户uid
+ * @param {number} fid 好友uid
+ */
+const add = function(uid, fid){
+    
+}
+
+/**
+ * 删好友
+ * @param {number} uid 用户uid
+ * @param {number} fid 好友uid
+ */
+const del = function(uid, fid){
+    
+}
+
 module.exports = {
     get_info,
     get_list,
-    get_focus_list
+    get_focus_list,
+    add,
+    del
 }

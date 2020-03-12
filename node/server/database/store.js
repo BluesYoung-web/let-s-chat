@@ -169,7 +169,7 @@ class Store{
                         myredis.set(`${this.uid}.friend_list`, JSON.stringify(data)).then(() => {
                             resolve({
                                 data,
-                                extra: 'MongoDB'
+                                extra: 'mysql'
                             });
                         });
                     }).catch((err) => {
@@ -178,6 +178,22 @@ class Store{
                 }
             })
         });
+    }
+    /**
+     * 加好友
+     * @param {number} uid 好友uid
+     */
+    add_friend(uid){
+        const {myredis} = require('../database/conn');
+        const friend = require('../controller/friend');
+        friend
+    }
+    /**
+     * 删好友
+     * @param {number} uid 好友uid
+     */
+    del_friend(uid){
+
     }
 }
 

@@ -66,55 +66,32 @@
      */
     userProcess(args){
         let {cmd, data, cbk, extra, store} = {...args};
-        const {resFormat} = require('../core/tools');
         switch (cmd) {
             case 100:
                 // 获取用户信息
                 store.get_info().then((data) => {
-                    this.conn.sendText(resFormat({
-                        status: 0,
-                        data: data.data,
-                        cbk,
-                        extra: data.extra
-                    }));
+                    this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
-                    this.conn.sendText(resFormat({
-                        status: -1,
-                        data: mag,
-                        cbk
-                    }));
+                    this.opFail(msg, cbk, extra);
                 });
                 break;
             case 101:
                 // 设置用户信息
                 store.set_info(data).then((msg) => {
-                    this.conn.sendText(resFormat({
-                        status: 0,
+                    let dt = {
                         data: msg,
-                        cbk
-                    }));
+                        extra: {}
+                    }
+                    this.opSuccess(dt, cbk, extra);
                 }).catch((err) => {
-                    this.conn.sendText(resFormat({
-                        status: -1,
-                        data: err,
-                        cbk
-                    }));
+                    this.opFail(err, cbk, extra);
                 });
             case 102:
                 // 搜索用户
                 store.search(data.key).then((data) => {
-                    this.conn.sendText(resFormat({
-                        status: 0,
-                        data: data.data,
-                        cbk,
-                        extra: data.extra
-                    }));
+                    this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
-                    this.conn.sendText(resFormat({
-                        status: -1,
-                        data: mag,
-                        cbk
-                    }));
+                    this.opFail(msg, cbk, extra);
                 });
             default:
                 break;
@@ -142,7 +119,25 @@
      * @param {object} args.extra 透传参数
      */
     friendProcess(args){
-
+        let {cmd, data, cbk, extra, store} = {...args};
+        switch (cmd) {
+            case 300:
+                store.get_user_info_by_uid(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 301:
+                store.get_friend_list().then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            default:
+                break;
+        }
     }
     /**
      * 聊天相关操作
@@ -154,10 +149,37 @@
      * @param {object} args.extra 透传参数
      */
     chatProcess(args){
-
+        
     }
-
-
+    /**
+     * 操作成功
+     * @param {object} data 数据
+     * @param {number} cbk 回调函数id
+     * @param {object} extra 透传参数
+     */
+    opSuccess(data, cbk, extra){
+        const {resFormat} = require('../core/tools');
+        this.conn.sendText(resFormat({
+            status: 0,
+            data: data.data,
+            cbk,
+            extra: data.extra
+        }));
+    }
+    /**
+     * 操作失败
+     * @param {string} msg 提示信息 
+     * @param {number} cbk 回调函数id
+     * @param {object} extra 透传参数
+     */
+    opFail(msg, cbk, extra){
+        const {resFormat} = require('../core/tools');
+        this.conn.sendText(resFormat({
+            status: -1,
+            data: msg,
+            cbk
+        }));
+    }
  }
 
  module.exports = Socket;

@@ -135,6 +135,20 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 302:
+                store.add_friend(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 303:
+                store.del_friend(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

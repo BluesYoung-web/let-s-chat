@@ -186,14 +186,27 @@ class Store{
     add_friend(uid){
         const {myredis} = require('../database/conn');
         const friend = require('../controller/friend');
-        friend
+        return new Promise((resolve, reject) => {
+            friend.add(this.uid, uid).then((data) => {
+                resolve('好友添加成功');
+            }).catch((err) => {
+                reject('好友添加失败');
+            });
+        });
     }
     /**
      * 删好友
      * @param {number} uid 好友uid
      */
     del_friend(uid){
-
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            friend.del(this.uid, uid).then((data) => {
+                resolve('好友删除成功');
+            }).catch((err) => {
+                reject('好友删除失败');
+            });
+        });
     }
 }
 

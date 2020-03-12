@@ -85,7 +85,20 @@ const get_focus_list = function(uid){
  * @param {number} fid 好友uid
  */
 const add = function(uid, fid){
-    
+    // 加好友的同时，默认互相关注
+    let sql = `insert into friends(uid, fid) values(${uid}, ${fid}),(${fid}, ${uid});`;
+    let sql2 = `insert into focus(uid, fid) values(${uid}, ${fid}),(${fid}, ${uid});`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            mysqlQuery(sql2).then((data) => {
+                resolve(data);
+            }).catch((err) => {
+                reject(err);
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
 }
 
 /**
@@ -94,7 +107,20 @@ const add = function(uid, fid){
  * @param {number} fid 好友uid
  */
 const del = function(uid, fid){
-    
+    // 删好友的同时，默认取关
+    let sql = `delete from friends where (uid = ${uid} and fid = ${fid}) or (uid = ${fid} and fid = ${uid});`;
+    let sql2 = `delete from focus where (uid = ${uid} and fid = ${fid}) or (uid = ${fid} and fid = ${uid});`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            mysqlQuery(sql2).then((data) => {
+                resolve(data);
+            }).catch((err) =>{
+                reject(err);
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
 }
 
 module.exports = {

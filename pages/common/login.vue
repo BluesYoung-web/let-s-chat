@@ -118,8 +118,8 @@
 			wxlogin() {
 				// #ifdef H5
 				this.toMain({
-					openId: '111',
-					// openId:'oRrdQt0VnoxDYW9K8HdI9Cuoklyw'
+					// openId: '111',
+					openId:'oRrdQt0VnoxDYW9K8HdI9Cuoklyw'
 				});
 				return;
 				// #endif

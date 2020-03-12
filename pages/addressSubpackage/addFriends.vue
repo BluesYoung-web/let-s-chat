@@ -119,13 +119,8 @@
 						key: this.inputMsg,
 						success: (res) => {
 							// 如果为多个用户
-							if (res.length > 1) {
-								this.ifShowSearch = false;
-								this.friendsList = res;
-							} else{
-								res = res.pop();
-								this.toUserInfo(res);
-							}
+							this.ifShowSearch = false;
+							this.friendsList = res;
 						},
 						fail: (code, err) => {
 							console.log(code, err);

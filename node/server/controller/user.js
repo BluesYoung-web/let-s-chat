@@ -156,7 +156,6 @@ const search = function(key){
         // uid或tel
         sql = `select * from user where uid = ${key} or tel = ${key};`;
     }
-    console.log(sql);
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             resolve(data);

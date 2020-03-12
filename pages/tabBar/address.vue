@@ -40,44 +40,39 @@
 			bubbleMenu,
 			iconList
 		},
+		onLoad(){
+			data.friend.get_list({
+				success: (dt) => {
+					for(let item of dt){
+						data.friend.get_info({
+							uid: item,
+							force: true,
+							success: (dt) => {
+								this.allFriendList.push(dt);
+								this.friendsList.push(dt);
+							},
+							fail: (code, err) => {
+								console.log(code, err);
+							}
+						});
+					}
+				},
+				fail: (code, err) => {
+					
+				}
+			})
+		},
 		data() {
 			return {
 				/**
 				 * 好友列表
 				 */
-				friendsList: [{
-					avatar: '/static/img/defaultHead.jpg',
-					nick: '张三丰',
-					uid: 10
-				}, {
-					avatar: '/static/img/finds_01.jpg',
-					nick: '张无忌',
-					uid: 12
-				}, {
-					avatar: '/static/img/finds_02.jpeg',
-					nick: '张卫健',
-					uid: 13
-				}, {
-					avatar: '/static/img/avatar.png',
-					nick: '章金莱',
-					uid: 14
-				}],
+				friendsList: [],
+				allFriendList: [],
 				/**
 				 * 最近联系人
 				 */ 
-				closeFriend: [{
-					avatar: '/static/img/defaultHead.jpg',
-					uid: 10
-				}, {
-					avatar: '/static/img/finds_01.jpg',
-					uid: 12
-				}, {
-					avatar: '/static/img/finds_02.jpeg',
-					uid: 13
-				}, {
-					avatar: '/static/img/avatar.png',
-					uid: 14
-				}],
+				closeFriend: [],
 				/**
 				 * 是否显示气泡菜单
 				 */
@@ -150,14 +145,16 @@
 			/**
 			 * 前往好友资料页面
 			 */
-			toFriendInfo(uid) {
-				console.log(uid);
+			toFriendInfo(item) {
+				uni.navigateTo({
+					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=1&isFocus=1`
+				});
 			},
 			/**
 			 * 根据输入框前端筛选好友
 			 */
 			getInputMsg(e){
-				console.log(e);
+				this.friendsList = this.allFriendList.filter((item) => item.nick.includes(e));
 			},
 			/**
 			 * 去好友验证页面
@@ -174,10 +171,6 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-
-	// page {
-	// 	background-color: #FFFFFF;
-	// }
 	.search{
 		width: 750upx;
 		background-color: #FFFFFF;

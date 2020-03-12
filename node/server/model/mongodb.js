@@ -38,16 +38,17 @@ class MyMongo{
     }
     /**
      * 查询
+     * @param {object} condition 查询条件对象
      */
-    find(args){
-        let {condition, success, fail} = {...args};
-        this.model.find(condition).exec((err, data) => {
-            if (err) {
-                fail(err);
-                throw err;
-            } else {
-                success(data); 
-            }
+    find(condition){
+        return new Promise((resolve, reject) => {
+            this.model.find(condition).exec((err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data); 
+                }
+            });
         });
     }
     /**

@@ -62,12 +62,19 @@
 		onLoad(e) {
 			this.isF = e.isF;
 			this.isFocus = e.isFocus;
-			data.user.search({
-				key: e.uid,
-				success: (res) => {
-					this.user = res.pop();
+			data.friend.get_info({
+				uid: e.uid,
+				success: (dt) => {
+					this.user = dt;
+					if (e.isF != 1 || e.isF != 0) {
+						this.isF = dt.isF;
+						this.isFocus = dt.isFocus;
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
 				}
-			});
+			})
 			//动态获取用户的发表的，关注该用户的，该用户赞过的数量
 						
 		},

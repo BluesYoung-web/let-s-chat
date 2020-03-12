@@ -32,7 +32,7 @@ class Store{
                 } else {
                     // 没有缓存，从mysql数据库获取
                     user.get_info(this.uid).then((data) => {
-                        if (data.length != 0) {
+                        if (data) {
                             // 更新缓存
                             myredis.set(`${this.uid}.info`, JSON.stringify(data)).then(() => {
                                 // 返回数据
@@ -109,6 +109,74 @@ class Store{
                     });
                 }
             });
+        });
+    }
+    /**
+     * 根据uid获取用户信息
+     * @param {number} uid 
+     */
+    get_user_info_by_uid(uid){
+        const {myredis} = require('../database/conn');
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            // 先从redis缓存获取
+            myredis.get(`${uid}.info`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: {
+                            source: 'redis缓存'
+                        }
+                    });
+                } else {
+                    friend.get_info(this.uid, uid).then((data) => {
+                        if (data) {
+                            myredis.set(`${uid}.info`, JSON.stringify(data)).then(() => {
+                                resolve({
+                                    data,
+                                    extra: {
+                                        source: 'mysql'
+                                    }
+                                });
+                            });
+                        } else {
+                            reject('查无此人')
+                        }
+                    }).catch((err) => {
+                        reject('查询出错');
+                    });
+                }
+            });
+        });
+    }
+    /**
+     * 获取当前用户好友列表
+     */
+    get_friend_list(){
+        const {myredis} = require('../database/conn');
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${this.uid}.friend_list`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: 'redis缓存'
+                    });
+                } else {
+                    friend.get_list(this.uid).then((data) => {
+                        myredis.set(`${this.uid}.friend_list`, JSON.stringify(data)).then(() => {
+                            resolve({
+                                data,
+                                extra: 'MongoDB'
+                            });
+                        });
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
+            })
         });
     }
 }

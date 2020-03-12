@@ -166,7 +166,7 @@
 		align-items: center;
 		height: 110upx;
 	}
-	.friendsInfoBottom button,{
+	.friendsInfoBottom button{
 		width: 325upx;
 		height: 70upx;
 		line-height: 70upx;

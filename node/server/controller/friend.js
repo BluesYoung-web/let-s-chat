@@ -91,9 +91,9 @@ const add = function(uid, fid){
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             mysqlQuery(sql2).then((data) => {
-                resolve(data);
-            }).catch((err) => {
-                reject(err);
+                get_list(uid).then((data) => {
+                    resolve(data);
+                });
             });
         }).catch((err) => {
             reject(err);
@@ -113,9 +113,9 @@ const del = function(uid, fid){
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             mysqlQuery(sql2).then((data) => {
-                resolve(data);
-            }).catch((err) =>{
-                reject(err);
+                get_list(uid).then((data) => {
+                    resolve(data);
+                });
             });
         }).catch((err) => {
             reject(err);

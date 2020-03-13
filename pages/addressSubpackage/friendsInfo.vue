@@ -52,22 +52,30 @@
 				/**
 				 * 是否是好友
 				 */
-				isF: false,
+				isF: 0,
 				/**
 				 * 是否已关注
 				 */
-				isFocus: false
+				isFocus: 0
 			}
 		},
 		onLoad(e) {
-			this.isF = e.isF;
-			this.isFocus = e.isFocus;
+			this.user.uid = e.uid;
+			if(e.isF){
+				this.isF = e.isF;
+				this.isFocus = e.isFocus;
+			}
+		},
+		onShow() {
 			data.friend.get_info({
-				uid: e.uid,
+				uid: this.user.uid,
+				force: true,
 				success: (dt) => {
 					this.user = dt;
-					if (e.isF != 1 || e.isF != 0) {
+					if(this.isF != 1){
 						this.isF = dt.isF;
+					}
+					if(this.isFocus != 1){
 						this.isFocus = dt.isFocus;
 					}
 				},
@@ -118,17 +126,47 @@
 			 * 删好友
 			 */
 			del(){
-				uni.showToast({
-					title:"删好友"
+				uni.showModal({
+					title: '提示',
+					content: '确认删除该好友',
+					success: (res) => {
+						if (res.confirm) {
+							data.friend.del({
+								fid: this.user.uid, 
+								success: () => {
+									this.isF = 0;
+									this.isFocus = 0;
+									uni.showToast({
+										title: "好友删除成功"
+									});
+								},
+								fail: (code, err) => {
+									console.log(code, err);
+								}
+							});
+						} else{
+							console.log('1');
+						}
+					}
 				});
-				this.isF = 0;
 			},
 			/**
 			 * 加好友
 			 */
 			add(){
-				console.log("add friend");
-				this.isF = 1;
+				data.friend.add({
+					fid: this.user.uid,
+					success: () => {
+						this.isF = 1;
+						this.isFocus = 1;
+						uni.showToast({
+							title: '好友添加成功'
+						});
+					},	
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				})
 			},
 			/**
 			 * 跳转到对话页

@@ -40,13 +40,14 @@
 			bubbleMenu,
 			iconList
 		},
-		onLoad(){
+		onShow(){
+			this.allFriendList = [];
+			this.friendsList = [];
 			data.friend.get_list({
 				success: (dt) => {
 					for(let item of dt){
 						data.friend.get_info({
 							uid: item,
-							force: true,
 							success: (dt) => {
 								this.allFriendList.push(dt);
 								this.friendsList.push(dt);
@@ -58,9 +59,36 @@
 					}
 				},
 				fail: (code, err) => {
-					
+					console.log(code, err);
 				}
-			})
+			});
+		},
+		onPullDownRefresh() {
+			this.allFriendList = [];
+			this.friendsList = [];
+			data.friend.get_list({
+				success: (dt) => {
+					for(let item of dt){
+						data.friend.get_info({
+							uid: item,
+							force: true,
+							success: (dt) => {
+								this.allFriendList.push(dt);
+								this.friendsList.push(dt);
+								setTimeout(() => {
+									uni.stopPullDownRefresh();
+								}, 100);
+							},
+							fail: (code, err) => {
+								console.log(code, err);
+							}
+						});
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
+				}
+			});
 		},
 		data() {
 			return {
@@ -147,7 +175,7 @@
 			 */
 			toFriendInfo(item) {
 				uni.navigateTo({
-					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=1&isFocus=1`
+					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=1&isFocus=${item.isFocus}`
 				});
 			},
 			/**

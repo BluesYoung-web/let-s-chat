@@ -27,7 +27,9 @@ const cmds = {
     get_info: 300,
     get_list: 301,
     add: 302,
-    del: 303
+    del: 303,
+    focus: 304,
+    dis_focus: 305
 }
 
 /**
@@ -95,13 +97,12 @@ const add = function(args){
             net.send({
                 cmd: cmds.add,
                 data: {
-                    uid,
-                    fid
+                    uid: fid
                 },
                 success : (res) => {
-                    add_to_list({
-                        uid,
-                        friendInfo: res,
+                    store.set({
+                        key: `${prefix}.${uid}.address`,
+                        data: res,
                         success,
                         fail
                     });
@@ -110,31 +111,6 @@ const add = function(args){
             });
         }
     });
-}
-
-/**
- * 添加到好友列表(本地)
- * @param {object} args 
- * @param {number} args.uid 当前用户uid
- * @param {object} args.friendInfo 好友详细信息
- * @param {function} args.success 
- * @param {function} args.fail
- */
-const add_to_list = function(args){
-    let {uid, friendInfo, success, fail} = {...args};
-    // 先获取好友列表
-    get_list({
-        success: (res) => {
-            res.push(friendInfo);
-            store.set({
-                key: `${prefix}.${uid}.address`,
-                data: res,
-                success,
-                fail
-            });
-        }
-    });
-
 }
 
 /**
@@ -151,13 +127,12 @@ const del = function(args){
             net.send({
                 cmd: cmds.del,
                 data: {
-                    uid,
-                    fid
+                    uid: fid
                 },
                 success : (res) => {
-                    del_from_list({
-                        uid,
-                        fid,
+                    store.set({
+                        key: `${prefix}.${uid}.address`,
+                        data: res,
                         success,
                         fail
                     });
@@ -167,29 +142,16 @@ const del = function(args){
         }
     });
 }
-
 /**
- * 从好友列表删除(本地)
+ * 关注好友
  * @param {object} args 
- * @param {number} args.uid 当前用户uid
  * @param {number} args.fid 好友uid
- * @param {function} args.success 
+ * @param {function} args.success
  * @param {function} args.fail
  */
-const del_from_list = function(args){
-    let {uid, fid, success, fail} = {...args};
-    // 先获取好友列表
-    get_list({
-        success: (res) => {
-            res = res.filter((item) => item.uid != fid);
-            store.set({
-                key: `${prefix}.${uid}.address`,
-                data: res,
-                success,
-                fail
-            });
-        }
-    });
+const focus = function(args){
+    let {fid, success, fail} = {...args};
+    
 }
 export default {
     get_info,

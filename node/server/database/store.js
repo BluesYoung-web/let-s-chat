@@ -116,37 +116,21 @@ class Store{
      * @param {number} uid 
      */
     get_user_info_by_uid(uid){
-        const {myredis} = require('../database/conn');
         const friend = require('../controller/friend');
         return new Promise((resolve, reject) => {
-            // 先从redis缓存获取
-            myredis.get(`${uid}.info`).then((data) => {
+            friend.get_info(this.uid, uid).then((data) => {
                 if (data) {
-                    data = JSON.parse(data);
                     resolve({
                         data,
                         extra: {
-                            source: 'redis缓存'
+                            source: 'mysql'
                         }
                     });
                 } else {
-                    friend.get_info(this.uid, uid).then((data) => {
-                        if (data) {
-                            myredis.set(`${uid}.info`, JSON.stringify(data)).then(() => {
-                                resolve({
-                                    data,
-                                    extra: {
-                                        source: 'mysql'
-                                    }
-                                });
-                            });
-                        } else {
-                            reject('查无此人')
-                        }
-                    }).catch((err) => {
-                        reject('查询出错');
-                    });
+                    reject('查无此人')
                 }
+            }).catch((err) => {
+                reject('查询出错');
             });
         });
     }
@@ -186,11 +170,42 @@ class Store{
     add_friend(uid){
         const {myredis} = require('../database/conn');
         const friend = require('../controller/friend');
+        const add = function(uid, fid, list){
+            return new Promise((resolve, reject) => {
+                myredis.get(`${uid}.${list}`).then((data) => {
+                    if (data) {
+                        data = JSON.parse(data);
+                        data.push(fid);
+                        myredis.set(`${uid}.${list}`, JSON.stringify(data)).then(() => {
+                            resolve();
+                        });
+                    } else {
+                        myredis.set(`${uid}.${list}`, JSON.stringify([fid])).then(() => {
+                            resolve();
+                        });
+                    }
+                });
+            });
+        }
         return new Promise((resolve, reject) => {
             friend.add(this.uid, uid).then((data) => {
-                resolve('好友添加成功');
+                // 添加成功之后更新缓存
+                myredis.set(`${this.uid}.friend_list`, JSON.stringify(data)).then(() => {
+                    myredis.set(`${uid}.friend_list`, JSON.stringify(data)).then(() => {
+                        add(this.uid, uid, 'focus_list').then(() => {
+                            add(uid, this.uid, 'focus_list').then(() => {
+                                resolve({
+                                    data,
+                                    extra: '好友添加成功'
+                                });
+                            });
+                        });
+                    });
+                });
             }).catch((err) => {
-                reject('好友添加失败');
+                reject({
+                    data: '好友添加失败'
+                });
             });
         });
     }
@@ -200,11 +215,43 @@ class Store{
      */
     del_friend(uid){
         const friend = require('../controller/friend');
+        const {myredis} = require('../database/conn');
+        const del = function(uid, fid, list){
+            return new Promise((resolve, reject) => {
+                myredis.get(`${uid}.${list}`).then((data) => {
+                    if (data) {
+                        data = JSON.parse(data);
+                        data.splice(data.indexOf(fid), 1);
+                        myredis.set(`${uid}.${list}`, JSON.stringify(data)).then(() => {
+                            resolve();
+                        });
+                    } else {
+                        myredis.set(`${uid}.${list}`, JSON.stringify([])).then(() => {
+                            resolve();
+                        });
+                    }
+                });
+            });
+        }
+        // 先删缓存，再删库
         return new Promise((resolve, reject) => {
-            friend.del(this.uid, uid).then((data) => {
-                resolve('好友删除成功');
-            }).catch((err) => {
-                reject('好友删除失败');
+            del(this.uid, uid, 'friend_list').then(() => {
+                del(uid, this.uid, 'friend_list').then(() => {
+                    del(this.uid, uid, 'focus_list').then(() => {
+                        del(uid, this.uid, 'focus_list').then(() => {
+                            friend.del(this.uid, uid).then((data) => {
+                                resolve({
+                                    data,
+                                    extra: '好友删除成功'
+                                });
+                            }).catch(() => {
+                                reject({
+                                    data: '好友删除失败'
+                                });
+                            });
+                        });
+                    });
+                });
             });
         });
     }

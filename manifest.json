@@ -7,9 +7,9 @@
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
-		"statusbar": {  
-		        "immersed": false  
-		    },
+        "statusbar" : {
+            "immersed" : false
+        },
         "usingComponents" : true,
         "nvueCompiler" : "uni-app",
         "splashscreen" : {
@@ -52,7 +52,9 @@
             /* ios打包配置 */
             "ios" : {},
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "push" : {}
+            }
         }
     },
     /* 快应用特有相关 */

@@ -24,7 +24,8 @@
 		{
 			"path": "pages/tabBar/address",
 			"style": {
-				"navigationStyle":"custom"
+				"navigationStyle":"custom",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/addressSubpackage/addFriends",

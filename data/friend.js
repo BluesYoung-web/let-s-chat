@@ -30,7 +30,10 @@ const cmds = {
     del: 303,
     focus: 304,
     dis_focus: 305,
-    friend_check: 306
+    friend_check: 306,
+    get_follows: 307,
+    get_focus_list: 308,
+    get_release: 309
 }
 
 /**
@@ -187,11 +190,70 @@ const dis_focus = function(args){
         }
     });
 }
+/**
+ * 获取粉丝列表
+ * @param {object} args
+ * @param {number} args.uid 用户uid
+ * @param {function} args.success
+ * @param {function} args.fail
+ */
+const get_follows = function(args){
+    let {uid, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_follows,
+        data: {
+            uid
+        },
+        success,
+        fail
+    });
+}
+
+/**
+ * 获取关注列表
+ * @param {object} args
+ * @param {number} args.uid 用户uid
+ * @param {function} args.success
+ * @param {function} args.fail
+ */
+const get_focus_list = function(args){
+    let {uid, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_focus_list,
+        data: {
+            uid
+        },
+        success,
+        fail
+    });
+}
+
+/**
+ * 获取发表列表
+ * @param {object} args
+ * @param {number} args.uid 用户uid
+ * @param {function} args.success
+ * @param {function} args.fail
+ */
+const get_release = function(args){
+    let {uid, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_release,
+        data: {
+            uid
+        },
+        success,
+        fail
+    });
+}
 export default {
     get_info,
     get_list,
     add,
     del,
     focus,
-    dis_focus
+    dis_focus,
+    get_follows,
+    get_focus_list,
+    get_release
 }

@@ -296,8 +296,8 @@ class Store{
     dis_focus(uid){
         const friend = require('../controller/friend');
         return new Promise((resolve, reject) => {
-            friend.dis_focus(this.uid, uid).then((data) => {
-                this.del(this.uid, uid, 'focus_list').then(() => {
+            this.del(this.uid, uid, 'focus_list').then(() => {
+                friend.dis_focus(this.uid, uid).then((data) => {
                     resolve({
                         data: '取关成功'
                     });
@@ -338,6 +338,36 @@ class Store{
                     });
                 }
             });
+        });
+    }
+    /**
+     * 获取关注列表
+     * @param {number} uid
+     */
+    get_focus_list(uid){
+        const {myredis} = require('../database/conn');
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${uid}.focus_list`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: 'redis缓存'
+                    });
+                } else {
+                    friend.get_list(uid).then((data) => {
+                        myredis.set(`${uid}.focus_list`, JSON.stringify(data)).then(() => {
+                            resolve({
+                                data,
+                                extra: 'mysql'
+                            });
+                        });
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
+            })
         });
     }
     /**

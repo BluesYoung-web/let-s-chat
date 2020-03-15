@@ -26,6 +26,34 @@
 			data.user.get_info({
 				success: (res) => {
 					this.user = res;
+					//动态获取用户的发表的，关注该用户的，该用户关注的
+					data.friend.get_follows({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myCommend = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+					data.friend.get_focus_list({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myFocus = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+					data.friend.get_release({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myRelease = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
 				}
 			});
 		},

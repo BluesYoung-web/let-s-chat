@@ -173,7 +173,14 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
-            case 308: 
+            case 308:
+                store.get_focus_list(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 309: 
                 store.get_release(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {

@@ -30,11 +30,11 @@
 			<button class="editInfoBtn bg-889aa3 color-889aa3 mg-tp60"  plain="true" 
 			@tap="clickButton" v-text="buttonText"></button>
 			
-			<!-- 下方的赞&关注&发表 -->
+			<!-- 下方的粉丝&关注&发表 -->
 			<view class="flex flex-direction-row flex-hc width-750">
-				<!-- 赞 -->
+				<!-- 粉丝 -->
 				<view class="myCommend" @tap="goTo('toMyCommend')">
-					<text class="color-889aa3 ft-26">赞</text>
+					<text class="color-889aa3 ft-26">粉丝</text>
 					<text class="color-4A6572 ft-28 mg-tp15">{{commendNum}}</text>
 				</view>
 				<!-- 关注 -->
@@ -99,7 +99,7 @@
 				this.$emit('clickButton');
 			},
 			/**
-			 * 去我点赞过的、关注我的、我发表的
+			 * 去我关注的、关注我的、我发表的
 			 */
 			goTo(str){
 				this.$emit(str, this.user.uid);
@@ -136,7 +136,7 @@
 		width: 320upx;
 		color: @codeBorder;
 	}
-	/* 赞 关注 发表 */
+	/* 粉丝 关注 发表 */
 	.myCommend,.myFocus,.myRelease{
 		width: 33%;
 		height: 200upx;

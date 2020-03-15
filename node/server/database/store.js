@@ -310,6 +310,64 @@ class Store{
             });
         });
     }
+    /**
+     * 获取关注我的人
+     * @param {number} uid 用户uid
+     */
+    get_follows(uid){
+        const friend = require('../controller/friend');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${uid}.follows`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: 'redis缓存'
+                    });
+                } else {
+                    friend.get_follows(uid).then((data) => {
+                        myredis.set(`${uid}.follows`, JSON.stringify(data)).then(() => {
+                            resolve({
+                                data,
+                                extra: 'mysql'
+                            });
+                        });
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
+            });
+        });
+    }
+    /**
+     * 获取我发表的
+     * @param {number} uid 用户uid
+     */
+    get_release(uid){
+        const find = require('../controller/find');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${uid}.release`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: 'redis缓存'
+                    });
+                } else {
+                    find.get_release(uid).then((data) =>{
+                        myredis.set(`${uid}.release`, JSON.stringify(data)).then(() => {
+                            resolve({
+                                data,
+                                extra: 'mysql'
+                            });
+                        });
+                    });
+                }
+            })
+        });
+    }
 }
 
 module.exports = Store;

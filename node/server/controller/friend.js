@@ -154,6 +154,25 @@ const dis_focus = function(uid, fid){
     });
 }
 
+/**
+ * 获取关注我的人
+ * @param {number} uid 用户uid
+ */
+const get_follows = function(uid){
+    let sql = `select uid from focus where fid = ${uid};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            let arr = [];
+            for (const iterator of data) {
+                arr.push(iterator.uid);
+            }
+            resolve(arr);
+        }).catch((err) => {
+            resolve(err);
+        });
+    });
+}
+
 module.exports = {
     get_info,
     get_list,
@@ -161,5 +180,6 @@ module.exports = {
     add,
     del,
     focus,
-    dis_focus
+    dis_focus,
+    get_follows,
 }

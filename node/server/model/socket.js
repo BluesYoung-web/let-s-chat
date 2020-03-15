@@ -163,6 +163,23 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 306: 
+                // 好友验证
+                break;
+            case 307:
+                store.get_follows(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 308: 
+                store.get_release(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

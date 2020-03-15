@@ -123,10 +123,43 @@ const del = function(uid, fid){
     });
 }
 
+/**
+ * 关注
+ * @param {number} uid 用户uid
+ * @param {number} fid 好友uid
+ */
+const focus = function(uid, fid){
+    let sql = `insert into focus(uid, fid) values(${uid}, ${fid});`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) =>{
+            resolve(data);
+        }).catch((err) =>{
+            reject(err);
+        });
+    });
+}
+/**
+ * 取关
+ * @param {number} uid 用户uid
+ * @param {number} fid 好友uid
+ */
+const dis_focus = function(uid, fid){
+    let sql = `delete from focus where uid = ${uid} and fid = ${fid};`;
+    return new Promise((resolve, reject) =>{
+        mysqlQuery(sql).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     get_info,
     get_list,
     get_focus_list,
     add,
-    del
+    del,
+    focus,
+    dis_focus
 }

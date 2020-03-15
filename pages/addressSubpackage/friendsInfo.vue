@@ -101,10 +101,29 @@
 			clickButton(){
 				if(this.isFocus == 1){
 					// 取关，服务器操作
-					this.isFocus = 0;
+					data.friend.dis_focus({
+						fid: this.user.uid,
+						success: () => {
+							uni.showToast({
+								title:'取消关注成功'
+							});
+							this.isFocus = 0;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					})
 				}else{
 					// 关注，服务器操作
-					this.isFocus = 1;
+					data.friend.focus({
+						fid: this.user.uid,
+						success: () => {
+							uni.showToast({
+								title: '关注成功'
+							});
+							this.isFocus = 1;
+						}
+					});
 				}
 			},
 			/**
@@ -145,7 +164,7 @@
 								}
 							});
 						} else{
-							console.log('1');
+							console.log('取消删除');
 						}
 					}
 				});

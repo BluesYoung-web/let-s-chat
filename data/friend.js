@@ -29,7 +29,8 @@ const cmds = {
     add: 302,
     del: 303,
     focus: 304,
-    dis_focus: 305
+    dis_focus: 305,
+    friend_check: 306
 }
 
 /**
@@ -143,7 +144,7 @@ const del = function(args){
     });
 }
 /**
- * 关注好友
+ * 关注
  * @param {object} args 
  * @param {number} args.fid 好友uid
  * @param {function} args.success
@@ -151,11 +152,46 @@ const del = function(args){
  */
 const focus = function(args){
     let {fid, success, fail} = {...args};
-    
+    data.user.get_info({
+        success: (uid) => {
+            net.send({
+                cmd: cmds.focus,
+                data: {
+                    uid: fid
+                },
+                success,
+                fail
+            });
+        }
+    });
+}
+/**
+ * 取关
+ * @param {object} args 
+ * @param {number} args.fid 好友uid
+ * @param {function} args.success
+ * @param {function} args.fail
+ */
+const dis_focus = function(args){
+    let {fid, success, fail} = {...args};
+    data.user.get_info({
+        success: (uid) => {
+            net.send({
+                cmd: cmds.dis_focus,
+                data: {
+                    uid: fid
+                },
+                success,
+                fail
+            });
+        }
+    });
 }
 export default {
     get_info,
     get_list,
     add,
-    del
+    del,
+    focus,
+    dis_focus
 }

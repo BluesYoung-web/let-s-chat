@@ -149,6 +149,20 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 304: 
+                store.focus(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 305:
+                store.dis_focus(data.uid).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

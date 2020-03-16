@@ -12,7 +12,8 @@
 			<search-input width="600upx" border="none" backgroundColor="#efeff4" bdRadius="50upx" placeholder="输入好友名称"  @getInputMsg="getInputMsg"></search-input>
 		</view>
 		<!-- 新朋友 -->
-		<icon-list iconType="personadd-filled" color='#1BB723' title="新的朋友" @click="toFriendCheck"></icon-list>
+		<icon-list iconType="personadd-filled" color='#1BB723' title="新的朋友" 
+		@click="toFriendCheck" :showRed="hasFriendCheck"></icon-list>
 		<!-- 常用联系人列表 -->
 		<close-friend :closeFriend="closeFriend" @toFriendInfo="toFriendInfo"></close-friend>
 		<!-- 好友列表 -->
@@ -124,6 +125,7 @@
 					title: '帮助与反馈',
 					icon: 'email'
 				}],
+				hasFriendCheck: false
 			}
 		},
 		methods: {

@@ -8,7 +8,8 @@
 				<text class="pd-lt10 ft-30 color-333">{{title}}</text>
 			</view>
 			<view class="flex flex-ac">
-				<image class="rightIcon" src="/static/img/arrow-right.png" mode=""></image>
+				<uni-icons v-if="iconType && showRed" type="more-filled" size="24" color="#ff0000"></uni-icons>
+				<uni-icons type="arrowright" size='24' color='#344955'></uni-icons>
 			</view>
 		</view>
 	</view>
@@ -44,6 +45,10 @@
 				default: '默认信息',
 				// required:true
 			},
+			showRed: {
+				type: [String, Boolean],
+				default: false
+			}
 		},
 		methods: {
 			btnClick() {

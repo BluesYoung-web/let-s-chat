@@ -157,7 +157,7 @@ export default {
     justify-content: space-between;
 }
 
-.likes {
+.likes, .comments {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,20 +165,7 @@ export default {
     height: 100%;
 }
 
-.likes image {
-    width: 50upx;
-    height: 50upx;
-}
-
-.comments {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    height: 100%;
-}
-
-.comments image {
+.likes image, .comments image {
     width: 50upx;
     height: 50upx;
 }

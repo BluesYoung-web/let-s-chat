@@ -36,17 +36,7 @@
 		}, {
 			"path": "pages/tabBar/finds",
 			"style": {
-				"navigationBarTitleText": "发现",
-				"enablePullDownRefresh": true, //是否开启下拉刷新
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue604",
-							"fontSize": "30px",
-							"fontSrc": "/static/ttf/camera.ttf"
-						}]
-					}
-				}
+				"navigationBarTitleText": "发现"
 			}
 		}, {
 			"path": "pages/tabBar/my",
@@ -196,6 +186,21 @@
 			"style": {
 				"navigationBarTitleText": "错误"
 			}
+		}, {
+			"path": "pages/findsSubpackage/circle",
+			"style": {
+				"navigationBarTitleText": "好友圈",
+				"enablePullDownRefresh": true, //是否开启下拉刷新
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue604",
+							"fontSize": "30px",
+							"fontSrc": "/static/ttf/camera.ttf"
+						}]
+					}
+				}
+			}
 		}
     ],
 	// 全局样式配置
@@ -229,7 +234,7 @@
 				"pagePath": "pages/tabBar/finds",
 				"iconPath": "static/img/tabBar/finds.png",
 				"selectedIconPath": "static/img/tabBar/finds_active.png",
-				"text": "好友圈"
+				"text": "发现"
 			},
 			{
 				"pagePath": "pages/tabBar/my",

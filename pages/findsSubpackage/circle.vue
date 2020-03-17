@@ -7,6 +7,8 @@
 			<view class="finds-body" v-for="(item,index) in findsList" :key="index">
 				<find-item :item="item" @watchImg="watchImg" @like="like" @comment="comment"></find-item>
 			</view>
+			<back-top src="/static/img/top.png" :scrollTop="old.scrollTop" 
+			@toTopClick="goTop"></back-top>
 			<edit-item type="3" :content="loadingText" @poupChange="showMore"></edit-item>
 		</scroll-view>
 
@@ -49,22 +51,18 @@
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import findItem from "@/components/young-find-item/young-find-item.vue";
 	import editItem from "@/components/young-edit-item/young-edit-item.vue";
+	import backTop from "@/components/young-back-top/young-back-top.vue";
 	import data from '@/data.js';
 	export default {
 		components: {
 			uniPopup,
 			findItem,
+			backTop,
 			editItem
 		},
 		mounted() {
-			// 根据时间排序
-			// this.findsList.sort((a, b) => b.time - a.time);
 			//高度自适应
 			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
-		},
-		beforeUpdate() {
-			// 根据时间排序
-			// this.findsList.sort((a, b) => b.time - a.time);
 		},
 		data() {
 			return {
@@ -91,10 +89,6 @@
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
-			// 关闭小红点的显示
-			uni.removeTabBarBadge({
-				index: 2
-			});
 			this.findsList = [];
 			this.loadingText = '点击加载更多...';
 			// 从服务器拉取新数据
@@ -130,10 +124,25 @@
 			 * @param {Object} e
 			 */
 			goTop(e) {
-				this.scrollTop = this.old.scrollTop
-				this.$nextTick(()=> {
-					this.scrollTop = 0
-				});
+				this.scrollTop = this.old.scrollTop;
+				// this.$nextTick(() => {
+					// 5毛动画
+					let it = setInterval(() => {
+						if(this.scrollTop){
+							this.scrollTop -= 10;
+						}
+					}, 10);
+					if (this.scrollTop + 10 > 3000) {
+						setTimeout(() => {
+							clearInterval(it);
+							this.scrollTop = 0;
+						}, 3000);
+					} else{
+						setTimeout(() => {
+							clearInterval(it);
+						}, this.scrollTop + 10);
+					}
+				// });
 			},
 			/**
 			 * 点赞

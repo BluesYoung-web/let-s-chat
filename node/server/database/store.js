@@ -334,7 +334,7 @@ class Store{
                             });
                         });
                     }).catch((err) => {
-                        reject(err);
+                        reject('查找出错');
                     });
                 }
             });
@@ -364,7 +364,7 @@ class Store{
                             });
                         });
                     }).catch((err) => {
-                        reject(err);
+                        reject('查找出错');
                     });
                 }
             })
@@ -395,7 +395,26 @@ class Store{
                         });
                     });
                 }
-            })
+            }).catch((err) => {
+                reject('查找出错');
+            });
+        });
+    }
+    /**
+     * 获取我能看到的好友圈
+     * @param {number} page 分页
+     */
+    get_circle(page){
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            page = page > 0 ? page : 1;
+            find.get(this.uid, page).then((data) => {
+                resolve({
+                    data
+                });
+            }).catch((err) => {
+                reject('查找出错');
+            });
         });
     }
 }

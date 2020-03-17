@@ -1,13 +1,13 @@
 <template>
-	<!-- 朋友圈界面 -->
+	<!-- 好友圈界面 -->
 	<view class="content">
 		<scroll-view enable-back-to-top="true" scroll-y="true" :scroll-top="scrollTop" :style="{height:scrollHeight + 'px'}"
 		 @scroll="scroll">		 	
-			<!-- 一个朋友圈动态 -->
+			<!-- 一个好友圈动态 -->
 			<view class="finds-body" v-for="(item,index) in findsList" :key="index">
 				<find-item :item="item" @watchImg="watchImg" @like="like" @comment="comment"></find-item>
 			</view>
-			<edit-item type="3" :content="loadingText"></edit-item>
+			<edit-item type="3" :content="loadingText" @poupChange="showMore"></edit-item>
 		</scroll-view>
 
 		<!-- 发表动态弹出层 -->
@@ -29,6 +29,9 @@
 				<view class="titleTip height-100 pd-lt40 pd-tp20">
 					<text class="ft-32">确定发表吗</text>
 				</view>
+				<view class="say">
+					<input type="text" v-model="say" placeholder="说点什么吧..."/>
+				</view>
 				<view class="height-600">
 					<image class="width-600" :src="findsImgUrl" mode="aspectFit"></image>
 				</view>
@@ -46,6 +49,7 @@
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	import findItem from "@/components/young-find-item/young-find-item.vue";
 	import editItem from "@/components/young-edit-item/young-edit-item.vue";
+	import data from '@/data.js';
 	export default {
 		components: {
 			uniPopup,
@@ -58,9 +62,6 @@
 			//高度自适应
 			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
 		},
-		onShow() {
-			console.log(uni.getSystemInfoSync());
-		},
 		beforeUpdate() {
 			// 根据时间排序
 			// this.findsList.sort((a, b) => b.time - a.time);
@@ -68,54 +69,34 @@
 		data() {
 			return {
 				page:1,
+				pagecount: null,
 				//点击加载更多
-				loadingText:'加载更多...',
+				loadingText:'点击加载更多...',
+				say: '',
 				scrollHeight: '',
 				scrollTop: 0,
 				old: {
 					scrollTop: 0
 				},
-				findsList: [ //空间发表动态的列表
-					{
-						id:1,
-						userId: 12345678,
-						avatar: "/static/img/finds_01.jpg",
-						name: "小美",
-						time: 1576199585544,
-						showTime:new Date(1576199585544).toTimeString().substr(0, 5),
-						dynamicImg: "/static/img/finds_01.jpg", //发布的动态图片
-						likesNum: 9, //点赞数
-						commentsNum: 15, //评论数
-						likeAction: 0, //是否给他点赞
-					},
-					{
-						id:1,
-						userId: 12345678,
-						avatar: "/static/img/finds_01.jpg",
-						name: "小美",
-						time: 1576199585544,
-						showTime:new Date(1576199585544).toTimeString().substr(0, 5),
-						dynamicImg: "/static/img/finds_01.jpg", //发布的动态图片
-						likesNum: 9, //点赞数
-						commentsNum: 15, //评论数
-						likeAction: 0, //是否给他点赞
-					}
-				],
+				findsList: [],
 				popup: false, //拍照面板是否显示
 				color1: '', //拍照弹出框拍摄view颜色
 				color2: '', //拍照弹出框相册view颜色
-
 				toast: false, //确认发表提示框
-				findsImgUrl: "/static/img/avatar.png", //发表的图片路径
+				findsImgUrl: "", //发表的图片路径
 			}
 		},
-		
+		onLoad(){
+			this.getnewsList(1);
+		},
 		// 下拉刷新
 		onPullDownRefresh() {
 			// 关闭小红点的显示
 			uni.removeTabBarBadge({
 				index: 2
 			});
+			this.findsList = [];
+			this.loadingText = '点击加载更多...';
 			// 从服务器拉取新数据
 			this.getnewsList(1);
 			// 关闭下拉刷新动画
@@ -127,27 +108,27 @@
 		onNavigationBarButtonTap(e) {
 			this.popup = true;
 		},
-		// 监听底部按钮点击事件
-		// onTabItemTap() {
-		// 	// 相当于下拉刷新
-		// 	uni.startPullDownRefresh();
-		// 	//调用回到顶部方法
-		// 	this.goTop();
-		// },
 		methods: {
-			//前往好友资料页面
+			/**
+			 * 前往用户信息页面
+			 * @param {number} uid
+			 */
 			toFriendsInfo(uid){
 				uni.navigateTo({
-					url: `../../addressSubpackage/friendsInfo/friendsInfo?uid=${uid}&isF=true`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+					url: `/pages/addressSubpackage/friendsInfo?uid=${uid}`,
 				});
 			},
-			
+			/**
+			 * 滚动事件
+			 * @param {Object} e
+			 */
 			scroll(e) {
 				this.old.scrollTop = e.detail.scrollTop
 			},
+			/**
+			 * 回顶部
+			 * @param {Object} e
+			 */
 			goTop(e) {
 				this.scrollTop = this.old.scrollTop
 				this.$nextTick(()=> {
@@ -163,7 +144,6 @@
 				e.likeAction = (e.likeAction == 1 ? 0 : 1);
 				e.likeAction ? e.likesNum++ : e.likesNum--;
 				// 服务器相关操作
-
 			},
 			/**
 			 * 评论
@@ -186,49 +166,67 @@
 				this['color' + flag] = '#E5E5E5'
 			},
 			takepho(flag) {
-				// this['color' + flag] = '#fff'
-
-				// uni.chooseImage({
-				// 	count: 1, //默认9
-				// 	sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-				// 	sourceType: [flag == 1 ? 'camera' : 'album'], //根据传入的flag判断是否从相册选择
-				// 	success: (res) => {
-				// 		//console.log(res.tempFilePaths);
-				// 		this.findsImgUrl = res.tempFilePaths[0];
-				// 		// 将图片上传到服务器
-				// 		uni.uploadFile({
-				// 			url: `${this.serverUrl}?op=upload&file=img`,
-				// 			filePath: this.findsImgUrl,
-				// 			name: "img",
-				// 			success: (res) => {
-				// 				this.findsImgUrl = res.data;
-				// 				console.log(res.data);
-				// 			}
-				// 		});
-				// 		this.popup = false;
-				// 		this.toast = true;
-				// 	},
-				// 	fail: (res) => {
-				// 		this.popup = false;
-				// 		uni.showToast({
-				// 			icon: "none",
-				// 			title: "取消或设备请求超时"
-				// 		});
-				// 	}
-				// });
+				this['color' + flag] = '#fff'
+				uni.chooseImage({
+					count: 1, //默认9
+					sizeType: ['compressed'], 
+					sourceType: [flag == 1 ? 'camera' : 'album'], //根据传入的flag判断是否从相册选择
+					success: (res) => {
+						this.findsImgUrl = res.tempFilePaths[0];
+						console.log(this.findsImgUrl);
+						this.popup = false;
+						this.toast = true;
+					},
+					fail: (res) => {
+						this.popup = false;
+						uni.showToast({
+							icon: "none",
+							title: "取消或设备请求超时"
+						});
+					}
+				});
 			},
 
 			// 确认发表
 			submitFinds() {
-				// this.toast = false;
-				// uni.showLoading({
-				// 	title: "发布中"
-				// });
+				this.toast = false;
+				uni.showLoading({
+					title: "发布中"
+				});
+				// 将图片上传到服务器
+				data.user.upload({
+					filePath: this.findsImgUrl,
+					name: 'img',
+					success:(res) => {
+						console.log(res);
+						if(res.status == 0){
+							// 上传成功
+							this.findsImgUrl = res.data.url;
+							this.putup();
+						}else{
+							uni.hideLoading();
+							uni.showToast({
+								title:"图片上传失败！"
+							});
+						}
+					}
+				});
+			},
+			/**
+			 * 发表
+			 */
+			putup(){
+				console.log('发表');
+				uni.hideLoading();
+				let data = {
+					ot: Date.parse(new Date()),
+					img: this.findsImgUrl, 
+					say: this.say
+				}
 				// let put = {
 				// 	userId: this.userInfo.account,
 				// 	// 获取当前时间戳
 				// 	time: (new Date()).valueOf(),
-				// 	dynamicImg: this.findsImgUrl, //发布的动态图片
 				// 	// 仅为了本地暂存
 				// 	name: this.userInfo.name,
 				// 	avatar: this.userInfo.avatarUrl,
@@ -300,31 +298,40 @@
 					}
 				});
 			},
-		
+			/**
+			 * 查看更多
+			 * @param {Object} p
+			 */
+			showMore(){
+				if (this.page < this.pagecount) {
+					this.page++;
+					this.getnewsList(this.page);
+				} else{
+					this.loadingText = '我是有底线的';
+				}
+			},
 			//服务器拉取朋友圈数据
 			getnewsList(p){
-				// if(Number(p)){
-				// 	this.page=p;
-				// }
-				// uni.showNavigationBarLoading();
-				// request.getLatestFinds(this.page,(data) => {
-				// 	if (data) {
-				// 		this.page++;
-				// 		let sum=data.pop();
-				// 		for (let i in data) {
-				// 			this.findsList.push(data[i]);
-				// 		}
-				// 		// 好友圈添加暂存
-				// 		this.addFinds(this.findsList);
-				// 		if(this.page > sum){
-				// 			this.loadingText = '已经到底啦';
-				// 		}else{
-				// 			this.loadingText = '点击加载更多';
-				// 		}
-				// 		uni.hideNavigationBarLoading();
-				// 		uni.stopPullDownRefresh();
-				// 	}
-				// });
+				if(Number(p)){
+					this.page = p;
+				}
+				data.find.get({
+					page: this.page,
+					success: (data) => {
+						this.pagecount = data.pagecount;
+						if (this.findsList.length == 0) {
+							this.findsList = data.data;
+						} else{
+							this.findsList = this.findsList.concat(data.data);
+						}
+						if(data.data.length < 10){
+							this.loadingText = '我是有底线的';
+						}
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
 			},
 		},
 	}
@@ -351,5 +358,15 @@
 
 	.btn::after {
 		border: none;
+	}
+	
+	.say{
+		position: relative;
+		background-color: #EEEEEE;
+		margin-left: 10%;
+		margin-right: 10%;
+		padding-left: 2%;
+		border-radius: 5px;
+		width: 80%;
 	}
 </style>

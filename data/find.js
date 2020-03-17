@@ -40,9 +40,20 @@ const put_up = function(args){
 /**
  * 获取好友圈
  * @param {object} args 
+ * @param {number} args.page 分页 
+ * @param {Function} args.success
+ * @param {Function} args.fail
  */
 const get = function(args){
-
+    let {page, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get,
+        data: {
+            page
+        },
+        success, 
+        fail
+    });
 }
 /**
  * 删除好友圈

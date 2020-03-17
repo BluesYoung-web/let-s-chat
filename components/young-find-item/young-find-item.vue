@@ -10,18 +10,22 @@
             <view class="friends-information">
                 <!-- 好友昵称 -->
                 <view class="friends-username">
-                    <span>{{item.name}}</span>
+                    <span>{{item.nick}}</span>
                 </view>
                 <!-- 好友发布动态时间 -->
                 <view class="dynamic-time flex flex-vc">
                     <image src="/static/img/clock.png" mode=""></image>
-                    <span class="mg-lt10 inline-block">{{item.showTime}}</span>
+                    <span class="mg-lt10 inline-block">{{showTime(item.ot)}}</span>
                 </view>
             </view>
         </view>
+        <!-- 标题 -->
+        <view class="pd-lt30">
+            <text v-if="item.say">{{item.say}}</text>
+        </view>
         <!-- 动态图片 -->
-        <view class="dynamic-img" @tap="watchImg(item.dynamicImg)">
-            <image :src="item.dynamicImg" mode="aspectFit"></image>
+        <view class="dynamic-img" @tap="watchImg(item.img)">
+            <image :src="item.img" mode="aspectFit"></image>
         </view>
         <!-- 赞与留言 -->
         <view class="likes-comments">
@@ -90,6 +94,30 @@ export default {
         comment(item){
             this.$emit('comment', item);
         },
+        /**
+         * 显示时间处理
+         * @param {number} timestamp 原始时间戳
+         */
+        showTime(timestamp){
+            timestamp = Number(timestamp);
+            const nowTime = Date.parse(new Date());
+            let d = nowTime - timestamp;
+            let str = '';
+            if (d <= 60000) {
+                str = '刚刚';
+            } else if( d > 60000 && d <= 86400000){
+                // 显示时间
+                str = new Date(timestamp).toTimeString().substr(0,5);
+            }else if(d > 86400000 && d <= 172800000){
+                // 显示昨天+时间
+                str = "昨天"+new Date(timestamp - 86400000).toTimeString().substr(0,5);
+            }else{
+                // 直接显示日期+时间
+                let t = new Date(timestamp);
+                str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日${t.getHours()}:${t.getMinutes()}`;
+            }
+            return str;
+        }
     }
 }
 </script>

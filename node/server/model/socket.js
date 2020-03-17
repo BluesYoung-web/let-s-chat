@@ -107,7 +107,21 @@
      * @param {object} args.extra 透传参数
      */
     findProcess(args){
-
+        let {cmd, data, cbk, extra, store} = {...args};
+        switch (cmd) {
+            case 200:
+                // 发布好友圈
+                break;
+            case 201:
+                // 获取我能看到的好友圈
+                store.get_circle(data.page).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+            default:
+                break;
+        }
     }
     /**
      * 好友相关操作

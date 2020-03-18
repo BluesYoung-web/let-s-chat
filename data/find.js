@@ -29,7 +29,9 @@ const cmds = {
     like: 203,
     dislike: 204,
     put_comments: 205,
-    del_comments: 206
+    del_comments: 206,
+    get_likes: 207,
+    get_comments: 208
 }
 /**
  * 发布好友圈
@@ -132,6 +134,21 @@ const put_comments = function(args){
 const del_comments = function(args){
 
 }
+/**
+ * 获取点赞列表
+ * @param {object} args 
+ */
+const get_likes = function(args){
+    let {findId, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_likes,
+        data: {
+            findId
+        },
+        success,
+        fail
+    });
+}
 export default {
     put_up,
     get,
@@ -139,5 +156,6 @@ export default {
     like,
     dislike,
     put_comments,
-    del_comments
+    del_comments,
+    get_likes
 }

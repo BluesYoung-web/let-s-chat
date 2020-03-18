@@ -187,7 +187,7 @@
 			comment(e) {
 				// 跳转到评论详情页
 				uni.navigateTo({
-					url: `/pages/findsSubpackage/comments?id=${e.id}&likesNum=${e.likesNum}`,
+					url: `/pages/findsSubpackage/comments?id=${e.id}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

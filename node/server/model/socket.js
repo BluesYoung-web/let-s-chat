@@ -143,6 +143,14 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+
+            case 207: 
+                // 获取点赞列表
+                store.get_likes_list(data.findId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
             default:
                 break;
         }

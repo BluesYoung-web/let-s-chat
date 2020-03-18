@@ -495,6 +495,58 @@ class Store{
             });
         });
     }
+    /**
+     * 发表评论
+     */
+    comment(data){
+        const {myredis} = require('../database/conn');
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            find.comment(data).then(() => {
+                myredis.get(`${data.findId}.comment_list`).then((data) => {
+                    if (data) {
+                        data = JSON.parse(data);
+                    } else {
+                        data = [];
+                    }
+                    data.push(data);
+                    myredis.set(`${data.findId}.comment_list`, JSON.stringify(data)).then(() => {
+                        resolve({
+                            data: '评论成功'
+                        });
+                    });
+                });
+            }).catch((err) => {
+                reject('评论失败');
+            });
+        });
+    }
+    /**
+     * 获取评论列表
+     */
+    get_likes_list(findId){
+        const {myredis} = require('../database/conn');
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${findId}.like_list`).then((data) => {
+                if (data) {
+                    resolve({
+                        data,
+                        extra: 'redis缓存'
+                    });
+                } else {
+                    find.get_likes_list(findId).then((data) => {
+                        resolve({
+                            data,
+                            extra: 'mysql'
+                        });
+                    }).catch((err) => {
+                        reject('查找出错');
+                    });
+                }
+            })
+        });
+    }
 }
 
 module.exports = Store;

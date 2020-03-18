@@ -135,10 +135,59 @@ const click_dis_like = function(uid, findId){
         });
     });
 }
+/**
+ * 评论数据
+ * @param {object} data 
+ */
+const comment = function(data){
+    let sql = '';
+    if (data.toUserId) {
+        sql = `insert into comments(findId, userId, toUserId, content) 
+        values(${data.findId}, ${data.uid}, ${data.toUserId}, '${data.content}');`;
+    } else {
+        sql = `insert into comments(findId, userId, content) 
+        values(${data.findId}, ${data.uid}, '${data.content}');`;
+    }
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            let s = `select * from comments where findId = ${findId};`;
+            mysqlQuery(s).then((data) => {
+                let len = data.length;
+                let s2 = `update finds set commentsNum = ${len} where id = ${findId};`;
+                sqlPro(s2).then(() => {
+                    resolve();
+                });
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+/**
+ * 获取点赞列表
+ * @param {number} uid 用户uid
+ * @param {number} findId 好友圈id
+ */
+const get_likes_list = function(findId){
+    let sql = `select userId from likes where findId = ${findId};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            let arr = [];
+            for (const iterator of data) {
+                arr.push(iterator.userId);
+            }
+            resolve(arr);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 module.exports = {
     get_release,
     get,
     put_up,
     click_like,
-    click_dis_like
+    click_dis_like,
+    comment,
+    get_likes_list
 }

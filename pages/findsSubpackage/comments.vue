@@ -39,7 +39,7 @@
 <script>
 	import likesList from '@/components/young-likes-list/young-likes-list.vue';
 	import commentsList from '@/components/young-comments-list/young-comments-list.vue';
-	
+	import data from '@/data.js';
 	export default {
 		components:{
 			likesList,
@@ -64,74 +64,10 @@
 				// 评论列表
 				id:null,
 				show:0, //评论列表与点赞列表切换
-				likeAction: false,
 				// 评论列表
-				commentsList:[
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						toNick: '张三丰',
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						toNick: '张三丰',
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						toNick: '张三丰',
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						content:"评论内容评论内容",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-						toNick: '张三丰',
-						content:"评论内容评论内容",
-					}
-				],
+				commentsList:[],
 				// 点赞列表
-				likesList:[
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-					},
-					{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-					},{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-					},{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-					},{
-						avatar:'/static/img/finds_01.jpg',
-						nick:"用户昵称",
-					},
-				]
+				likesList:[]
 			}
 		},
 		methods: {
@@ -162,8 +98,7 @@
 			}
 		},
 		onLoad(e) {
-			// this.id=e.id;
-			// this.likes=e.likesNum;
+			this.id=e.id;
 			// console.log(e.show);
 			//我的发表页面跳转过来显示赞列表或者评论列表
 			// if(e.show ==1){
@@ -176,6 +111,22 @@
 		},
 		onShow() {
 			// 根据id从服务器获取对应的评论
+			data.find.get_likes({
+				findId: this.id,
+				success: (res) => {
+					for (const iterator of res) {
+						data.friend.get_info({
+							uid: iterator,
+							success: (dt) => {
+								this.likesList.push(dt);
+							}
+						});
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
+				}
+			})
 		},
 	}
 </script>

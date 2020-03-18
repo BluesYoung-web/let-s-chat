@@ -4,6 +4,7 @@
  * @copyright http://github.com/BluesYoung-web
  */
 import store from '@/core/store.js';
+import data from '@/data.js';
 import net from '@/core/net.js';
 import err from '@/core/err.js';
 import event from '@/core/event.js';
@@ -41,18 +42,28 @@ const put_up = function(args){
  * 获取好友圈
  * @param {object} args 
  * @param {number} args.page 分页 
+ * @param {boolean} args.force 是否强制从服务器获取
  * @param {Function} args.success
  * @param {Function} args.fail
  */
 const get = function(args){
-    let {page, success, fail} = {...args};
-    net.send({
+    let {page, force, success, fail} = {...args};
+    let req = {
         cmd: cmds.get,
         data: {
             page
-        },
-        success, 
-        fail
+        }
+    }
+    data.user.get_info({
+        success: (res) => {
+            store.get({
+                key: `${res.uid}.finds.${page}`,
+                req,
+                success,
+                fail,
+                force
+            });
+        }
     });
 }
 /**

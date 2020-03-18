@@ -72,13 +72,13 @@ const get_list = function(args){
     let {force, success, fail} = {...args};
     // 先获取当前用户uid，避免切换用户之后好友列表错误的bug
     data.user.get_info({
-        success: (uid) => {
+        success: (res) => {
             let req = {
                 cmd: cmds.get_list,
                 data: {}
             }
             store.get({
-                key: `${prefix}.${uid}.address`,
+                key: `${prefix}.${res.uid}.address`,
                 req,
                 force,
                 success,
@@ -97,7 +97,7 @@ const get_list = function(args){
 const add = function(args){
     let {fid, success, fail} = {...args};
     data.user.get_info({
-        success: (uid) => {
+        success: (result) => {
             net.send({
                 cmd: cmds.add,
                 data: {
@@ -105,7 +105,7 @@ const add = function(args){
                 },
                 success : (res) => {
                     store.set({
-                        key: `${prefix}.${uid}.address`,
+                        key: `${prefix}.${result.uid}.address`,
                         data: res,
                         success,
                         fail
@@ -127,7 +127,7 @@ const add = function(args){
 const del = function(args){
     let {fid, success, fail} = {...args};
     data.user.get_info({
-        success: (uid) => {
+        success: (result) => {
             net.send({
                 cmd: cmds.del,
                 data: {
@@ -135,7 +135,7 @@ const del = function(args){
                 },
                 success : (res) => {
                     store.set({
-                        key: `${prefix}.${uid}.address`,
+                        key: `${prefix}.${result.uid}.address`,
                         data: res,
                         success,
                         fail
@@ -155,17 +155,13 @@ const del = function(args){
  */
 const focus = function(args){
     let {fid, success, fail} = {...args};
-    data.user.get_info({
-        success: (uid) => {
-            net.send({
-                cmd: cmds.focus,
-                data: {
-                    uid: fid
-                },
-                success,
-                fail
-            });
-        }
+    net.send({
+        cmd: cmds.focus,
+        data: {
+            uid: fid
+        },
+        success,
+        fail
     });
 }
 /**
@@ -177,17 +173,13 @@ const focus = function(args){
  */
 const dis_focus = function(args){
     let {fid, success, fail} = {...args};
-    data.user.get_info({
-        success: (uid) => {
-            net.send({
-                cmd: cmds.dis_focus,
-                data: {
-                    uid: fid
-                },
-                success,
-                fail
-            });
-        }
+    net.send({
+        cmd: cmds.dis_focus,
+        data: {
+            uid: fid
+        },
+        success,
+        fail
     });
 }
 /**

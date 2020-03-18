@@ -92,7 +92,7 @@
 			this.findsList = [];
 			this.loadingText = '点击加载更多...';
 			// 从服务器拉取新数据
-			this.getnewsList(1);
+			this.getnewsList(1, true);
 			// 关闭下拉刷新动画
 			setTimeout(() => {
 				uni.stopPullDownRefresh();
@@ -320,12 +320,13 @@
 				}
 			},
 			//服务器拉取朋友圈数据
-			getnewsList(p){
+			getnewsList(p, force){
 				if(Number(p)){
 					this.page = p;
 				}
 				data.find.get({
 					page: this.page,
+					force,
 					success: (data) => {
 						this.pagecount = data.pagecount;
 						if (this.findsList.length == 0) {

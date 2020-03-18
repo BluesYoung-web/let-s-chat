@@ -102,13 +102,14 @@ export default {
             timestamp = Number(timestamp);
             const nowTime = Date.parse(new Date());
             let d = nowTime - timestamp;
+            let diff = new Date(nowTime).toDateString().substr(8,2) - new Date(timestamp).toDateString().substr(8,2);
             let str = '';
             if (d <= 60000) {
                 str = '刚刚';
-            } else if( d > 60000 && d <= 86400000){
+            } else if(d > 60000 && diff == 0){
                 // 显示时间
                 str = new Date(timestamp).toTimeString().substr(0,5);
-            }else if(d > 86400000 && d <= 172800000){
+            }else if(diff == 1){
                 // 显示昨天+时间
                 str = "昨天"+new Date(timestamp - 86400000).toTimeString().substr(0,5);
             }else{

@@ -111,6 +111,11 @@
         switch (cmd) {
             case 200:
                 // 发布好友圈
+                store.put_up(data).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
                 break;
             case 201:
                 // 获取我能看到的好友圈

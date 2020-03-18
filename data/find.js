@@ -34,9 +34,18 @@ const cmds = {
 /**
  * 发布好友圈
  * @param {object} args 
+ * @param {object} args.data 
+ * @param {Function} args.success
+ * @param {Function} args.fail
  */
 const put_up = function(args){
-    
+    let {data, success, fail} = {...args};
+    net.send({
+        cmd: cmds.put_up,
+        data,
+        success,
+        fail
+    });
 }
 /**
  * 获取好友圈

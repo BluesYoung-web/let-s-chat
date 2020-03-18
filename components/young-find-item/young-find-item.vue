@@ -33,8 +33,8 @@
             <view class="likes" @tap="like(item)">
                 <view class="flex flex-vc width-80 flex-jsb">
                     <view class="height-50">
-                        <image v-if="item.likeAction == 0" src="/static/img/heart.png" mode=""></image>
-                        <image v-else src="/static/img/heart2.png" mode=""></image>
+                        <image v-if="item.likeAction == 1" src="/static/img/heart2.png" mode=""></image>
+                        <image v-else src="/static/img/heart.png" mode=""></image>
                     </view>
                     <span class="inline-block width-20">{{item.likesNum}}</span>
                 </view>

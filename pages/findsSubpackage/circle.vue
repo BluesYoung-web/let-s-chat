@@ -44,7 +44,6 @@
 			</view>
 		</uni-popup>
 	</view>
-
 </template>
 
 <script>
@@ -66,10 +65,11 @@
 		},
 		data() {
 			return {
-				page:1,
+				page: 1,
+				user: null,
 				pagecount: null,
 				//点击加载更多
-				loadingText:'点击加载更多...',
+				loadingText: '点击加载更多...',
 				say: '',
 				scrollHeight: '',
 				scrollTop: 0,
@@ -86,6 +86,11 @@
 		},
 		onLoad(){
 			this.getnewsList(1);
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			})
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
@@ -225,39 +230,25 @@
 			 * 发表
 			 */
 			putup(){
-				console.log('发表');
-				uni.hideLoading();
-				let data = {
+				let dt = {
 					ot: Date.parse(new Date()),
 					img: this.findsImgUrl, 
 					say: this.say
 				}
-				// let put = {
-				// 	userId: this.userInfo.account,
-				// 	// 获取当前时间戳
-				// 	time: (new Date()).valueOf(),
-				// 	// 仅为了本地暂存
-				// 	name: this.userInfo.name,
-				// 	avatar: this.userInfo.avatarUrl,
-				// 	showTime: "刚刚",
-				// 	likesNum: 0, //点赞数
-				// 	commentsNum: 0, //评论数
-				// 	likeAction: 0, //是否给他点赞
-				// };
-				// this.findsList.unshift(put);
-				// // 好友圈上传数据库
-				// request.putUpFinds(put, (data) => {
-				// 	// 隐藏加载动画
-				// 	uni.hideLoading();
-				// 	uni.showToast({
-				// 		icon: "none",
-				// 		title: "发表成功"
-				// 	});
-				// 	// 好友圈添加暂存
-				// 	this.addFinds(this.findsList);
-				// });
-				// // 发表之后自动刷新
-				// uni.startPullDownRefresh();
+				data.find.put_up({
+					data: dt,
+					success: () => {
+						uni.hideLoading();
+						uni.showToast({
+							title: '好友圈发布成功！'
+						});
+						uni.startPullDownRefresh();
+					},
+					fail: (code, err) => {
+						uni.hideLoading();
+						console.log(code, err);
+					}
+				});
 			},
 			// 取消发表
 			cancelSubmit() {
@@ -319,7 +310,11 @@
 					this.loadingText = '我是有底线的';
 				}
 			},
-			//服务器拉取朋友圈数据
+			/**
+			 * 服务器拉取朋友圈数据
+			 * @param {number} p 页数
+			 * @param {boolean} force 是否强制从服务器获取 
+			 */
 			getnewsList(p, force){
 				if(Number(p)){
 					this.page = p;

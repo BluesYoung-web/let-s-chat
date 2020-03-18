@@ -417,6 +417,20 @@ class Store{
             });
         });
     }
+    /**
+     * 发布好友圈
+     * @param {object} data 
+     */
+    put_up(data){
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) =>{
+            find.put_up(this.uid, data).then((data) => {
+                resolve('发布成功');
+            }).catch((err) => {
+                reject('发布失败');
+            })
+        });
+    }
 }
 
 module.exports = Store;

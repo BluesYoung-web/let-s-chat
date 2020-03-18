@@ -57,7 +57,28 @@ const get = function(uid, page){
     });
 }
 
+/**
+ * 发布好友圈
+ * @param {number} uid 用户uid
+ * @param {object} data 好友圈数据
+ * @param {number} data.ot 时间戳
+ * @param {string} data.img 图片url
+ * @param {string} data.say 标题（感想）
+ */
+const put_up = function (uid, data) {
+    let sql = `insert into finds(userId, ot, img, say) 
+    values(${uid}, '${data.ot}', '${data.img}', '${data.say}');`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     get_release,
-    get
+    get,
+    put_up
 }

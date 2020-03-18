@@ -124,6 +124,25 @@
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
+            case 202:
+                // 删除
+                break;
+            case 203:
+                // 点赞
+                store.click_like(data.findId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 204: 
+                // 取消点赞
+                store.click_dis_like(data.findId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

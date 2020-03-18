@@ -25,11 +25,11 @@ const model = 101;
 const cmds = {
     put_up: 200,
     get: 201,
-    del: 203,
-    like: 204,
-    dislike: 205,
-    put_comments: 206,
-    del_comments: 207
+    del: 202,
+    like: 203,
+    dislike: 204,
+    put_comments: 205,
+    del_comments: 206
 }
 /**
  * 发布好友圈
@@ -85,16 +85,38 @@ const del = function(args){
 /**
  * 点赞
  * @param {object} args 
+ * @param {number} args.findId
+ * @param {Function} args.success
+ * @param {Function} args.fail 
  */
 const like = function(args){
-
+    let {findId, success, fail} = {...args};
+    net.send({
+        cmd: cmds.like,
+        data:{
+            findId
+        },
+        success,
+        fail
+    });
 }
 /**
  * 取消点赞
  * @param {object} args 
+ * @param {number} args.findId
+ * @param {Function} args.success
+ * @param {Function} args.fail 
  */
 const dislike = function(args){
-
+    let {findId, success, fail} = {...args};
+    net.send({
+        cmd: cmds.dislike,
+        data:{
+            findId
+        },
+        success,
+        fail
+    });
 }
 /**
  * 发表评论

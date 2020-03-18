@@ -425,10 +425,74 @@ class Store{
         const find = require('../controller/find');
         return new Promise((resolve, reject) =>{
             find.put_up(this.uid, data).then((data) => {
-                resolve('发布成功');
+                resolve({
+                    data: '发布成功'
+                });
             }).catch((err) => {
                 reject('发布失败');
-            })
+            });
+        });
+    }
+    /**
+     * 点赞
+     * @param {number} findId 好友圈id
+     */
+    click_like(findId){
+        const find = require('../controller/find');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            find.click_like(this.uid, findId).then(() => {
+                myredis.get(`${findId}.like_list`).then((data) => {
+                    if (data) {
+                        data = JSON.parse(data);
+                    } else {
+                        data = [];
+                    }
+                    data.push(this.uid);
+                    myredis.set(`${findId}.like_list`, JSON.stringify(data)).then(() => {
+                        resolve({
+                            data: '点赞成功'
+                        });
+                    });
+                });
+            }).catch((err) => {
+                reject('点赞失败');
+            });
+        });
+    }
+    /**
+     * 取消点赞
+     * @param {number} findId 好友圈id
+     */
+    click_dis_like(findId){
+        const {myredis} = require('../database/conn');
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${findId}.like_list`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    data.splice(data.indexOf(this.uid), 1);
+                    myredis.set(`${findId}.like_list`, JSON.stringify(data)).then(() => {
+                        find.click_dis_like(this.uid, findId).then(() => {
+                            resolve({
+                                data: '取消点赞成功'
+                            });
+                        }).catch((err) => {
+                            reject('取消点赞失败');
+                        });
+                    });
+                } else {
+                    myredis.set(`${findId}.like_list`, JSON.stringify([])).then(() => {
+                        find.click_dis_like(this.uid, findId).then(() => {
+                            resolve({
+                                data: '取消点赞成功'
+                            });
+                        }).catch((err) => {
+                            reject('取消点赞失败');
+                        });
+                    });
+                }
+            });
         });
     }
 }

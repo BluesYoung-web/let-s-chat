@@ -5,12 +5,8 @@
  */
 
 const {mysqlQuery} = require('../database/conn');
-/**
- * 获取我发表的
- * @param {number} uid 用户uid
- */
-const get_release  = function(uid){
-    let sql = `select * from finds where user_id = ${uid};`
+
+const sqlPro = function(sql){
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             resolve(data);
@@ -18,6 +14,15 @@ const get_release  = function(uid){
             reject(err);
         });
     });
+}
+
+/**
+ * 获取我发表的
+ * @param {number} uid 用户uid
+ */
+const get_release  = function(uid){
+    let sql = `select * from finds where user_id = ${uid};`
+    return sqlPro(sql);
 }
 
 /**
@@ -44,11 +49,26 @@ const get = function(uid, page){
                 const pagecount = Math.ceil(all / pagesize);
                 let sql2 = `${sql} limit ${start}, ${pagesize};`;
                 mysqlQuery(sql2).then((data) => {
-                    data = {
-                        data,
-                        pagecount
-                    }
-                    resolve(data);
+                    let s = `select findId from likes where userId = ${uid};`;
+                    let temp = data;
+                    mysqlQuery(s).then((data) => {
+                        let arr = []
+                        for (const item of data) {
+                            arr.push(item.findId);
+                        }
+                        for (const item of temp) {
+                            if (arr.includes(item.id)) {
+                                item.likeAction = 1;
+                            } else {
+                                item.likeAction = 0;
+                            }
+                        }
+                        data = {
+                            data: temp,
+                            pagecount
+                        }
+                        resolve(data);
+                    });
                 });
             });
         }).catch((err) => {
@@ -68,17 +88,57 @@ const get = function(uid, page){
 const put_up = function (uid, data) {
     let sql = `insert into finds(userId, ot, img, say) 
     values(${uid}, '${data.ot}', '${data.img}', '${data.say}');`;
+    return sqlPro(sql);
+}
+
+/**
+ * 点赞
+ * @param {number} uid 用户uid
+ * @param {number} findId 好友圈id
+ */
+const click_like = function(uid, findId){
+    let sql = `insert into likes(userId, findId, likeAction) values(${uid}, ${findId}, 1);`;
     return new Promise((resolve, reject) => {
-        mysqlQuery(sql).then(() => {
-            resolve();
+        sqlPro(sql).then(() => {
+            let s1 = `select * from likes where findId = ${findId};`;
+            mysqlQuery(s1).then((data) => {
+                let len = data.length;
+                let s2 = `update finds set likesNum = ${len} where id = ${findId};`;
+                sqlPro(s2).then(() => {
+                    resolve();
+                });
+            });
         }).catch((err) => {
             reject(err);
         });
     });
 }
-
+/**
+ * 取消点赞
+ * @param {number} uid 用户uid
+ * @param {number} findId 好友圈id
+ */
+const click_dis_like = function(uid, findId){
+    let sql = `delete from likes where userId = ${uid} and findId = ${findId};`;
+    return new Promise((resolve, reject) => {
+        sqlPro(sql).then(() => {
+            let s1 = `select * from likes where findId = ${findId};`;
+            mysqlQuery(s1).then((data) => {
+                let len = data.length;
+                let s2 = `update finds set likesNum = ${len} where id = ${findId};`;
+                sqlPro(s2).then(() => {
+                    resolve();
+                });
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 module.exports = {
     get_release,
     get,
-    put_up
+    put_up,
+    click_like,
+    click_dis_like
 }

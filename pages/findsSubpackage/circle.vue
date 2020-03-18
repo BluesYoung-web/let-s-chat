@@ -154,10 +154,31 @@
 			 * @param {object} e 单条朋友圈对象
 			 */
 			like(e) {
-				// 样式改变
-				e.likeAction = (e.likeAction == 1 ? 0 : 1);
-				e.likeAction ? e.likesNum++ : e.likesNum--;
+				console.log(e.likeAction);
 				// 服务器相关操作
+				if (! e.likeAction) {
+					data.find.like({
+						findId: e.id,
+						success: () => {
+							e.likeAction = 1;
+							e.likesNum++;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+				} else {
+					data.find.dislike({
+						findId: e.id,
+						success: () => {
+							e.likeAction = 0;
+							e.likesNum--;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+				}
 			},
 			/**
 			 * 评论

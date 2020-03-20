@@ -57,19 +57,9 @@
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
 	
-	// 请求抽取
-	import request from '@/request/request.js';
-	
-	import {mapState,mapMutations} from 'vuex';
 	export default {
-		components: {uniPopup},
-		mounted() {
-			// 根据时间排序
-			this.findsList.sort((a,b)=>b.time-a.time);
-		},
-		beforeUpdate() {
-			// 根据时间排序
-			this.findsList.sort((a,b)=>b.time-a.time);
+		components: {
+			uniPopup
 		},
 		data() {
 			return {
@@ -78,20 +68,17 @@
 				sign:'',  //删除标记
 			}
 		},
-		computed:{
-			...mapState(['userInfo','myFindLists'])
-		},
 		onShow() {
 			// 如果暂存里面有，则直接从暂存里面拿
-			if(this.myFindLists){
-				this.findsList=this.myFindLists;
-				console.log(JSON.stringify(this.findsList));
-			}else{
-				//从服务器获取自己发送的动态
-				request.getMyFinds(this.userInfo.account,(data)=>{
-					this.findsList=data;
-				});
-			}
+			// if(this.myFindLists){
+			// 	this.findsList=this.myFindLists;
+			// 	console.log(JSON.stringify(this.findsList));
+			// }else{
+			// 	//从服务器获取自己发送的动态
+			// 	request.getMyFinds(this.userInfo.account,(data)=>{
+			// 		this.findsList=data;
+			// 	});
+			// }
 		},
 		/*
 		methods: {

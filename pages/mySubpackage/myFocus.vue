@@ -1,5 +1,5 @@
 <template>
-	<!-- 关注我的列表 -->
+	<!-- 我关注的人 -->
 	<view class="focusLists">		
 		<view class="focusRow flex flex-vc flex-jsb" v-for="(item,index) in lists" v-bind:key="index">
 			<view class="focusHead flex flex-vc flex-jsb" @tap="toInfo(item)">
@@ -15,8 +15,6 @@
 </template>
 
 <script>
-	import {mapMutations,mapState} from 'vuex';
-	import request from '@/request/request.js';
 	export default {
 		data() {
 			return {	
@@ -31,29 +29,26 @@
 			}
 		},
 		onLoad() {
-			this.lists=this.followMe;
+			// this.lists=this.followMe;
 		},
 		onShow(){
 			// 根据state动态改变关注文字
-			if (this.myFriends) {
-				let myFriends=this.myFriends;
-				let key=[];
-				for (let i in myFriends) {
-					for (let j in myFriends[i]) {
-						key.push(myFriends[i][j].account);
-					}
-				}
-				for (let i in this.lists) {
-					if (key.includes(this.lists[i].uid)) {
-						this.lists[i].isFocus=1;
-					}else{
-						this.lists[i].isFocus=0;
-					}
-				}
-			}
-		},
-		computed:{
-			...mapState(['followMe','myFriends'])
+			// if (this.myFriends) {
+			// 	let myFriends=this.myFriends;
+			// 	let key=[];
+			// 	for (let i in myFriends) {
+			// 		for (let j in myFriends[i]) {
+			// 			key.push(myFriends[i][j].account);
+			// 		}
+			// 	}
+			// 	for (let i in this.lists) {
+			// 		if (key.includes(this.lists[i].uid)) {
+			// 			this.lists[i].isFocus=1;
+			// 		}else{
+			// 			this.lists[i].isFocus=0;
+			// 		}
+			// 	}
+			// }
 		},
 		/*
 		methods: {
@@ -124,9 +119,9 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-	.focusLists{
+	// .focusLists{
 		
-	}
+	// }
 	.focusRow{
 		width: 100%;
 		height: 200upx;

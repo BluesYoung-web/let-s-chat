@@ -1,5 +1,5 @@
 <template>
-	<!-- 历史被赞数 -->
+	<!-- 我的粉丝 -->
 	<view>
 		<view class="likesSum" v-for="(item,index) in lists" :key="index">
 			<view class="time flex flex-jc flex-vc">
@@ -18,9 +18,6 @@
 </template>
 
 <script>
-	import service from '@/service.js';
-	import request from '@/request/request.js';
-	import {mapMutations,mapState} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -34,12 +31,9 @@
 				]
 			}
 		},
-		computed:{
-			...mapState(['likeMe'])
-		},
 		onLoad() {
 			// 从state里面获取赞我的人的信息
-			this.lists=this.likeMe;
+			// this.lists=this.likeMe;
 		},
 		methods: {
 			//跳转到点赞人的详情页

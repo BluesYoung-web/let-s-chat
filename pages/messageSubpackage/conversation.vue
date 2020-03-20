@@ -132,12 +132,12 @@
 	innerAudioContext.autoplay = true;
 	
 	import uniSegmentedControl from "@/components/uni-segmented-control/uni-segmented-control.vue";
-	import {mapState,mapMutations} from 'vuex';
-	import tools from '@/tools/tools.js';
 	export default{
-		components: {uniSegmentedControl},
+		components: {
+			uniSegmentedControl
+		},
 		mounted() {
-			this.scrollHeight = this.windowHeight;
+			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
 			let info2 = uni.createSelectorQuery().select(".conversationBottom");
 			info2.boundingClientRect((data)=>{
 				this.scrollHeight =this.scrollHeight - data.height;//屏幕高度-底部键盘区高度
@@ -155,7 +155,6 @@
 					'../../static/img/facetype.png',
 					'../../static/img/food.png'
 				],
-				// emoji:'../../static/img/heart.png',
 				scrollHeight:'',
 				scrollTop:0,
 				messages:[
@@ -208,23 +207,21 @@
 			}
 		},
 		computed:{
-			...mapState(['tempInfo','userInfo','serverUrl','websocketUrl','socketTask','is_open_socket',
-						'conversationMessage','conversationMessageList','windowHeight']),
 			intIntervalTime() {
 			    // 用于显示整数的秒数
 			    return Math.round(this.intervalTime);
 			}
 		},
 		onShow() {
-		    if(this.conversationMessageList){
-		    	for (let i in this.conversationMessageList) {
-		    		if(this.fuid==this.conversationMessageList[i].account){
-		    			this.messages=this.conversationMessageList[i].conversation;
-		    		}
-		    	}
-		    	// 处理时间显示
-		    	this.messages=tools.timeProcess(this.messages);
-		    };
+		    // if(this.conversationMessageList){
+		    // 	for (let i in this.conversationMessageList) {
+		    // 		if(this.fuid==this.conversationMessageList[i].account){
+		    // 			this.messages=this.conversationMessageList[i].conversation;
+		    // 		}
+		    // 	}
+		    // 	// 处理时间显示
+		    // 	this.messages=tools.timeProcess(this.messages);
+		    // };
 		},
 		onLoad(e) {
 			//表情获取
@@ -234,20 +231,20 @@
 			for (let i in emojiFood) {
 				this.foodList.push(emojiFood[i].char);
 			};
-			// 从state获取用户信息
-			if(this.userInfo){
-				let tp=this.userInfo;
-				this.account=tp.account;
-				this.avatarUrl=tp.avatarUrl;
-			}
-			this.is_from_address=e.voiceActive ? true:false;
-			console.log("进入会话页");
-			if (e.voiceActive==0) {
-				console.log("语音输入");
-				this.inputActive=false;
-				this.voiceActive=true;
-				this.txtInput=false;
-			}
+			// // 从state获取用户信息
+			// if(this.userInfo){
+			// 	let tp=this.userInfo;
+			// 	this.account=tp.account;
+			// 	this.avatarUrl=tp.avatarUrl;
+			// }
+			// this.is_from_address=e.voiceActive ? true:false;
+			// console.log("进入会话页");
+			// if (e.voiceActive==0) {
+			// 	console.log("语音输入");
+			// 	this.inputActive=false;
+			// 	this.voiceActive=true;
+			// 	this.txtInput=false;
+			// }
 			//获取录音权限相关
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
@@ -296,7 +293,6 @@
 			// this.changeContent(obj);
 		},
 		methods:{
-			...mapMutations(['addConversationMessage','clearMsgNum','addMessageListFirst','changeContent']),
 			takeBack(){
 				this.show = false;
 				this.bottom=0;
@@ -394,24 +390,24 @@
 			},
 			//消息发送
 			sendMessage(){
-				let msg = this.content;
-				if(this.content!=''){
-					const time=Date.parse(new Date);
-					let data={
-						sign:'me',
-						head:this.avatarUrl,
-						content:msg,
-						time:time,
-						showTime:null
-					};
-					this.messages.push(data);
-					// 处理时间显示
-					this.messages=tools.timeProcess(this.messages);
-					if (this.is_open_socket) {
-						this.sendMsg(this.account, this.fuid, data, this.socketTask);
-					}
-					this.content='';
-				};
+				// let msg = this.content;
+				// if(this.content!=''){
+				// 	const time=Date.parse(new Date);
+				// 	let data={
+				// 		sign:'me',
+				// 		head:this.avatarUrl,
+				// 		content:msg,
+				// 		time:time,
+				// 		showTime:null
+				// 	};
+				// 	this.messages.push(data);
+				// 	// 处理时间显示
+				// 	this.messages=tools.timeProcess(this.messages);
+				// 	if (this.is_open_socket) {
+				// 		this.sendMsg(this.account, this.fuid, data, this.socketTask);
+				// 	}
+				// 	this.content='';
+				// };
 			},
 			//输入表情
 			showFaces(item){
@@ -442,20 +438,13 @@
 			toFriendInfo(){
 				let uid = this.fuid
 				uni.navigateTo({
-					url: `../addressSubpackage/friendsInfo/friendsInfo?uid=${uid}&isF=true`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+					url: `/pages/addressSubpackage/friendsInfo?uid=${uid}&isF=true`,
 				});
 			},
 			//前往我的界面
 			toMyInfo(){
-				console.log('aaa')
 				uni.switchTab({
-					url: '../tabBar/my/my',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+					url: '/pages/tabBar/my/my',
 				});
 			},
 			//点击录音图标显示开始录音按钮
@@ -493,29 +482,29 @@
 					const voice = this.voicePath;
 					const intervalTime = this.intervalTime;
 					const time=Date.parse(new Date);
-					let data={
-						sign:'meVoice',
-						intervalTime:intervalTime,
-						head:this.avatarUrl,
-						content:"语音",
-						realContent:voice,
-						time:time,
-						showTime:null
-					};
-					this.messages.push(data);
-					// 处理时间显示
-					this.messages=tools.timeProcess(this.messages);
-					// 语音上传到服务器
-					let task = plus.uploader.createUpload(`${this.serverUrl}?op=upload&file=audio`,{},(t,status)=>{
-						if(t.state==4 && status==200){
-							data.realContent=t.responseText;
-							if (this.is_open_socket) {
-								this.sendMsg(this.account, this.fuid, data, this.socketTask);
-							}
-						}
-					});
-					task.addFile(voice,{key:"audio"});
-					task.start();
+					// let data={
+					// 	sign:'meVoice',
+					// 	intervalTime:intervalTime,
+					// 	head:this.avatarUrl,
+					// 	content:"语音",
+					// 	realContent:voice,
+					// 	time:time,
+					// 	showTime:null
+					// };
+					// this.messages.push(data);
+					// // 处理时间显示
+					// this.messages=tools.timeProcess(this.messages);
+					// // 语音上传到服务器
+					// let task = plus.uploader.createUpload(`${this.serverUrl}?op=upload&file=audio`,{},(t,status)=>{
+					// 	if(t.state==4 && status==200){
+					// 		data.realContent=t.responseText;
+					// 		if (this.is_open_socket) {
+					// 			this.sendMsg(this.account, this.fuid, data, this.socketTask);
+					// 		}
+					// 	}
+					// });
+					// task.addFile(voice,{key:"audio"});
+					// task.start();
 				}, 500);
 			},
 			playVoice(item){

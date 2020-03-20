@@ -499,22 +499,11 @@ class Store{
      * 发表评论
      */
     comment(data){
-        const {myredis} = require('../database/conn');
         const find = require('../controller/find');
         return new Promise((resolve, reject) => {
-            find.comment(data).then(() => {
-                myredis.get(`${data.findId}.comment_list`).then((data) => {
-                    if (data) {
-                        data = JSON.parse(data);
-                    } else {
-                        data = [];
-                    }
-                    data.push(data);
-                    myredis.set(`${data.findId}.comment_list`, JSON.stringify(data)).then(() => {
-                        resolve({
-                            data: '评论成功'
-                        });
-                    });
+            find.comment(this.uid, data).then(() => {
+                resolve({
+                    data: '评论成功'
                 });
             }).catch((err) => {
                 reject('评论失败');
@@ -522,7 +511,7 @@ class Store{
         });
     }
     /**
-     * 获取评论列表
+     * 获取点赞列表
      */
     get_likes_list(findId){
         const {myredis} = require('../database/conn');
@@ -530,6 +519,7 @@ class Store{
         return new Promise((resolve, reject) => {
             myredis.get(`${findId}.like_list`).then((data) => {
                 if (data) {
+                    data = JSON.parse(data);
                     resolve({
                         data,
                         extra: 'redis缓存'
@@ -545,6 +535,22 @@ class Store{
                     });
                 }
             })
+        });
+    }
+    /**
+     * 获取评论列表
+     */
+    get_comments_list(findId){
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            find.get_comments_list(findId).then((data) => {
+                resolve({
+                    data,
+                    extra: 'mysql'
+                });
+            }).catch((err) => {
+                reject('查找出错');
+            });
         });
     }
 }

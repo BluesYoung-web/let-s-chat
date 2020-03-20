@@ -63,7 +63,7 @@
 				scrollHeight:'',
 				// 评论列表
 				id:null,
-				show:0, //评论列表与点赞列表切换
+				show: 0, //评论列表与点赞列表切换
 				// 评论列表
 				commentsList:[],
 				// 点赞列表
@@ -73,28 +73,38 @@
 		methods: {
 			// 显示评论列表
 			showComments(){
-				this.show=0;
+				this.show = 0;
 			},
 			//显示点赞列表
 			showLikes(){
-				this.show=1;
+				this.show = 1;
 			},
 			//前往写评论页面
 			toWriteComment(){
 				uni.navigateTo({
-					url: `writeComment?id=${this.id}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+					url: `writeComment?findId=${this.id}`,
 				});
 			},
 			toUserInfo(item){
-				console.log('11111111111');
-				console.log(item);
+				let uid = item.uid;
+				data.user.get_info({
+					success: (res) => {
+						if (res.uid == uid) {
+							uni.switchTab({
+								url: '/pages/tabBar/my'
+							});
+						} else {
+							uni.navigateTo({
+								url: `/pages/addressSubpackage/friendsInfo?uid=${uid}`
+							});
+						}
+					}
+				});
 			},
 			feedBack(item){
-				console.log('22222222222222');
-				console.log(item);
+				uni.navigateTo({
+					url: `writeComment?findId=${this.id}&toUserId=${item.uid}`,
+				});
 			}
 		},
 		onLoad(e) {
@@ -110,7 +120,9 @@
 			// }
 		},
 		onShow() {
-			// 根据id从服务器获取对应的评论
+			this.likesList = [];
+			this.commentsList = [];
+			// 根据id从服务器获取对应的评论及点赞列表
 			data.find.get_likes({
 				findId: this.id,
 				success: (res) => {
@@ -126,7 +138,28 @@
 				fail: (code, err) => {
 					console.log(code, err);
 				}
-			})
+			});
+			data.find.get_comments({
+				findId: this.id,
+				success: (res) => {
+					for (const iterator of res) {
+						if (iterator.toNick) {
+							data.friend.get_info({
+								uid: iterator.toNick,
+								success: (dt) => {
+									iterator.toNick = dt.nick;
+									this.commentsList.push(iterator);
+								}
+							});
+						} else {
+							this.commentsList.push(iterator);
+						}
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
+				}
+			});
 		},
 	}
 </script>

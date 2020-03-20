@@ -136,24 +136,19 @@ const click_dis_like = function(uid, findId){
     });
 }
 /**
- * 评论数据
- * @param {object} data 
+ * 发表评论
+ * @param {number} uid 评论者uid
+ * @param {object} data 评论数据
  */
-const comment = function(data){
-    let sql = '';
-    if (data.toUserId) {
-        sql = `insert into comments(findId, userId, toUserId, content) 
-        values(${data.findId}, ${data.uid}, ${data.toUserId}, '${data.content}');`;
-    } else {
-        sql = `insert into comments(findId, userId, content) 
-        values(${data.findId}, ${data.uid}, '${data.content}');`;
-    }
+const comment = function(uid, data){
+    let sql = `insert into comments(findId, userId, toNick, content) 
+        values(${data.findId}, ${uid}, ${data.toNick}, '${data.content}');`;
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then(() => {
-            let s = `select * from comments where findId = ${findId};`;
-            mysqlQuery(s).then((data) => {
-                let len = data.length;
-                let s2 = `update finds set commentsNum = ${len} where id = ${findId};`;
+            let s = `select * from comments where findId = ${data.findId};`;
+            mysqlQuery(s).then((dt) => {
+                let len = dt.length;
+                let s2 = `update finds set commentsNum = ${len} where id = ${data.findId};`;
                 sqlPro(s2).then(() => {
                     resolve();
                 });
@@ -182,6 +177,22 @@ const get_likes_list = function(findId){
         });
     });
 }
+/**
+ * 获取评论列表
+ * @param {number} uid 用户uid
+ * @param {number} findId 好友圈id
+ */
+const get_comments_list = function(findId){
+    let sql = `SELECT comments.id, user.uid, user.avatar, user.nick, comments.content, comments.toNick from 
+    user, comments where comments.findId = ${findId} and user.uid = comments.userId;`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 module.exports = {
     get_release,
     get,
@@ -189,5 +200,6 @@ module.exports = {
     click_like,
     click_dis_like,
     comment,
-    get_likes_list
+    get_likes_list,
+    get_comments_list
 }

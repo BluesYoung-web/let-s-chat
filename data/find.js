@@ -123,9 +123,18 @@ const dislike = function(args){
 /**
  * 发表评论
  * @param {object} args 
+ * @param {object} args.data 评论数据 
+ * @param {Function} args.success 
+ * @param {Function} args.fail 
  */
 const put_comments = function(args){
-
+    let {data, success, fail} = {...args};
+    net.send({
+        cmd: cmds.put_comments,
+        data,
+        success,
+        fail
+    });
 }
 /**
  * 删除评论
@@ -137,11 +146,32 @@ const del_comments = function(args){
 /**
  * 获取点赞列表
  * @param {object} args 
+ * @param {number} args.findId 好友圈id
+ * @param {Function} args.success
+ * @param {Function} args.fail
  */
 const get_likes = function(args){
     let {findId, success, fail} = {...args};
     net.send({
         cmd: cmds.get_likes,
+        data: {
+            findId
+        },
+        success,
+        fail
+    });
+}
+/**
+ * 获取评论列表
+ * @param {object} args 
+ * @param {number} args.findId 好友圈id
+ * @param {Function} args.success
+ * @param {Function} args.fail
+ */
+const get_comments = function(args){
+    let {findId, success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_comments,
         data: {
             findId
         },
@@ -157,5 +187,6 @@ export default {
     dislike,
     put_comments,
     del_comments,
-    get_likes
+    get_likes,
+    get_comments
 }

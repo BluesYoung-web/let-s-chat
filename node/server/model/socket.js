@@ -143,7 +143,14 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
-
+            case 205:
+                // 发表评论
+                store.comment(data).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             case 207: 
                 // 获取点赞列表
                 store.get_likes_list(data.findId).then((data) => {
@@ -151,6 +158,15 @@
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
+                break;
+            case 208: 
+                // 获取评论列表
+                store.get_comments_list(data.findId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

@@ -1,43 +1,48 @@
 <template>
 	<!-- 好友圈评论输入 --> 
-	<view class="">
-	<view class="navBar">
-		<view class="navBarCancel flex flex-js flex-vc" @tap="back">
-			<image src="/static/img/cancel.png" mode=""></image>
-			<text>Cancel</text>
-		</view>
-		<view class="navBarTitle flex flex-jc flex-vc">
-			<text>发评论</text>
-		</view>
-		<view class="navBarBtn flex flex-je flex-ac bg-344955" >
-			<button :disabled="canPutUp" @tap="putUp" class="my-color-fff">发表</button>
-		</view>
-	</view>
+	<view class="body">
+		<!-- 自定义导航栏 -->
+		<uni-nav-bar left-icon='back' left-text="返回" background-color="#344955" color="#fff"
+		@clickLeft="back" @clickRight="putUp">
+			<view class="" slot="right">
+				<button type="default" class="button" :class="canPutUp ? 'sure' : 'btn'">发表</button>
+			</view>
+		</uni-nav-bar>
 		<!-- 输入文本框 -->
 		<view class="writeComment">
 			<textarea class="width-full" value="" v-model="content" placeholder="写评论" maxlength="100" />
-			<view class="absolute countLimit ">
-				<text>{{content.length}}/</text>
-				<text>100</text>
-			</view>
+			<text class="tips">{{content.length}}/100</text>
 		</view>
-</view>
+	</view>
 </template>
 
 <script>
-	// 请求抽离
-	import request from '@/request/request.js';
+	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
+	import data from '@/data.js';
 	export default {
+		components: {
+			uniNavBar
+		},
 		onLoad(e) {
-			this.id=e.id;
+			this.findId = e.findId;
+			this.toUserId = e.toUserId ? e.toUserId : null;
 		},
 		data() {
 			return {
-				id:null,// 好友圈id
-				content:'',//输入框的内容
+				/**
+				 * 好友圈id
+				 */
+				findId: null,
+				/**
+				 * 回复用户id
+				 */
+				toUserId: null,
+				/**
+				 * 输入框的内容
+				 */
+				content: '',
 			}
 		},
-		/*
 		methods: {
 			//返回评论列表界面
 			back(){
@@ -46,28 +51,27 @@
 			},
 			// 发表评论
 			putUp(){
-				// 存储评论，返回上个页面
-				request.putUpComments(this.id,this.content,(data)=>{
-					if(data==1){
+				data.find.put_comments({
+					data: {
+						findId: this.findId,
+						toNick: this.toUserId,
+						content: this.content
+					},
+					success: () => {
 						uni.showToast({
-							icon:'',
-							title:"评论发表成功"
+							title: '评论发表成功！'
 						});
-						uni.navigateBack();
+						this.back();
+					},
+					fail: (code, err) => {
+						console.log(code, err);
 					}
-				},(err)=>{
-					uni.showToast({
-						icon:'',
-						title:"评论发表失败"
-					});
 				});
-				
 			},
 		},
-		*/
 		computed:{
-			canPutUp:function(){
-				return this.content.length>0 ? false : true ;
+			canPutUp(){
+				return this.content.length > 0 ? true : false ;
 			}
 		}
 	}
@@ -76,59 +80,39 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-	.navBarCancel{
-		width: 33%;
-		color: @colorF;
-		padding-left: 10upx;
+	.body{
+		background-color: @bgcolor;
+		height: 100%;
 	}
-	.navBarTitle{
-		width: 33%;
-		color: @colorF;
-		font-size: 40upx;
+	/* 右侧按键 */
+	button{
+		position: relative;
+		font-size: 36upx;
+		width: 120upx;
+		height: 70upx;
+		line-height: 70upx;
+		margin-right: 60upx;
 	}
-	.navBarCancel image{
-		height: 40upx;
-		width: 40upx;
+	.btn{
+		background-color: #C8C7CC;
+		color: #aaa;
 	}
-	.navBarBtn{
-		width: 33%;
-		padding-right: 10upx;
-	}
-	button::after{ 
-		border: none;
-	}
-	.navBarBtn button[disabled]{
-		background-color: @disableBtn;
-		border: 10upx solid @borderColor;
-		height: 60upx;
-		width: 100upx;
-		line-height: 60upx;
-		border-radius: 0;
-		color: @borderColor;
-	}
-	.navBarBtn button{
-		background-color: @codeBorder;
-		border: 10upx solid @borderColor;
-		height: 60upx;
-		width: 100upx;
-		line-height: 60upx;
-		border-radius: 0;
-		color: @borderColor;
+	.sure{
+		background-color: #F9AA33;
+		color: #FFFFFF;
 	}
 	.writeComment{
-		margin-top: 100upx;
+		margin-top: 50upx;
 	}
 	textarea{
-		height: 350upx;	
+		height: 200upx;	
 		font-size: 30upx;	
-		padding-top: 35upx;
-		padding-left: 25upx;
+		padding: 10upx;
 	}
-	
-	/* 字数限制的样式 */
-	.countLimit{
-		bottom: 20upx;
-		right: 30upx;
+	.tips{
+		position: absolute;
+		right: 10upx;
+		top: 320upx;
 	}
 </style>
 

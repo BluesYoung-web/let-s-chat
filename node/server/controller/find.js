@@ -21,7 +21,7 @@ const sqlPro = function(sql){
  * @param {number} uid 用户uid
  */
 const get_release  = function(uid){
-    let sql = `select * from finds where user_id = ${uid};`
+    let sql = `select * from finds where userId = ${uid};`
     return sqlPro(sql);
 }
 

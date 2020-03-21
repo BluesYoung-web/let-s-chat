@@ -69,13 +69,20 @@
 			 * 删除单条好友圈
 			 */
 			deleteMyRelease(item){
-				console.log(item);
 				uni.showModal({
 					title: '提示',
 					content: '是否要删除该条好友圈？',
 					success: (res) => {
 						if (res.confirm) {
-							console.log('确认删除');
+							data.find.del({
+								findId: item.id,
+								pagecount: this.pagecount,
+								success: () =>{
+									uni.showToast({
+										title: '好友圈删除成功'
+									});
+								}
+							});
 						} else{
 							console.log('取消删除');
 						}

@@ -126,6 +126,11 @@
                 });
             case 202:
                 // 删除
+                store.del_my_release(data.findId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
                 break;
             case 203:
                 // 点赞

@@ -242,6 +242,27 @@ const get_comments_list = function(findId){
         });
     });
 }
+
+/**
+ * 删除发表的好友圈
+ * @param {number} findId 好友圈id
+ */
+const del = function(findId){
+    let sql = `delete from finds where id = ${findId};`;
+    let sql2 = `delete from likes where findId = ${findId};`;
+    let sql3 = `delete from comments where findId = ${findId};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            mysqlQuery(sql2).then(() => {
+                mysqlQuery(sql3).then(() => {
+                    resolve();
+                });
+            });
+        }).catch((err) => {
+            reject();
+        })
+    });
+}
 module.exports = {
     get_release,
     get,
@@ -251,5 +272,6 @@ module.exports = {
     comment,
     get_likes_list,
     get_comments_list,
-    get_my_release
+    get_my_release,
+    del
 }

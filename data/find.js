@@ -32,7 +32,7 @@ const cmds = {
     del_comments: 206,
     get_likes: 207,
     get_comments: 208,
-    get_my_release: 209
+    get_my_release: 209,
 }
 /**
  * 发布好友圈
@@ -83,7 +83,26 @@ const get = function(args){
  * @param {object} args 
  */
 const del = function(args){
-
+    let {findId, pagecount, success, fail} = {...args};
+    net.send({
+        cmd: cmds.del,
+        data: {
+            findId
+        },
+        success: () => {
+            data.user.get_info({
+                success: (res) => {
+                    for(let i = 1; i <= pagecount; i++){
+                        store.del({
+                            key: `${res.uid}.myFinds.${i}`
+                        });
+                    }
+                }
+            });
+            success();
+        },
+        fail
+    });
 }
 /**
  * 点赞

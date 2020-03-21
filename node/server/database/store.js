@@ -418,6 +418,22 @@ class Store{
         });
     }
     /**
+     * 删除我发表的好友圈
+     * @param {number} findId 
+     */
+    del_my_release(findId){
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            find.del(findId).then(() => {
+                resolve({
+                    data: '好友圈删除成功'
+                });
+            }).catch((err) =>{
+                reject('好友圈删除失败');
+            });
+        });
+    }
+    /**
      * 获取我能看到的好友圈
      * @param {number} page 分页
      */

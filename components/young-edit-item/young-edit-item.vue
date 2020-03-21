@@ -26,6 +26,39 @@
 		<view v-if="type == 3" class="signOutItem flex flex-hc flex-vc" @tap="openPopup">
 			<text v-text="content"></text>
 		</view>
+		<!-- 好友验证 -->
+		<view v-if="type == 4">
+			<view  v-for="(item, index) in checkList" :key="index" class="flex flex-direction-row flex-vc flex-jsb width-750 height-120 pd-lr30">
+				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill"></image>
+				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro">
+					<text class="ft-32">{{'好友请求-'+item.nick}}</text>
+					<!-- 未处理 -->
+					<view class="flex flex-direction-row flex-ac" v-if="!item.isChecked">
+						<button class="btn color-1BB723 mg-rt20" @tap="clickYes(item)">同意</button>
+						<button class="btn color-refuse" @tap="clickNo(item)">拒绝</button>
+					</view>
+					<!-- 已处理 -->
+					<view class="color-ccc ft-26" v-else>
+						<text v-if="item.res == true">您已同意好友请求</text>
+						<text v-else>您已拒绝好友请求</text>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 粉丝互粉 -->
+		<view v-if="type == 5">
+			<view v-for="(item, index) in fansList" :key="index" class="flex flex-direction-row flex-vc flex-jsb width-750 height-120 pd-lr30">
+				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill" @tap="clickUser(item)"></image>
+				<!-- 关注/取消关注 -->
+				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro">
+					<text class="ft-32" @tap="clickUser(item)">{{item.nick}}</text>
+					<view class="flex flex-direction-row flex-ac">
+						<button class="btn color-1BB723" @tap="focus(item)" v-if="item.isFocus == 0">关注</button>
+						<button class="btn color-refuse" @tap="disFocus(item)" v-else>取消关注</button>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -48,6 +81,18 @@
 			avatar: {
 				type: String,
 				default: ''
+			},
+			checkList: {
+				type: Array,
+				default(){
+					return []
+				}
+			},
+			fansList: {
+				type: Array,
+				default(){
+					return []
+				}
 			}
 		},
 		methods:{
@@ -59,6 +104,21 @@
 			},
 			accountCopy(){
 				this.$emit('copy');
+			},
+			clickYes(item){
+				this.$emit('yes', item.uid);
+			},
+			clickNo(item){
+				this.$emit('no', item.uid);
+			},
+			focus(item){
+				this.$emit('focus', item.uid);
+			},
+			disFocus(item){
+				this.$emit('disFocus', item.uid);
+			},
+			clickUser(item){
+				this.$emit('clickUser', item.uid);
 			}
 		}
 	}
@@ -105,5 +165,19 @@
 		height: 30upx;
 		width: 30upx;
 		margin-left: 30upx;
+	}
+	.color-1BB723{
+		background-color: #1BB723;
+		color: white;
+		width: 120upx;
+	}
+	.color-refuse{
+		background-color: #ff3333;
+		color: #F6F6F6;
+		width: 200upx;
+	}
+	.btn{
+		height: 60upx;
+		line-height: 60upx;
 	}
 </style>

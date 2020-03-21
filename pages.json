@@ -63,7 +63,7 @@
 		}, {
 			"path": "pages/mySubpackage/myCommend",
 			"style": {
-				"navigationBarTitleText": "赞我的",
+				"navigationBarTitleText": "我的粉丝",
 				"enablePullDownRefresh": true
 			}
 		}, {
@@ -74,7 +74,7 @@
 		}, {
 			"path": "pages/mySubpackage/myFocus",
 			"style": {
-				"navigationBarTitleText": "关注我的"
+				"navigationBarTitleText": "我关注的"
 			}
 		}, {
 			"path": "pages/mySubpackage/myInformation/myInformation",

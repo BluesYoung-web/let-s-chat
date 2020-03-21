@@ -8,9 +8,6 @@
 			<view class="myRelease flex flex-jc" @tap="checkImg(item)">
 				<image :src="item.dynamicImg" mode="aspectFit"></image>
 			</view>
-			
-			
-			
 			<view class="likes-comments">
 				<!-- 点赞 -->
 				<view class="likes" @tap="toLikeList(item)">
@@ -39,7 +36,6 @@
 						<!-- <span class="inline-block width-20">{{item.likesNum}}</span> -->
 					</view>
 				</view>
-				
 			</view>
 			
 		</view>
@@ -69,6 +65,8 @@
 			}
 		},
 		onShow() {
+			// 获取我发表的好友圈
+
 			// 如果暂存里面有，则直接从暂存里面拿
 			// if(this.myFindLists){
 			// 	this.findsList=this.myFindLists;

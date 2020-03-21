@@ -90,7 +90,7 @@
 				success: (res) => {
 					this.user = res;
 				}
-			})
+			});
 		},
 		// 下拉刷新
 		onPullDownRefresh() {

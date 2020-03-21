@@ -1,49 +1,94 @@
 <template>
 	<!-- 我的粉丝 -->
 	<view>
-		<view class="likesSum" v-for="(item,index) in lists" :key="index">
-			<view class="time flex flex-jc flex-vc">
-				<text>{{item.time}}</text>
-			</view>
-			<view class="likesList flex flex-vc" @tap="toPeopInfo(item)">
-				<image :src="item.avatar" mode=""></image>
-				<view class="content">
-					<text class="friend_name one-line-ellipsis">{{item.name}}</text>
-				</view>
-				<text class="flex-je">X {{item.countNum}}</text>
-			</view>
-		</view>
+		<edit-item type="5" :fansList="lists" @focus="focus" @disFocus="disFocus"
+		@clickUser="toPeopInfo"></edit-item>
 	</view>
 
 </template>
 
 <script>
+	import data from '@/data.js';
+	import editItem from '@/components/young-edit-item/young-edit-item.vue';
 	export default {
+		components:{
+			editItem
+		},
 		data() {
 			return {
-				lists: [
-					// {
-					// 	avatar: '/static/img/friendhead.png',
-					// 	name: "小敏",
-					// 	userId:'',
-					//  countNum:1
-					// },
-				]
+				lists: []
 			}
 		},
-		onLoad() {
-			// 从state里面获取赞我的人的信息
-			// this.lists=this.likeMe;
+		onShow(){
+			this.lists = [];
+			data.user.get_info({
+				success: (res) => {
+					data.friend.get_follows({
+						uid: res.uid,
+						success: (tp) => {
+							for (let item of tp) {
+								data.friend.get_info({
+									uid: item,
+									force: true,
+									success: (dt) => {
+										this.lists.push(dt);
+									},
+									fail: (code, err) => {
+										console.log(code, err);
+									}
+								});
+							}
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+				}
+			});
 		},
 		methods: {
-			//跳转到点赞人的详情页
-			toPeopInfo(item) {
-				let uid = item.userId;
+			/**
+			 * 跳转用户信息页
+			 */
+			toPeopInfo(uid) {
 				uni.navigateTo({
-					url: `../../addressSubpackage/friendsInfo/friendsInfo?uid=${uid}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
+					url: `/pages/addressSubpackage/friendsInfo?uid=${uid}`,
+				});
+			},
+			/**
+			 * 关注
+			 */
+			focus(uid){
+				data.friend.focus({
+					fid: uid,
+					success: () => {
+						uni.showToast({
+							title: '关注成功！'
+						});
+						this.lists.forEach((v, i) => {
+							if(v.uid == uid){
+								v.isFocus = 1;
+							}
+						});
+					}
+				});
+			},
+			/**
+			 * 取消关注
+			 */
+			disFocus(uid){
+				data.friend.dis_focus({
+					fid: uid,
+					success: () => {
+						uni.showToast({
+							title: '取消关注成功！'
+						});
+						this.lists.forEach((v, i) => {
+							if(v.uid == uid){
+								v.isFocus = 0;
+							}
+						});
+					}
 				});
 			}
 		},
@@ -53,35 +98,4 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-	page {
-		background-color: @colorF7;
-	}
-
-	.likesSum {
-		width: 100%;
-	}
-
-	.time {
-		width: 100%;
-		height: 70upx;
-		font-size: 30upx;
-	}
-
-	.likesList {
-		padding: 10upx;
-		background-color: @colorF;
-		height: 150upx;
-	}
-
-	.likesList image {
-		display: inline-block;
-		margin: 10upx;
-		width: 100upx;
-		height: 100upx;
-		border: 1px solid @codeBorder;
-		border-radius: 50%;
-	}
-	.friend_name {
-		width: 400upx;
-	}
 </style>

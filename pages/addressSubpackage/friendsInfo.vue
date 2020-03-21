@@ -61,10 +61,6 @@
 		},
 		onLoad(e) {
 			this.user.uid = e.uid;
-			if(e.isF){
-				this.isF = e.isF;
-				this.isFocus = e.isFocus;
-			}
 		},
 		onShow() {
 			data.friend.get_info({
@@ -72,17 +68,13 @@
 				force: true,
 				success: (dt) => {
 					this.user = dt;
-					if(this.isF != 1){
-						this.isF = dt.isF;
-					}
-					if(this.isFocus != 1){
-						this.isFocus = dt.isFocus;
-					}
+					this.isF = dt.isF;
+					this.isFocus = dt.isFocus;
 				},
 				fail: (code, err) => {
 					console.log(code, err);
 				}
-			})
+			});
 			//动态获取用户的发表的，关注该用户的，该用户关注的
 			data.friend.get_follows({
 				uid: this.user.uid,

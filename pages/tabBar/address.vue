@@ -177,7 +177,7 @@
 			 */
 			toFriendInfo(item) {
 				uni.navigateTo({
-					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=1&isFocus=${item.isFocus}`
+					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}`
 				});
 			},
 			/**

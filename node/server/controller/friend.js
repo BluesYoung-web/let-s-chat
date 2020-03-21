@@ -17,6 +17,7 @@ const {mysqlQuery} = require('../database/conn');
  */
 const get_info = function(uid, fid){
     let sql = `select * from user where uid = ${fid}`;
+    fid = Number(fid);
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             let user = data[0];
@@ -32,6 +33,7 @@ const get_info = function(uid, fid){
                     } else {
                         user.isFocus = 0;
                     }
+                    console.log(user);
                     resolve(user);
                 }).catch((err) => {
                     reject(err);

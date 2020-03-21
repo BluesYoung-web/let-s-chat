@@ -69,12 +69,14 @@
 		}, {
 			"path": "pages/mySubpackage/myRelease",
 			"style": {
-				"navigationBarTitleText": "我发布的"
+				"navigationBarTitleText": "我发布的",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/mySubpackage/myFocus",
 			"style": {
-				"navigationBarTitleText": "我关注的"
+				"navigationBarTitleText": "我关注的",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/mySubpackage/myInformation/myInformation",

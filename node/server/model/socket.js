@@ -167,6 +167,14 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 209: 
+                // 获取我发表的所有好友圈
+                store.get_my_release(data.page).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

@@ -31,7 +31,8 @@ const cmds = {
     put_comments: 205,
     del_comments: 206,
     get_likes: 207,
-    get_comments: 208
+    get_comments: 208,
+    get_my_release: 209
 }
 /**
  * 发布好友圈
@@ -179,6 +180,33 @@ const get_comments = function(args){
         fail
     });
 }
+/**
+ * 获取我发表的好友圈
+ * @param {number} args.page 分页 
+ * @param {boolean} args.force 是否强制从服务器获取
+ * @param {Function} args.success
+ * @param {Function} args.fail
+ */
+const get_my_release = function(args){
+    let {page, force, success, fail} = {...args};
+    let req = {
+        cmd: cmds.get_my_release,
+        data: {
+            page
+        }
+    }
+    data.user.get_info({
+        success: (res) => {
+            store.get({
+                key: `${res.uid}.myFinds.${page}`,
+                req,
+                success,
+                fail,
+                force
+            });
+        }
+    });
+}
 export default {
     put_up,
     get,
@@ -188,5 +216,6 @@ export default {
     put_comments,
     del_comments,
     get_likes,
-    get_comments
+    get_comments,
+    get_my_release
 }

@@ -17,6 +17,10 @@
                     <image src="/static/img/clock.png" mode=""></image>
                     <span class="mg-lt10 inline-block">{{showTime(item.ot)}}</span>
                 </view>
+				<!-- 删除按钮 -->
+				<view v-if="showDel" class="del" @tap="del(item)">
+				    <text>删除</text>
+				</view>
             </view>
         </view>
         <!-- 标题 -->
@@ -67,6 +71,10 @@ export default {
             default(){
                 return {}
             }
+        },
+        showDel: {
+            type: Boolean,
+            default: false
         }
     },
     /**
@@ -93,6 +101,12 @@ export default {
          */
         comment(item){
             this.$emit('comment', item);
+        },
+        /**
+         * 删除好友圈
+         */
+        del(item){
+            this.$emit('del', item);
         },
         /**
          * 显示时间处理
@@ -197,5 +211,13 @@ export default {
 .likes image, .comments image {
     width: 50upx;
     height: 50upx;
+}
+.del{
+	color: red;
+	font-size: 28upx;
+	position: relative;
+	float: right;
+	top: -100upx;
+	right: 20upx;
 }
 </style>

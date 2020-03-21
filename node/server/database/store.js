@@ -371,7 +371,7 @@ class Store{
         });
     }
     /**
-     * 获取我发表的
+     * 获取我发表的(仅用于数量统计)
      * @param {number} uid 用户uid
      */
     get_release(uid){
@@ -379,8 +379,8 @@ class Store{
         const {myredis} = require('../database/conn');
         return new Promise((resolve, reject) => {
             myredis.get(`${uid}.release`).then((data) => {
-                if (data) {
-                    data = JSON.parse(data);
+                data = JSON.parse(data);
+                if (data.length != 0) {
                     resolve({
                         data,
                         extra: 'redis缓存'
@@ -395,6 +395,23 @@ class Store{
                         });
                     });
                 }
+            }).catch((err) => {
+                reject('查找出错');
+            });
+        });
+    }
+    /**
+     * 获取我发表的好友圈
+     * @param {number} page 分页
+     */
+    get_my_release(page){
+        const find = require('../controller/find');
+        return new Promise((resolve, reject) => {
+            page = page > 0 ? page : 1;
+            find.get_my_release(this.uid, page).then((data) => {
+                resolve({
+                    data
+                });
             }).catch((err) => {
                 reject('查找出错');
             });

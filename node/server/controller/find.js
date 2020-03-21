@@ -17,12 +17,62 @@ const sqlPro = function(sql){
 }
 
 /**
- * 获取我发表的
+ * 获取我发表的所有好友圈(仅用于显示数量)
  * @param {number} uid 用户uid
  */
 const get_release  = function(uid){
     let sql = `select * from finds where userId = ${uid};`
     return sqlPro(sql);
+}
+
+/**
+ * 获取我发表的所有好友圈(拥有删除权限及分页懒加载)
+ * @param {number} uid 用户uid
+ * @param {number} page 分页
+ */
+const get_my_release = function(uid, page){
+    const friend = require('./friend');
+    const pagesize = 10;
+    let start = (page - 1)*pagesize;
+    return new Promise((resolve, reject) => {
+        friend.get_focus_list(uid).then((data) => {
+            data.push(uid);
+            let str = '';
+            str = `(${data.join(', ')})`;
+            let sql = `SELECT finds.id, finds.userId, user.avatar, user.nick, finds.say, finds.ot, 
+            finds.img, finds.commentsNum, finds.likesNum from finds,user 
+            where finds.userId = ${uid} and finds.userId = user.uid ORDER BY finds.id desc`;
+            mysqlQuery(sql).then((data) => {
+                const all = data.length;
+                const pagecount = Math.ceil(all / pagesize);
+                let sql2 = `${sql} limit ${start}, ${pagesize};`;
+                mysqlQuery(sql2).then((data) => {
+                    let s = `select findId from likes where userId = ${uid};`;
+                    let temp = data;
+                    mysqlQuery(s).then((data) => {
+                        let arr = []
+                        for (const item of data) {
+                            arr.push(item.findId);
+                        }
+                        for (const item of temp) {
+                            if (arr.includes(item.id)) {
+                                item.likeAction = 1;
+                            } else {
+                                item.likeAction = 0;
+                            }
+                        }
+                        data = {
+                            data: temp,
+                            pagecount
+                        }
+                        resolve(data);
+                    });
+                });
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
 }
 
 /**
@@ -39,10 +89,9 @@ const get = function(uid, page){
             data.push(uid);
             let str = '';
             str = `(${data.join(', ')})`;
-            let sql = `SELECT finds.id id, finds.userId userId, user.avatar avatar, 
-            user.nick nick, finds.say say, finds.ot ot, 
-            finds.img img, finds.commentsNum commentsNum, finds.likesNum likesNum
-            from finds,user where finds.userId in ${str} and finds.userId = user.uid
+            let sql = `SELECT finds.id, finds.userId, user.avatar, user.nick, finds.say, finds.ot, 
+            finds.img, finds.commentsNum, finds.likesNum from finds,user 
+            where finds.userId in ${str} and finds.userId = user.uid
             ORDER BY finds.id desc`;
             mysqlQuery(sql).then((data) => {
                 const all = data.length;
@@ -201,5 +250,6 @@ module.exports = {
     click_dis_like,
     comment,
     get_likes_list,
-    get_comments_list
+    get_comments_list,
+    get_my_release
 }

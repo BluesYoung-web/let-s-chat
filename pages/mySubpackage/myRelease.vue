@@ -78,6 +78,7 @@
 								findId: item.id,
 								pagecount: this.pagecount,
 								success: () =>{
+									this.findsList = this.findsList.filter((it) => it.id != item.id);
 									uni.showToast({
 										title: '好友圈删除成功'
 									});

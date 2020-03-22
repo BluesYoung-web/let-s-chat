@@ -77,12 +77,8 @@
                 break;
             case 101:
                 // 设置用户信息
-                store.set_info(data).then((msg) => {
-                    let dt = {
-                        data: msg,
-                        extra: {}
-                    }
-                    this.opSuccess(dt, cbk, extra);
+                store.set_info(data).then((data) => {
+                    this.opSuccess(data, cbk, extra);
                 }).catch((err) => {
                     this.opFail(err, cbk, extra);
                 });
@@ -124,6 +120,7 @@
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
+                break;
             case 202:
                 // 删除
                 store.del_my_release(data.findId).then((data) => {

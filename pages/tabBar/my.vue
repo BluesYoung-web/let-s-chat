@@ -19,43 +19,39 @@
 		components: {
 			personInfo
 		},
-		onLoad() {
-			/**
-			 * 获取当前用户信息
-			 */
+		onShow(){
 			data.user.get_info({
+				force: true,
 				success: (res) => {
 					this.user = res;
-				}
-			});
-		},
-		onShow(){
-			//动态获取用户的发表的，关注该用户的，该用户关注的
-			data.friend.get_follows({
-				uid: this.user.uid,
-				success: (data) => {
-					this.myCommend = data.length;
-				},
-				fail: (code, err) => {
-					console.log(code, err);
-				}
-			});
-			data.friend.get_focus_list({
-				uid: this.user.uid,
-				success: (data) => {
-					this.myFocus = data.length;
-				},
-				fail: (code, err) => {
-					console.log(code, err);
-				}
-			});
-			data.friend.get_release({
-				uid: this.user.uid,
-				success: (data) => {
-					this.myRelease = data.length;
-				},
-				fail: (code, err) => {
-					console.log(code, err);
+					//动态获取用户的发表的，关注该用户的，该用户关注的
+					data.friend.get_follows({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myCommend = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+					data.friend.get_focus_list({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myFocus = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
+					data.friend.get_release({
+						uid: this.user.uid,
+						success: (data) => {
+							this.myRelease = data.length;
+						},
+						fail: (code, err) => {
+							console.log(code, err);
+						}
+					});
 				}
 			});
 		},

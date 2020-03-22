@@ -137,9 +137,9 @@ const set_info = function(args){
                 where uid = ${uid};`
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then(() => {
-            resolve('修改成功');
+            resolve();
         }).catch((err) => {
-            reject('修改失败');
+            reject(err);
         });
     });
 }

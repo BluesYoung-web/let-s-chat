@@ -69,8 +69,8 @@ class Store{
         return new Promise((resolve, reject) => {
             // 首先从redis缓存获取
             myredis.get(`${this.uid}.info`).then((data) => {
+                data = JSON.parse(data);
                 if (data) {
-                    data = JSON.parse(data);
                     resolve({
                         data,
                         extra: {
@@ -109,13 +109,15 @@ class Store{
         const user = require('../controller/user');
         return new Promise((resolve, reject) => {
             // 先写入mysql数据库
-            user.set_info(data).then((msg) => {
+            user.set_info(data).then(() => {
                 // 更新缓存
                 myredis.set(`${data.uid}.info`, JSON.stringify(data)).then(() => {
-                    resolve(msg);
+                    resolve({
+                        data: '修改成功'
+                    });
                 });
             }).catch((err) => {
-                reject(err);
+                reject('修改失败');
             });
         });
     }

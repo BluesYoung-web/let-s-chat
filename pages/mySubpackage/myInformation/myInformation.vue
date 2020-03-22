@@ -26,14 +26,11 @@
 				</view>
 			</view>
 		</uni-popup>
-		<!-- 裁剪图片 -->
-		<image-cropper :src="tempFilePath" @confirm="confirm"></image-cropper>
 	</view>	
 </template>
 
 <script>
 	import uniPopup from "@/components/uni-popup/uni-popup.vue";
-	import ImageCropper from "@/components/invinbg-image-cropper/invinbg-image-cropper.vue";
 	import editItem from '@/components/young-edit-item/young-edit-item.vue';
 	import data from '@/data.js';
 	export default {
@@ -48,8 +45,7 @@
 					wxid:'' //微信id
 				},
 				showPopup: false, //控制弹出框是否显示
-				tempFilePath: '',//要裁剪图片的路径
-				cropFilePath: '',//裁剪后图片的路径
+				tempFilePath: '',//图片的路径
 			}
 		},
 		onShow() {
@@ -118,6 +114,7 @@
 						// console.log(JSON.stringify(res.tempFilePaths));
 						//裁剪图片的路径
 						this.tempFilePath = res.tempFilePaths.shift();
+						this.upload();
 					},
 					fail: res => {
 						uni.showToast({
@@ -127,7 +124,9 @@
 					},
 				});
 			},
-			// 保存用户头像信息到state
+			/**
+			 * 更新本地缓存
+			 */
 			saveLogo(){
 				data.user.set_info({
 					data: this.user,
@@ -140,14 +139,13 @@
 				});
 			},
 			
-			// 裁剪图片的相关方法
-			// 确认裁剪
-			confirm(e) {
-				this.tempFilePath = ''
-				this.cropFilePath = e.detail.tempFilePath;
+			/**
+			 * 图片上传
+			 */
+			upload() {
 				// 将裁剪后的图片上传到服务器
 				data.user.upload({
-					filePath:this.cropFilePath,
+					filePath:this.tempFilePath,
 					name:"img",
 					success:(res) => {
 						console.log(res);
@@ -171,7 +169,6 @@
 		},
 		components: {
 			uniPopup,
-			ImageCropper,
 			editItem
 		},
 	}

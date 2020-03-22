@@ -425,10 +425,16 @@ class Store{
      */
     del_my_release(findId){
         const find = require('../controller/find');
+        const {myredis} = require('../database/conn');
         return new Promise((resolve, reject) => {
             find.del(findId).then(() => {
-                resolve({
-                    data: '好友圈删除成功'
+                // 更新缓存
+                find.get_release(this.uid).then((data) =>{
+                    myredis.set(`${this.uid}.release`, JSON.stringify(data)).then(() => {
+                        resolve({
+                            data: '好友圈删除成功'
+                        });
+                    });
                 });
             }).catch((err) =>{
                 reject('好友圈删除失败');

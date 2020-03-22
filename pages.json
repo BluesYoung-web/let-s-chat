@@ -203,6 +203,11 @@
 					}
 				}
 			}
+		}, {
+			"path":"pages/addressSubpackage/friendCheck",
+			"style": {
+				"navigationBarTitleText": "新的朋友"
+			}
 		}
     ],
 	// 全局样式配置

@@ -9,6 +9,15 @@
  */
 const {mysqlQuery} = require('../database/conn');
 
+const sqlPro = function(sql){
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 
 /**
  * 根据uid获取用户信息
@@ -33,7 +42,6 @@ const get_info = function(uid, fid){
                     } else {
                         user.isFocus = 0;
                     }
-                    console.log(user);
                     resolve(user);
                 }).catch((err) => {
                     reject(err);
@@ -80,6 +88,15 @@ const get_focus_list = function(uid){
             reject(err);
         });
     });
+}
+/**
+ * 加好友预处理
+ * @param {number} uid 添加者uid
+ * @param {number} fid 被添加者uid
+ */
+const addPre = function(uid, fid){
+    let sql = `insert into friends_check(uid, fid) values(${uid}, ${fid});`;
+    return sqlPro(sql);
 }
 /**
  * 加好友
@@ -132,13 +149,7 @@ const del = function(uid, fid){
  */
 const focus = function(uid, fid){
     let sql = `insert into focus(uid, fid) values(${uid}, ${fid});`;
-    return new Promise((resolve, reject) => {
-        mysqlQuery(sql).then((data) =>{
-            resolve(data);
-        }).catch((err) =>{
-            reject(err);
-        });
-    });
+    return sqlPro(sql);
 }
 /**
  * 取关
@@ -147,13 +158,7 @@ const focus = function(uid, fid){
  */
 const dis_focus = function(uid, fid){
     let sql = `delete from focus where uid = ${uid} and fid = ${fid};`;
-    return new Promise((resolve, reject) =>{
-        mysqlQuery(sql).then((data) => {
-            resolve(data);
-        }).catch((err) => {
-            reject(err);
-        });
-    });
+    return sqlPro(sql);
 }
 
 /**
@@ -174,14 +179,39 @@ const get_follows = function(uid){
         });
     });
 }
+/**
+ * 获取好友验证列表
+ * @param {number} uid
+ */
+const get_check_list = function(uid){
+    let sql = `select * from friends_check where fid = ${uid};`;
+    return sqlPro(sql);
+}
 
+/**
+ * 好友验证结果处理
+ * @param {object} data
+ */
+const check = function(data){
+    let sql = `update friends_check set isChecked = 1, isAgree = ${data.isAgree} where id = ${data.id};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+}
 module.exports = {
     get_info,
     get_list,
     get_focus_list,
+    addPre,
     add,
     del,
     focus,
     dis_focus,
     get_follows,
+    get_check_list,
+    check
 }

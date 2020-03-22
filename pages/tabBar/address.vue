@@ -42,9 +42,13 @@
 			iconList
 		},
 		onShow(){
+			uni.$once('hasFriendCheck', () => {
+				this.hasFriendCheck = true;
+			});
 			this.allFriendList = [];
 			this.friendsList = [];
 			data.friend.get_list({
+				force: true,
 				success: (dt) => {
 					for(let item of dt){
 						data.friend.get_info({
@@ -68,6 +72,7 @@
 			this.allFriendList = [];
 			this.friendsList = [];
 			data.friend.get_list({
+				force: true,
 				success: (dt) => {
 					for(let item of dt){
 						data.friend.get_info({
@@ -190,8 +195,12 @@
 			 * 去好友验证页面
 			 */
 			toFriendCheck(){
-				uni.showToast({
-					title:'去好友验证'
+				this.hasFriendCheck = false;
+				uni.hideTabBarRedDot({
+					index: 1
+				});
+				uni.navigateTo({
+					url:'/pages/addressSubpackage/friendCheck'
 				});
 			}
 		},

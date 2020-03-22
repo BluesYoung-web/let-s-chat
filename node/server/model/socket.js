@@ -208,8 +208,11 @@
                 });
                 break;
             case 302:
-                store.add_friend(data.uid).then((data) => {
-                    this.opSuccess(data, cbk, extra);
+                // 发送好友申请
+                store.add_friend_pre(data.uid).then((dt) => {
+                    // 推送给对应的申请对象
+                    this.opSuccess(dt, cbk, extra);
+                    this.push(102, 0, 0, '收到新的好友申请', [data.uid]);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -236,23 +239,43 @@
                 });
                 break;
             case 306: 
-                // 好友验证
+                // 获取好友验证列表
+                store.get_check_list().then((data) =>{
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
                 break;
-            case 307:
+            case 307: 
+                // 好友验证
+                store.friend_check(data).then((dt) => {
+                    if (data.isAgree == 1) {
+                        store.add_friend(data.uid).then((data) => {
+                            this.opSuccess(data, cbk, extra);
+                        });
+                    }
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            case 308:
+                // 获取粉丝
                 store.get_follows(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
                 break;
-            case 308:
+            case 309:
+                // 关注
                 store.get_focus_list(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
                 break;
-            case 309: 
+            case 310: 
+                // 获取发表的好友圈
                 store.get_release(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -303,6 +326,29 @@
             data: msg,
             cbk
         }));
+    }
+    /**
+     * 消息推送
+     * @param {number} model 
+     * @param {number} type 
+     * @param {number} id 
+     * @param {object} data 
+     * @param {Array} uidList 
+     */
+    push(model, type, id, data, uidList){
+        const {pushFormat} = require('../core/tools');
+        let onlines = this.getOnlines();
+        for (let iterator of uidList) {
+            if (onlines[iterator]) {
+                onlines[iterator].sendText(
+                    pushFormat({
+                        model, 
+                        type,
+                        id, 
+                        data
+                    }));
+            }
+        }
     }
  }
 

@@ -194,10 +194,8 @@
 				data.friend.add({
 					fid: this.user.uid,
 					success: () => {
-						this.isF = 1;
-						this.isFocus = 1;
 						uni.showToast({
-							title: '好友添加成功'
+							title: '已发送好友申请'
 						});
 					},	
 					fail: (code, err) => {

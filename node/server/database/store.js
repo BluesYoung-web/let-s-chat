@@ -214,6 +214,38 @@ class Store{
         });
     }
     /**
+     * 加好友(真正调用)
+     * @param {number} uid 好友uid
+     */
+    add_friend_pre(uid){
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            friend.addPre(this.uid, uid).then(() => {
+                resolve({
+                    data: '好友申请已成功发送'
+                });
+            }).catch((err) => {
+                reject('好友申请发送失败');
+            });
+        });
+    }
+    /**
+     * 好友验证结果
+     * @param {object} data 
+     */
+    friend_check(data){
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            friend.check(data).then(() => {
+                resolve({
+                    data: '您已处理好友申请'
+                });
+            }).catch((err) => {
+                reject('好友申请处理失败');
+            });
+        })
+    }
+    /**
      * 加好友
      * @param {number} uid 好友uid
      */
@@ -222,18 +254,9 @@ class Store{
         const friend = require('../controller/friend');
         return new Promise((resolve, reject) => {
             friend.add(this.uid, uid).then((data) => {
-                // 添加成功之后更新缓存
-                myredis.set(`${this.uid}.friend_list`, JSON.stringify(data)).then(() => {
-                    myredis.set(`${uid}.friend_list`, JSON.stringify(data)).then(() => {
-                        this.add(this.uid, uid, 'focus_list').then(() => {
-                            this.add(uid, this.uid, 'focus_list').then(() => {
-                                resolve({
-                                    data,
-                                    extra: '好友添加成功'
-                                });
-                            });
-                        });
-                    });
+                resolve({
+                    data,
+                    extra: '好友添加成功'
                 });
             }).catch((err) => {
                 reject({
@@ -591,6 +614,21 @@ class Store{
                 });
             }).catch((err) => {
                 reject('查找出错');
+            });
+        });
+    }
+    /**
+     * 获取好友验证列表
+     */
+    get_check_list(){
+        const friend = require('../controller/friend');
+        return new Promise((resolve, reject) => {
+            friend.get_check_list(this.uid).then((data) => {
+                resolve({
+                    data
+                });
+            }).catch((err) => {
+                reject(err);
             });
         });
     }

@@ -39,7 +39,7 @@
 					</view>
 					<!-- 已处理 -->
 					<view class="color-ccc ft-26" v-else>
-						<text v-if="item.res == true">您已同意好友请求</text>
+						<text v-if="item.isAgree == 1">您已同意好友请求</text>
 						<text v-else>您已拒绝好友请求</text>
 					</view>
 				</view>
@@ -54,7 +54,7 @@
 					<text class="ft-32" @tap="clickUser(item)">{{item.nick}}</text>
 					<view class="flex flex-direction-row flex-ac">
 						<button class="btn color-1BB723" @tap="focus(item)" v-if="item.isFocus == 0">关注</button>
-						<button class="btn color-refuse" @tap="disFocus(item)" v-else>取消关注</button>
+						<button class="btn color-refuse w240" @tap="disFocus(item)" v-else>取消关注</button>
 					</view>
 				</view>
 			</view>
@@ -106,10 +106,10 @@
 				this.$emit('copy');
 			},
 			clickYes(item){
-				this.$emit('yes', item.uid);
+				this.$emit('yes', item);
 			},
 			clickNo(item){
-				this.$emit('no', item.uid);
+				this.$emit('no', item);
 			},
 			focus(item){
 				this.$emit('focus', item.uid);
@@ -169,15 +169,17 @@
 	.color-1BB723{
 		background-color: #1BB723;
 		color: white;
-		width: 120upx;
 	}
 	.color-refuse{
 		background-color: #ff3333;
 		color: #F6F6F6;
-		width: 200upx;
 	}
 	.btn{
 		height: 60upx;
 		line-height: 60upx;
+		width: 120upx;
+	}
+	.w240{
+		width: 240upx;
 	}
 </style>

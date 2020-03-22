@@ -9,7 +9,7 @@ export default{
 	/**
 	 * @type {string} http服务器地址
 	 */
-	httpUrl:'http://localhost',
+	httpUrl:'http://192.168.1.11',
 	/**
 	 * @type {string} websocket服务器地址
 	 */

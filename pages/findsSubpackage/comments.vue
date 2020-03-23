@@ -167,6 +167,20 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
+	.btn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.commentsBottom{
+		position: fixed;
+		z-index: 1;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 110upx;
+	}
 	.commentsButton{
 		width: 600upx !important;
 		font-size: 32upx !important;

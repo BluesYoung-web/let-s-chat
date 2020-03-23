@@ -124,9 +124,89 @@
 	}
 </script>
 
-<style lang="less">
-    /* 引入公共样式 */
-    @import '~@/common/common.less';
+<style>
+	.mg-rt20{
+		margin-right: 20upx;
+	}
+	.color-ccc{
+		color: #ccc;
+	}
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+	/* 水平居中 */
+	.flex-hc {
+		/* 09版 */
+		-webkit-box-pack: center;
+		/* 12版 */
+		-webkit-justify-content: center;
+		-moz-justify-content: center;
+		-ms-justify-content: center;
+		-o-justify-content: center;
+		justify-content: center;
+	}
+	/* 按行排列 */
+	.flex-direction-row{
+		flex-direction: row;
+	}
+	.flex-jsb { 
+		justify-content: space-between;
+	}
+	.flex-ac { 
+		align-items: center;
+	}
+	.width-750{
+		width: 750upx;
+	}
+	.width-600{
+		width: 600upx;
+	}
+	.width-80{
+		width: 80upx;
+	} 
+	.height-120, .h120{
+		height: 120upx;
+	}
+	.height-80{
+		height: 80upx;
+	} 
+	.line-h120{
+		line-height: 120upx;
+	}
+	.pd-lr30{
+		padding: 0 30upx;
+	}
+	.pd-lr20{
+		padding: 0 20upx;
+	}
+	.bd-rd50{
+		border-radius: 50% !important;
+	}
+	.bd-bt-gainsboro{
+		border-bottom: 1px solid #F1F1F1;
+	}
+	.ft-32{
+		font-size:32upx;
+	}
+	.ft-26{
+		font-size:26upx;
+	}
 	.avatarItem{
 		width: 750upx;
 		display: flex;

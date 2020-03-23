@@ -13,23 +13,20 @@
 		<!-- 昵称资料 -->
 		<view class="messageContent mg-tp60 flex flex-direction-column flex-vc">
 			<!-- 昵称 -->
-			<view class="name ft-36 font-weight-600 color-344955 one-line-ellipsis">
+			<view class="name ft-36 color-344955 one-line-ellipsis">
 				<text>{{user.nick}}</text>
 			</view>
 			<!-- 来聊账号 -->
 			<view class="account ft-26 color-889aa3 mg-tp15">
-				<text>来聊账号：</text>
-				<text>{{user.uid}}</text>
+				<text>账号：{{user.uid}}</text>
 			</view>
 			<!-- 签名 -->
 			<view class="motto ft-26 color-889aa3 mg-tp20 one-line-ellipsis">
 				<text>{{user.motto}}</text>
 			</view>
-			
 			<!-- 编辑资料按钮 -->
-			<button class="editInfoBtn bg-889aa3 color-889aa3 mg-tp60"  plain="true" 
+			<button class="editInfoBtn color-889aa3 mg-tp60"  plain="true" 
 			@tap="clickButton" v-text="buttonText"></button>
-			
 			<!-- 下方的粉丝&关注&发表 -->
 			<view class="flex flex-direction-row flex-hc width-750">
 				<!-- 粉丝 -->
@@ -108,9 +105,77 @@
 	}
 </script>
 
-<style lang="less">
-	/* 引入公共样式 */
-	@import "~@/common/common.less";
+<style>
+	/* 文字只显示一行，超出部分省略号 */
+	.one-line-ellipsis{
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.ft-36{
+		font-size:36upx;
+	}
+	.ft-28{
+		font-size: 28upx;
+	}
+	.ft-26{
+		font-size: 26upx;
+	}
+	.color-344955{
+		color: #344955;
+	}
+	.color-889aa3{
+		color: #889aa3;
+	}
+	.color-4A6572{
+		color: #4A6572;
+	}
+	.width-full {
+		width: 100%;
+	}
+	.width-750{
+		width: 750upx;
+	}
+	.bg-344955{
+		background-color: #344955;
+	}
+	.absolute{
+		position: absolute;
+	}
+	.mg-tp15{
+		margin-top: 15upx;
+	}
+	.mg-tp20{
+		margin-top: 20upx;
+	}
+	.mg-tp60{
+		margin-top: 60upx;
+	}
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+	}
+	.flex-jc { 
+		justify-content: center;
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+	.flex-direction-column{
+		flex-direction: column;
+	}
 	/* 首部头像下的背景颜色 */
 	.topBg{
 		height: 350upx;

@@ -1,4 +1,4 @@
-<!-- 个人页列表组件 -->
+<!-- 图标列表组件 -->
 <template>
 	<view>
 		<view @click="btnClick" class="bg-fff pd-lr20 width-750 height-100  flex flex-direction-row flex-vc flex-jsb">
@@ -61,9 +61,68 @@
 	}
 </script>
 
-<style lang="less">
-    /* 引入公共样式 */
-    @import '~@/common/common.less';
+<style>
+	.color-333{
+		color: #333;
+	}
+	.ft-30{
+		font-size: 30upx;
+	}
+	.line-h100{
+		line-height: 100upx;
+	}
+	/* flex布局属性集 */
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+
+	}
+	/* 按行排列 */
+	.flex-direction-row{
+		flex-direction: row;
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+	.flex-jsb { 
+		justify-content: space-between;
+	}
+	.flex-ac { 
+		align-items: center;
+	}
+	.height-100, .h100{
+		height: 100upx;
+	}
+	.width-750{
+		width: 750upx;
+	}
+	.width-50{
+		width: 50upx;
+	} 
+	.height-50{
+		height: 50upx;
+	}
+	.pd-lr20{
+		padding: 0 20upx;
+	}
+	.pd-lt10{
+		padding-left: 10upx;
+	}
+	.bg-fff{
+		background-color: #fff;
+	}
 	.rightIcon{
 		height: 30upx;
 		width: 30upx;

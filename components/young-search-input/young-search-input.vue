@@ -2,9 +2,10 @@
 <template>
 	<view>
 		<view class="search relative" :style="{width: width}">
-			<span class="iconfont absolute searchIcon">&#xe6a3;</span>
+			<img src="/static/img/search.png" class="absolute searchIcon"/>
 			<input v-model="inputMsg" type="text" @input="$emit('getInputMsg', $event.target.value)" class="input" value="" :placeholder="placeholder" :style="{'border-radius': bdRadius, border:border, 'background-color':backgroundColor}" />
-			<span @tap="clear" v-show="inputMsg.length != 0" class="iconfont absolute clearIcon">&#xe609;</span>
+			<img @tap="clear" v-show="inputMsg.length != 0" 
+			src="/static/img/clear.png" class="absolute clearIcon"/>
 		</view>
 	</view>
 </template>
@@ -46,6 +47,7 @@
 		},
 		methods: {
 			clear(){
+				// console.log('1111111111111111111111')
 				this.inputMsg = '';
 				this.$emit('getInputMsg', this.inputMsg);
 			},
@@ -54,24 +56,8 @@
 </script>
 
 <style lang="less">
-    /* 引入公共样式 */
-    @import '~@/common/common.less';
-	/* 引入字体图标 */
-	@font-face {
-	  font-family: 'iconfont';
-	  src: url('/static/ttf/input/iconfont.eot');
-	  src: url('/static/ttf/input/iconfont.eot?#iefix') format('embedded-opentype'),
-	      url('/static/ttf/input/iconfont.woff2') format('woff2'),
-	      url('/static/ttf/input/iconfont.woff') format('woff'),
-	      url('/static/ttf/input/iconfont.ttf') format('truetype'),
-	      url('/static/ttf/input/iconfont.svg#iconfont') format('svg');
-	}
-	.iconfont {
-	  font-family: "iconfont" !important;
-	  font-size: 16px;
-	  font-style: normal;
-	  -webkit-font-smoothing: antialiased;
-	  -moz-osx-font-smoothing: grayscale;
+    .absolute{
+		position: absolute;
 	}
 	.input {
 		padding-left: 64upx;

@@ -129,7 +129,7 @@ export default {
             }else{
                 // 直接显示日期+时间
                 let t = new Date(timestamp);
-                str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日${t.getHours()}:${t.getMinutes()}`;
+                str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日  ${t.getHours()}:${t.getMinutes()}`;
             }
             return str;
         }
@@ -137,87 +137,128 @@ export default {
 }
 </script>
 
-<style lang="less">
-@import '~@/common/common.less';
+<style>
+    .height-50{
+        height: 50upx;
+    }
+    .width-80{
+        width: 80upx;
+    }
+    .width-20{
+        width: 20upx;
+    }
+    .pd-lt30{
+        padding-left: 30upx;
+    }
+    .mg-lt10{
+        margin-left: 10upx;
+    } 
+    .inline-block{
+        display: inline-block;
+    }
+    /* flex布局属性集 */
+    .flex {
+        display: box; /* OLD - Android 4.4- */
+        display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+        display: -ms-flexbox; /* TWEENER - IE 10 */
+        display: -webkit-flex; /* NEW - Chrome */
+        display: flex;
 
-.dynamic-information {
-    height: 120upx;
-}
+    }
+    /* 垂直居中 */
+    .flex-vc {
+        /* 09版 */
+        -webkit-box-align: center;
+        /* 12版 */
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-align-items: center;
+        -o-align-items: center;
+        align-items: center;
+    }
+    .flex-jsb { 
+        justify-content: space-between;
+    }
 
-.friends-head {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    float: left;
-    width: 150upx;
-    height: 100%;
-}
+    .dynamic-information {
+        height: 120upx;
+    }
 
-.friends-head image {
-    width: 90upx;
-    height: 90upx;
-    border-radius: 50%;
-}
+    .friends-head {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        float: left;
+        width: 150upx;
+        height: 100%;
+    }
+
+    .friends-head image {
+        width: 90upx;
+        height: 90upx;
+        border-radius: 50%;
+    }
 
 
-.friends-username {
-    height: 55upx;
-    display: flex;
-    align-items: flex-end;
-    font-size: 30upx;
-    font-weight: bold;
-}
+    .friends-username {
+        height: 55upx;
+        display: flex;
+        align-items: flex-end;
+        font-size: 30upx;
+        font-weight: bold;
+    }
 
-.dynamic-time {
-    height: 65upx;
-    display: flex;
-}
+    .dynamic-time {
+        height: 65upx;
+        display: flex;
+    }
 
-.dynamic-time image {
-    width: 26upx;
-    height: 26upx;
-}
+    .dynamic-time image {
+        width: 26upx;
+        height: 26upx;
+    }
 
-.dynamic-time span {
-    font-size: 24upx;
+    .dynamic-time span {
+        font-size: 24upx;
 
-}
+    }
 
-.dynamic-img {
-    width: 100%;
-    height: 500upx;
-}
+    .dynamic-img {
+        width: 100%;
+        height: 500upx;
+    }
 
-.dynamic-img image {
-    height: 100%;
-    width: 100%;
-}
+    .dynamic-img image {
+        height: 100%;
+        width: 100%;
+    }
 
-.likes-comments {
-    height: 100upx;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-}
+    .likes-comments {
+        height: 100upx;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
 
-.likes, .comments {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    height: 100%;
-}
+    .likes, .comments {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        height: 100%;
+    }
 
-.likes image, .comments image {
-    width: 50upx;
-    height: 50upx;
-}
-.del{
-	color: red;
-	font-size: 28upx;
-	position: relative;
-	float: right;
-	top: -100upx;
-	right: 20upx;
-}
+    .likes image, .comments image {
+        width: 50upx;
+        height: 50upx;
+    }
+    .del{
+        color: red;
+        font-size: 28upx;
+        position: relative;
+        float: right;
+        top: -100upx;
+        right: 20upx;
+    }
 </style>

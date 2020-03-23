@@ -154,6 +154,21 @@
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
 	@colorButton:@codeBorder;
+	.popup{
+		width: 500upx;
+		height: 230upx;
+		background-color: @colorF;
+		border-radius: 5px;
+		text-align: center;
+	}
+	.popup text{
+		height: 100upx;
+		line-height: 100upx;		
+	}
+	.popup button{
+		height: 100upx;
+		background: @codeBorder;
+	}
 	.search{
 		height: 60upx;
 		background-color: @colorF;

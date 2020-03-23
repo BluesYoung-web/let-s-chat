@@ -7,7 +7,7 @@
 			</view>
 			<!-- 后限制条件改为最近联系好友，消息发送时间 -->
 			<view class="top-contacts-head" v-for="(friend,index) in closeFriend" :key="index">
-				<image v-if="index<4" :src="friend.avatar" mode="" @tap="toFriendInfo(friend.uid)"></image>
+				<image v-if="index < 4" :src="friend.avatar" mode="" @tap="toFriendInfo(friend.uid)"></image>
 			</view>
 		</view>
 	</view>
@@ -38,9 +38,7 @@
 	}
 </script>
 
-<style lang="less">
-	/* 引入公共样式 */
-	@import '~@/common/common.less';
+<style>
 	.top-contacts {
 		height: 240upx;
 		padding-left: 30upx;

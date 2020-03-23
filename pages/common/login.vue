@@ -236,6 +236,49 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
+	.logo {
+		padding-top: 100upx;
+		padding-bottom: 50upx;
+	}
+	
+	.logo image {
+		width: 200upx;
+		height: 200upx;
+	}
+	/* 登录整体内容的view */
+	.loginContentView input {
+		height: 100upx;
+		border: @bdcolor 1px solid;
+		border-radius: 6px;
+		padding-left: 60upx;
+		background-repeat: no-repeat;
+		background-size: 40upx 40upx;
+	}
+	.phoneInput {
+		width: 600upx;
+		background-image: url("@{imgurl}phone.png");
+		background-position: 18upx 30upx;
+	}
+	.passwordInput {
+		width: 360upx;
+		background-image: url("@{imgurl}message.png");
+		background-position: 14upx 30upx;
+	}
+	/* 验证码的view */
+	.identifying-code {
+		border: 1px solid @codeBorder;
+		border-radius: 6px;
+		width: 210upx;
+		height: 100upx;
+		line-height: 100upx;
+		background-color: @colorF;
+	}
+	/* 登录、注册按钮 */
+	.loginBtn,.registerBtn {
+		width: 600upx;
+		height: 100upx;
+		margin-top: 100upx;
+	}
 	/* 注册view */
 	.register {
 		width: 600upx;

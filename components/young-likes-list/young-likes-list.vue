@@ -32,8 +32,35 @@
 	}
 </script>
 
-<style lang="less">
-	@import '~@/common/common.less';
+<style>
+	/* flex布局属性集 */
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+
+	.flex-jc { 
+		justify-content: center;
+	}
+	.flex-js { 
+		justify-content: flex-start;
+	}
 	.contentRow{
 		width: 100%;
 		height: 100upx;

@@ -81,4 +81,10 @@
 	page{
 		background-color: @bgcolor;
 	}
+	.pre-86{
+		position: absolute;
+		float: left;
+		top: 25upx;
+		left: 10upx;
+    }
 </style>

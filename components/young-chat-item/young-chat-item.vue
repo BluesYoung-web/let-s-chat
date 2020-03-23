@@ -20,9 +20,9 @@
 							</view>
 							<!-- 消息内容 -->
 							<view class="message-body flex flex-direction-column flex-jc pd-lt15">
-								<view class="message-informatin flex flex-jsb">
+								<view class="message-information flex flex-jsb">
 									<span class="ft-34">{{item.nick}}</span>
-									<span class="color-ccc">{{item.time}}</span>
+									<span class="color-ccc">{{showTime(item.ot)}}</span>
 								</view>
 								<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
 							</view>
@@ -40,9 +40,9 @@
 							</view>
 							<!-- 消息内容 -->
 							<view class="message-body flex flex-direction-column flex-jc pd-lt15">
-								<view class="message-informatin flex flex-jsb">
+								<view class="message-information flex flex-jsb">
 									<span class="ft-34">{{item.nick}}</span>
-									<span class="color-ccc">{{item.time}}</span>
+									<span class="color-ccc">{{showTime(item.ot)}}</span>
 								</view>
 								<view class="message-content one-line-ellipsis mg-tp30 color-999">{{item.content}}</view>
 							</view>
@@ -125,38 +125,29 @@
 		data(){
 			return {}
 		},
-		/**
-		 * 处理显示的时间
-		 */
-		created(){
-			for (let i in this.dataList) {
-				this.dataList[i].time = this.timeFormat(this.dataList[i].ot);
-			}
-		},
 		methods: {
 			/**
-			 * 将时间戳转换成特定格式的时间
-			 * @param {timestamp} timestamp 时间戳
-			 * @return {string} str 处理后的时间
+			 * 显示时间处理
+			 * @param {number} timestamp 原始时间戳
 			 */
-			timeFormat(timestamp){
-				if(!Number(timestamp)){
-					return timestamp;
-				}
+			showTime(timestamp){
+				timestamp = Number(timestamp);
 				const nowTime = Date.parse(new Date());
 				let d = nowTime - timestamp;
+				let diff = new Date(nowTime).toDateString().substr(8,2) - new Date(timestamp).toDateString().substr(8,2);
 				let str = '';
-				if(d < 86400000){
+				if (d <= 60000) {
+					str = '刚刚';
+				} else if(d > 60000 && diff == 0){
 					// 显示时间
 					str = new Date(timestamp).toTimeString().substr(0,5);
-					
-				}else if(d > 86400000 && d < 172800000){
+				}else if(diff == 1){
 					// 显示昨天+时间
 					str = "昨天"+new Date(timestamp - 86400000).toTimeString().substr(0,5);
 				}else{
 					// 直接显示日期+时间
 					let t = new Date(timestamp);
-					str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日`;
+					str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日  ${t.getHours()}:${t.getMinutes()}`;
 				}
 				return str;
 			},
@@ -182,9 +173,95 @@
 	}
 </script>
 
-<style lang="less">
-    /* 引入公共样式 */
-    @import '~@/common/common.less';
+<style>
+	/* 文字只显示一行，超出部分省略号 */
+	.one-line-ellipsis{
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.mg-tp30{
+		margin-top: 30upx;
+	}
+	.bd-rd50{
+		border-radius: 50% !important;
+	}
+	.relative{
+		position: relative;
+	}
+	.pd-lr20{
+		padding: 0 20upx;
+	}
+	.pd-lt15{
+ 		padding-left: 15upx;
+	}
+	.height-200{
+		height: 200upx;
+	}
+	.height-120{
+		height: 120upx;
+	}
+	.width-120{
+		width: 120upx;
+	}
+	.ft-26{
+		font-size: 26upx;
+	}
+	.ft-34{
+		font-size: 34upx;
+	}
+	.color-344955{
+		color: #344955;
+	}
+	.color-ccc{
+		color: #ccc;
+	}
+	.color-999{
+		color: #999;
+	}
+    .flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+	/* 水平居中 */
+	.flex-hc {
+		/* 09版 */
+		-webkit-box-pack: center;
+		/* 12版 */
+		-webkit-justify-content: center;
+		-moz-justify-content: center;
+		-ms-justify-content: center;
+		-o-justify-content: center;
+		justify-content: center;
+	}
+	/* 按行排列 */
+	.flex-direction-row{
+		flex-direction: row;
+	}
+	.flex-direction-column{
+		flex-direction: column;
+	}
+	.flex-jsb { 
+		justify-content: space-between;
+	}
+	.flex-ac { 
+		align-items: center;
+	}
 	/* 未读消息角标 */
 	.icon {
 		position: absolute;

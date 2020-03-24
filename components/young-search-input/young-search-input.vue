@@ -1,9 +1,21 @@
 <!-- 输入框组件 可以设置背景色、宽度、圆角、边框、占位符 -->
 <template>
-	<view>
-		<view class="search relative" :style="{width: width}">
+	<view :class="type == 'createChatRoom' ? 'ct' : ''" :style="{width: width}">
+		<view class="search" v-if="type == 'createChatRoom'">
 			<img src="/static/img/search.png" class="absolute searchIcon"/>
-			<input v-model="inputMsg" type="text" @input="$emit('getInputMsg', $event.target.value)" class="input" value="" :placeholder="placeholder" :style="{'border-radius': bdRadius, border:border, 'background-color':backgroundColor}" />
+			<input v-model="inputMsg" type="text" 
+			@input="$emit('getInputMsg', $event.target.value)" 
+			class="input" value="" :placeholder="placeholder" 
+			:style="{'border-radius': bdRadius, border:border, 'background-color':backgroundColor}" />
+			<img @tap="clear" v-show="inputMsg.length != 0"
+			src="/static/img/clear.png" class="absolute clearIcon"/>
+		</view>
+		<view class="relative" v-else>
+			<img src="/static/img/search.png" class="absolute searchIcon"/>
+			<input v-model="inputMsg" type="text" 
+			@input="$emit('getInputMsg', $event.target.value)" 
+			class="input" value="" :placeholder="placeholder" 
+			:style="{'border-radius': bdRadius, border:border, 'background-color':backgroundColor}" />
 			<img @tap="clear" v-show="inputMsg.length != 0" 
 			src="/static/img/clear.png" class="absolute clearIcon"/>
 		</view>
@@ -38,6 +50,10 @@
 			backgroundColor:{
 				type: String,
 				default: "#ffffff"
+			},
+			type:{
+				type: String,
+				default: ''
 			}
 		},
 		data() {
@@ -47,7 +63,6 @@
 		},
 		methods: {
 			clear(){
-				// console.log('1111111111111111111111')
 				this.inputMsg = '';
 				this.$emit('getInputMsg', this.inputMsg);
 			},
@@ -55,7 +70,18 @@
 	}
 </script>
 
-<style lang="less">
+<style>
+	.ct{
+		position: relative;
+	}
+	.search{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		left: 0upx;
+		top: 20upx;
+		z-index: -1;
+	}
     .absolute{
 		position: absolute;
 	}
@@ -70,6 +96,11 @@
 		width: 30upx;
 		height: 30upx;
 	}
+	/* #ifdef APP-PLUS */
+	.clearIcon{
+		display: none;
+	}
+	/* #endif */
 	.clearIcon {
 		top: 24upx;
 		right: 20upx;

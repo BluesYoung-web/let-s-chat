@@ -5,7 +5,7 @@
 		<uni-nav-bar title="通讯录" background-color="#344955" color="#ffffff"
 		right-icon="plusempty" @clickRight="clickPlus"></uni-nav-bar>
 		<!-- 下拉气泡菜单 -->
-		<bubble-menu :ifShow="isShowbubble" x='342' y="5" theme="dark" 
+		<bubble-menu :ifShow="isShowbubble" :x='x' :y="y" theme="dark" 
 		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 搜索框 -->
 		<view class="search flex flex-jc bg-fff pd-tp20 pd-bt20">
@@ -96,8 +96,18 @@
 				}
 			});
 		},
+		created() {
+			/**
+			 * 计算消息气泡相对位置
+			 */
+			let sys = uni.getSystemInfoSync();
+			this.x = sys.screenWidth * 0.9;
+			this.y = sys.screenHeight / 20;
+		},
 		data() {
 			return {
+				x: 342,
+				y: 5,
 				/**
 				 * 好友列表
 				 */

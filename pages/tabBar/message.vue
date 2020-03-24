@@ -5,7 +5,7 @@
 		<uni-nav-bar title="消息" background-color="#344955" color="#ffffff"
 		right-icon="plusempty" @clickRight="clickPlus"></uni-nav-bar>
 		<!-- 下拉气泡菜单 -->
-		<bubble-menu :ifShow="isShowbubble" x='342' y="5" theme="dark" 
+		<bubble-menu :ifShow="isShowbubble" :x='x' :y="y" theme="dark" 
 		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 聊天列表组件 -->
 		<chat-item :dataList = "dataList" @clickInto = "onClickInto" @clickChoice = "onClickChoice"></chat-item>
@@ -24,20 +24,22 @@
 		},
 		data(){
 			return {
+				x: 0,
+				y: 0,
 				isShowbubble: false,
 				popData: [{
 					title: '发起群聊',
 					icon: 'chatbubble-filled',
-				}, {
+					}, {
 					title: '添加朋友',
 					icon: 'personadd-filled',
-				}, {
+					}, {
 					title: '扫一扫',
 					icon: 'scan'
-				}, {
+					}, {
 					title: '分享给朋友',
 					icon: 'upload'
-				}, {
+					}, {
 					title: '帮助与反馈',
 					icon: 'email'
 				}],
@@ -61,6 +63,14 @@
 					}],
 				}],
 			}
+		},
+		created() {
+			/**
+			 * 计算消息气泡相对位置
+			 */
+			let sys = uni.getSystemInfoSync();
+			this.x = sys.screenWidth * 0.9;
+			this.y = sys.screenHeight / 20;
 		},
 		onLoad(){
 			/**

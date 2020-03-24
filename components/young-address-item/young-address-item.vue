@@ -18,9 +18,9 @@
 			<checkbox-group @change="checkChange">
 				<view class="uni-list" v-for="(item, index) in friendsList" :key="index">
 					<label>
-						<checkbox :value="item.uid+''"/>
-						<image class="width-80 height-80 bd-rd50 inline-block" :src="item.avatar" mode="aspectFill"></image>
-						<view class="width-500 mg-lt20 pd-lr20 inline-block bd-bt-gainsboro">
+						<checkbox class="ckbox" :value="item.uid+''"/>
+						<image class="img width-80 height-80 bd-rd50 inline-block" :src="item.avatar" mode="aspectFill"></image>
+						<view class="nick width-500 mg-lt20 pd-lr20 inline-block bd-bt-gainsboro">
 							<text class="ft-32">{{item.nick}}</text>
 						</view>
 					</label>
@@ -87,6 +87,25 @@
 </script>
 
 <style>
+	.uni-list{
+		position: relative;
+	}
+	.ckbox{
+		position: absolute;
+		z-index: -1;
+	}
+	.img{
+		position: relative;
+		left: 100upx;
+		top: -10upx;
+		z-index: -1;
+	}
+	.nick{
+		position: relative;
+		z-index: -1;
+		left: 100upx;
+		top: -30upx;
+	}
 	.mg-lt20{
 		margin-left: 20upx;
 	}

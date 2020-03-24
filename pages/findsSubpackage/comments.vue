@@ -1,6 +1,6 @@
 <template>
 	<!-- 朋友圈评论列表 -->
-	<view>
+	<view class="ct">
 		<!-- 评论点赞头部 -->
 		<view class="commentsTop">
 			<view class="left" @tap="showComments">
@@ -164,9 +164,25 @@
 	}
 </script>
 
-<style lang="less">
-	// 引入预先定义好的less
-	@import "~@/common/common.less";
+<style>
+	.bg-344955{
+		background-color: #344955;
+	}
+	.bg-849aa5{
+		background-color: #849aa5;
+	}
+	.color-fff{
+		color: #ffffff;
+	}
+	.height-100{
+		height: 100upx;
+	}
+	.width-full{
+		width: 100%;
+	}
+	.ct{
+		position: relative;
+	}
 	.btn{
 		display: flex;
 		justify-content: center;
@@ -186,19 +202,19 @@
 		font-size: 32upx !important;
 	}
 	.commentsTop{
-		position: fixed;
+		position: absolute;
 		z-index: 1;
-		top: 100upx;
+		top: 0upx;
 		height: 70upx;
 		width: 100%;
 		font-size: 32upx;
 		font-weight: bold;
-		color: @codeBorder;
+		color: #344955;
 		padding: 0upx 50upx;
 		display: flex;
 		justify-content: space-between;
 	}
-	.commentsTop .left, .commentsTop .right{
+	.left, .right{
 		height: 100%;
 		display: flex;
 		align-items: flex-end;

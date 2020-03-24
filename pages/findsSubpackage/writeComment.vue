@@ -10,7 +10,7 @@
 		</uni-nav-bar>
 		<!-- 输入文本框 -->
 		<view class="writeComment">
-			<textarea class="width-full" value="" v-model="content" placeholder="写评论" maxlength="100" />
+			<textarea class="width-full textarea" value="" v-model="content" placeholder="写评论" maxlength="100" />
 			<text class="tips">{{content.length}}/100</text>
 		</view>
 	</view>
@@ -77,15 +77,16 @@
 	}
 </script>
 
-<style lang="less">
-	// 引入预先定义好的less
-	@import "~@/common/common.less";
+<style>
+	.width-full{
+		width: 100%;
+	}
 	.body{
-		background-color: @bgcolor;
+		background-color: #edf0f2;
 		height: 100%;
 	}
 	/* 右侧按键 */
-	button{
+	.button{
 		position: relative;
 		font-size: 36upx;
 		width: 120upx;
@@ -94,17 +95,18 @@
 		margin-right: 60upx;
 	}
 	.btn{
-		background-color: #C8C7CC;
-		color: #aaa;
+		background-color: #C8C7CC !important;
+		color: #aaa !important;
 	}
 	.sure{
-		background-color: #F9AA33;
-		color: #FFFFFF;
+		background-color: #F9AA33 !important;
+		color: #FFFFFF !important;
 	}
 	.writeComment{
 		margin-top: 50upx;
+		position: relative;
 	}
-	textarea{
+	.textarea{
 		height: 200upx;	
 		font-size: 30upx;	
 		padding: 10upx;
@@ -112,7 +114,7 @@
 	.tips{
 		position: absolute;
 		right: 10upx;
-		top: 320upx;
+		bottom: 0upx;
 	}
 </style>
 

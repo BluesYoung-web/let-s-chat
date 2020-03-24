@@ -13,10 +13,14 @@
 		</input-prompt>
 		<!-- 筛选搜索框 -->
 		<view class="search flex flex-jc bg-fff pd-tp20 pd-bt20">
-			<search-input width="600upx" border="none" backgroundColor="#efeff4" bdRadius="50upx" placeholder="输入好友名称"  @getInputMsg="getInputMsg"></search-input>
+			<search-input width="600upx" border="none" 
+			backgroundColor="#efeff4" 
+			bdRadius="50upx" placeholder="输入好友名称"  
+			@getInputMsg="getInputMsg"
+			type="createChatRoom"></search-input>
 		</view>
 		<!-- 好友列表 -->
-		<view>
+		<view class="flist">
 			<address-item type="createChatRoom" :friendsList="friendsList"
 			@checkChange="checkChange"></address-item>
 		</view>
@@ -124,6 +128,7 @@
 			 * 选择变化
 			 */
 			checkChange(arr){
+				console.log((arr))
 				this.checked = arr;
 			},
 			/**
@@ -162,13 +167,17 @@
 </script>
 
 <style>
+	.flist{
+		position: absolute;
+		top: 260upx;
+	}
 	/* 左侧标题 */
 	.leftTitle{
 		position: relative;
 		left: -60upx;
 	}
 	/* 右侧按键 */
-	button{
+	.button{
 		position: relative;
 		font-size: 40upx;
 		width: 120upx;
@@ -177,14 +186,14 @@
 		margin-right: 60upx;
 	}
 	.btn{
-		background-color: #C8C7CC;
-		color: #aaa;
+		background-color: #C8C7CC !important;
+		color: #aaa !important;
 	}
 	.sure{
-		background-color: #3CC51F;
-		color: #FFFFFF;
-		margin-right: 100upx;
-		width: 180upx;
+		background-color: #3CC51F !important;
+		color: #FFFFFF !important;
+		margin-right: 100upx !important;
+		width: 180upx !important;
 	}
 	/* 搜索 */
 	.search{

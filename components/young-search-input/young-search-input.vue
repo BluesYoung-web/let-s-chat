@@ -87,6 +87,7 @@
 	}
 	.input {
 		padding-left: 64upx;
+		padding-right: 64upx;
 		width: 100%;
 		height: 80upx;
 	}
@@ -96,11 +97,6 @@
 		width: 30upx;
 		height: 30upx;
 	}
-	/* #ifdef APP-PLUS */
-	.clearIcon{
-		display: none;
-	}
-	/* #endif */
 	.clearIcon {
 		top: 24upx;
 		right: 20upx;

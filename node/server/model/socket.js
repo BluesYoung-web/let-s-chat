@@ -305,6 +305,13 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 401:
+                store.get_room_info(data.roomId).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

@@ -68,7 +68,7 @@ class Store{
         const user = require('../controller/user');
         return new Promise((resolve, reject) => {
             // 首先从redis缓存获取
-            myredis.get(`${this.uid}.info`).then((data) => {
+            myredis.get(`${this.uid}.userInfo`).then((data) => {
                 data = JSON.parse(data);
                 if (data) {
                     resolve({
@@ -82,7 +82,7 @@ class Store{
                     user.get_info(this.uid).then((data) => {
                         if (data) {
                             // 更新缓存
-                            myredis.set(`${this.uid}.info`, JSON.stringify(data)).then(() => {
+                            myredis.set(`${this.uid}.userInfo`, JSON.stringify(data)).then(() => {
                                 // 返回数据
                                 resolve({
                                     data,
@@ -111,7 +111,7 @@ class Store{
             // 先写入mysql数据库
             user.set_info(data).then(() => {
                 // 更新缓存
-                myredis.set(`${data.uid}.info`, JSON.stringify(data)).then(() => {
+                myredis.set(`${data.uid}.userInfo`, JSON.stringify(data)).then(() => {
                     resolve({
                         data: '修改成功'
                     });
@@ -131,7 +131,7 @@ class Store{
         const user = require('../controller/user');
         return new Promise((resolve, reject) => {
             // 先从redis获取
-            myredis.get(key).then((data) => {
+            myredis.get(`search.${key}`).then((data) => {
                 if (data) {
                     data = JSON.parse(data);
                     resolve({
@@ -143,7 +143,7 @@ class Store{
                 } else {
                     user.search(key).then((data) => {
                         if (data.length != 0) {
-                            myredis.set(key, JSON.stringify(data)).then(() => {
+                            myredis.set(`search.${key}`, JSON.stringify(data)).then(() => {
                                 resolve({
                                     data,
                                     extra: {
@@ -254,9 +254,11 @@ class Store{
         const friend = require('../controller/friend');
         return new Promise((resolve, reject) => {
             friend.add(this.uid, uid).then((data) => {
-                resolve({
-                    data,
-                    extra: '好友添加成功'
+                myredis.set(`${this.uid}.friend_list`, JSON.stringify(data)).then(() => {
+                    resolve({
+                        data,
+                        extra: '好友添加成功'
+                    });
                 });
             }).catch((err) => {
                 reject({
@@ -645,6 +647,39 @@ class Store{
                 });
             }).catch((err) => {
                 reject(err);
+            });
+        });
+    }
+    /**
+     * 获取聊天室详细信息
+     */
+    get_room_info(roomId){
+        const chat = require('../controller/chat');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            myredis.get(`${roomId}.roomInfo`).then((data) => {
+                if (data) {
+                    data = JSON.parse(data);
+                    resolve({
+                        data,
+                        extra: {
+                            source: 'redis缓存'
+                        }
+                    });
+                } else {
+                    chat.get_room_info(roomId).then((data) => {
+                        myredis.set(`${roomId}.roomInfo`, JSON.stringify(data)).then(() => {
+                            resolve({
+                                data,
+                                extra: {
+                                    source: 'mysql'
+                                }
+                            });
+                        });
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
             });
         });
     }

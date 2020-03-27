@@ -55,7 +55,31 @@ const create_chat_room = function(args){
         });
     });
 }
+/**
+ * 根据房间id获取房间详细信息
+ * @param {number} roomId 
+ */
+const get_room_info = function(roomId){
+    let sql = `select * from chat_room where id = ${roomId};`;
+    let sql2 = `select uid from chat_room_users where chatRoomId = ${roomId};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            let roomInfo = data[0];
+            mysqlQuery(sql2).then((dt) => {
+                let users = [];
+                for (const iterator of dt) {
+                    users.push(iterator.uid);
+                }
+                roomInfo.users = users;
+                resolve(roomInfo);
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 
 module.exports = {
-    create_chat_room
+    create_chat_room,
+    get_room_info
 }

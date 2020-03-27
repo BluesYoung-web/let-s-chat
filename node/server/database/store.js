@@ -632,6 +632,22 @@ class Store{
             });
         });
     }
+    /**
+     * 创建聊天室
+     */
+    create_chat_room(data){
+        data.users && data.users.push(this.uid);
+        const chat = require('../controller/chat');
+        return new Promise((resolve, reject) => {
+            chat.create_chat_room(data).then((data) => {
+                resolve({
+                    data
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = Store;

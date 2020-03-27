@@ -296,7 +296,18 @@
      * @param {object} args.extra 透传参数
      */
     chatProcess(args){
-        
+        let {cmd, data, cbk, extra, store} = {...args};
+        switch (cmd) {
+            case 400:
+                store.create_chat_room(data).then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
+            default:
+                break;
+        }
     }
     /**
      * 操作成功

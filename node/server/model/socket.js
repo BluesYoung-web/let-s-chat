@@ -194,8 +194,11 @@
         let {cmd, data, cbk, extra, store} = {...args};
         switch (cmd) {
             case 300:
-                store.get_user_info_by_uid(data.uid).then((data) => {
-                    this.opSuccess(data, cbk, extra);
+                store.get_user_info_by_uid(data.uid).then((dt) => {
+                    store.get_room_id_by_users([data.uid]).then((tp) => {
+                        dt.data.roomId = tp.data;
+                        this.opSuccess(dt, cbk, extra);
+                    });
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -250,10 +253,24 @@
                 // 好友验证
                 store.friend_check(data).then((dt) => {
                     if (data.isAgree == 1) {
-                        store.add_friend(data.uid).then((data) => {
-                            this.opSuccess(data, cbk, extra);
+                        store.add_friend(data.uid).then(() => {
+                            // 建立对应的聊天室
+                            let room = {
+                                type: 0,
+                                users: [data.uid]
+                            }
+                            store.create_chat_room(room).then((data) => {
+                                let msg = {
+                                    roomId: data.roomId,
+                                    ot: Date.parse(new Date()), // 原始时间戳
+                                    type: 3, //系统消息
+                                    content: '你们已经是好友了，打个招呼吧!',
+                                }
+                                this.push(102, 0, 1, msg, [this.uid, room.users[0]]);
+                            });
                         });
                     }
+                    this.opSuccess(dt, cbk, extra);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -316,9 +333,9 @@
                 break;
             case 402:
                 // 聊天室内发消息
-                let {roomId, msg} = {...data};
-                store.get_room_info(roomId).then((data) => {
-                    this.push(103, 0, 0, msg, data.data.users);
+                let roomId = data.roomId;
+                store.get_room_info(roomId).then((dt) => {
+                    this.push(103, 0, 0, data, dt.data.users);
                 });
             default:
                 break;

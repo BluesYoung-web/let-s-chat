@@ -85,7 +85,7 @@ const get_room_info = function(roomId){
  */
 const get_room_id_by_users = function(uidList){
     let len = uidList.length;
-    let str = uidList.join(',');
+    let str = uidList.join(', ');
     str = `(${str})`;
     let sql = `select chatRoomId from chat_room_users where uid in ${str} 
                 group by chatRoomId having count(distinct uid) = ${len}`;

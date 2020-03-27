@@ -47,16 +47,22 @@
             let btn = document.querySelector("#btn");
             let value = document.querySelector("#value");
             btn.addEventListener('click',() => {
+                // let obj = {
+                //     cmd: 402,
+                //     data: {
+                //         roomId:3,
+                //         msg: {
+                //             uid,
+                //             content: value.value
+                //         }
+                //     },
+                //     cbk: 1
+                // }
                 let obj = {
-                    cmd: 402,
+                    cmd: 300,
                     data: {
-                        roomId:3,
-                        msg: {
-                            uid,
-                            content: value.value
-                        }
-                    },
-                    cbk: 1
+                        uid: 754433272
+                    }
                 }
                 socket.send(JSON.stringify(obj)); 
                 value.value = '';

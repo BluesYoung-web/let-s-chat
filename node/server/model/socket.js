@@ -299,6 +299,7 @@
         let {cmd, data, cbk, extra, store} = {...args};
         switch (cmd) {
             case 400:
+                // 创建聊天室
                 store.create_chat_room(data).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -306,12 +307,19 @@
                 });
                 break;
             case 401:
+                // 获取聊天室信息
                 store.get_room_info(data.roomId).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 402:
+                // 聊天室内发消息
+                let {roomId, msg} = {...data};
+                store.get_room_info(roomId).then((data) => {
+                    this.push(103, 0, 0, msg, data.data.users);
+                });
             default:
                 break;
         }

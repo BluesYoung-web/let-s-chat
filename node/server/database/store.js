@@ -683,6 +683,23 @@ class Store{
             });
         });
     }
+    /**
+     * 根据成员uid列表获取房间id
+     * @param {Array} uidList 
+     */
+    get_room_id_by_users(uidList){
+        uidList.push(this.uid);
+        const chat = require('../controller/chat');
+        return new Promise((resolve, reject) => {
+            chat.get_room_id_by_users(uidList).then((data) => {
+                resolve({
+                    data
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = Store;

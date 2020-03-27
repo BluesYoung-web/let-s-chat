@@ -79,7 +79,27 @@ const get_room_info = function(roomId){
     });
 }
 
+/**
+ * 根据成员uid列表获取房间id
+ * @param {Array} uidList 
+ */
+const get_room_id_by_users = function(uidList){
+    let len = uidList.length;
+    let str = uidList.join(',');
+    str = `(${str})`;
+    let sql = `select chatRoomId from chat_room_users where uid in ${str} 
+                group by chatRoomId having count(distinct uid) = ${len}`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            resolve(data[0].chatRoomId);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     create_chat_room,
-    get_room_info
+    get_room_info,
+    get_room_id_by_users
 }

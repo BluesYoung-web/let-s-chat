@@ -186,7 +186,7 @@
 	.avatar{
 		width: 500upx;
 		height: 500upx;
-		box-shadow:0 2upx 50upx 0 @codeBorder;
+		box-shadow:0 2upx 50upx 0 #344955;
 		display: flex;
 		justify-content: center;
 	}
@@ -196,10 +196,10 @@
 	}
 	/* 编辑资料按钮 */
 	.editInfoBtn,.editInformation{
-		border: 1px solid @codeBorder;
+		border: 1px solid #344955;
 		border-radius: 8upx;
 		width: 320upx;
-		color: @codeBorder;
+		color: #344955;
 	}
 	/* 粉丝 关注 发表 */
 	.myCommend,.myFocus,.myRelease{

@@ -1,0 +1,149 @@
+<template>
+	<view class="ct">
+		<!-- 语音/文字输入 -->
+		<view class="voice" @tap="inputChange">
+			<image class="voice-img" src="/static/img/conversation/keyboard.png" mode="" v-if="isVoice"></image>
+			<image class="voice-img" src="/static/img/conversation/voice.png" mode="" v-else></image>
+		</view>
+		<!-- 消息输入框 -->
+		<view class="keyboardInput">
+			<!-- 语音输入 -->
+			<button v-if="isVoice" type="default" class="keyboardInput-button"
+			@longpress="startRecord" @touchend="endRecord">按 住 说 话</button>
+			<!-- 文字输入 -->
+			<textarea :focus="!isVoice" class="keyboardInput-textarea"
+			v-model="ct" auto-height="true" v-else type="text" @tap="inputFocus" 
+			@input="$emit('getInputMsg', $event.target.value)"/>
+		</view>
+		<!-- 表情键盘按钮 -->
+		<view class="faces" @tap="showEmoji">
+			<image class="voice-img" src="/static/img/face.png" mode=""></image>
+		</view>
+		<!-- 消息发送按钮/加号 -->
+		<view class="messageSend" v-if="content.length > 0">
+			<image src="/static/img/send.png" mode=""
+			@tap="clickSend" class=" messageSend-image"></image>
+		</view>
+		<view class="plus" v-else>
+			<image src="/static/img/conversation/plus.png"
+			@tap="clickPlus" class="plus-img"></image>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		name: 'keyBoard',
+		props: {
+			isVoice: {
+				type: Boolean,
+				default: false
+			},
+			content: {
+				type: String,
+				default: ''
+			}
+		},
+		data(){
+			return {
+				ct: ''
+			}
+		},
+		watch: {
+			content(newValue, oldValue) {
+				this.ct = newValue;
+			}
+		},
+		methods:{
+			inputChange(){
+				this.$emit('inputChange');
+			},
+			startRecord(){
+				this.$emit('startRecord');
+			},
+			endRecord(){
+				this.$emit('endRecord');
+			},
+			inputFocus(){
+				this.$emit('inputFocus');
+			},
+			showEmoji(){
+				this.$emit('showEmoji');
+			},
+			clickSend(){
+				this.$emit('send');
+			},
+			clickPlus(){
+				this.$emit('plus');
+			}
+		}
+	}
+</script>
+
+<style>
+	.ct{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.voice{
+		width: 120upx;
+		display: flex;
+		justify-content: center;
+	}
+	.voice-img{
+		width: 70upx;
+		height: 70upx;
+	}
+	.keyboardInput{
+		background-color: #FFFFFF;
+		border: 1upx solid #344955;
+		width: 400upx;
+		border-radius: 15upx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.keyboardInput-textarea{
+		width: 400upx;
+		min-height: 40upx;
+		max-height: 200upx;
+		font-size: 32upx;
+		line-height: 40upx;
+		padding: 10upx;
+	}
+	.keyboardInput-button{
+		width: 400upx;
+		height: 65upx;
+		line-height: 65upx;
+	}
+	.faces{
+		width: 100upx;
+		margin-left: 10upx;
+		display: flex;
+		justify-content: center;
+	}
+	.messageSend{
+		margin-left: 20upx;
+		height: 70upx;
+		width: 70upx;
+		border: 1upx solid #344955;
+		border-radius: 50%;
+		background-color: #F9AA33;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.messageSend-image{		
+		height: 35upx;
+		width: 35upx;
+	}
+	.plus{
+		margin-left: 20upx;
+		margin-bottom: -10upx;
+	}
+	.plus-img{
+		width: 65upx;
+		height: 65upx;
+	}
+</style>

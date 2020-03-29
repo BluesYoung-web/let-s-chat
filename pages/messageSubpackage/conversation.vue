@@ -45,39 +45,22 @@
 					</view>
 				</view>
 			</scroll-view>
-			<!-- 底部文字语言输入框 -->
-			<view class="">
-				<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
-					<!-- 语音消息按钮 -->
-					<view class="voice" @tap="toStartRecord()">
-						<image src="/static/img/conversation/voice.png" mode=""></image>
-					</view>
-					<!-- 消息输入框 -->
-					<view class="keyboardInput">
-						<!-- 文字输入 -->
-						<textarea :focus="txtInput" @focus="getKeyboardHight" v-model="content" auto-height="true" v-if="inputActive" type="text"
-						@tap="inputFocus" />
-						<!-- 语音输入 -->
-					<button v-else type="default"  @longpress="startRecord" @touchend="endRecord">按 住 说 话</button>				
-				</view>
-				<!-- 表情键盘按钮 -->
-				<view class="faces" @tap="showFacesBox()">
-					<image src="/static/img/face.png" mode=""></image>
-				</view>
-				<!-- 消息发送按钮 -->
-				<view class="messageSend" @tap="sendMessage()">
-					<image src="/static/img/send.png" mode=""></image>
-				</view>
-			</view>
 			
-		</view>
+			<!-- 底部文字语言输入框 -->
+			<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
+				<!-- 输入键盘组件 -->
+				<key-board :isVoice="isVoice" :content="content" 
+				@getInputMsg="getInputMsg" @inputChange="inputChange"
+				@showEmoji="showEmojiKeyBoard" @inputFocus="takeBack"
+				@send="send" @plus="plus"></key-board>
+			</view>
 		<!-- 取消语音弹框 -->
 		<view class="cancelVoice" v-show="pressActive">
 			<view class="flex flex-jc flex-vc" style="width: 100%;height: 200upx;">
 				<image src="/static/img/cancelVoice.png" mode=""></image>
 			</view>	
 			<view class="flex flex-jc" style="width: 100%;height: 50upx;">
-				<text>手指松开，取消发送</text>
+				<text>向上滑动，取消发送</text>
 			</view>		
 		</view>
 		<!-- 表情键盘组件 -->
@@ -97,9 +80,11 @@
 	innerAudioContext.autoplay = true;
 	
 	import emojiInput from '@/components/young-emoji-input/young-emoji-input.vue';
+	import keyBoard from '@/components/young-key-board/young-key-board.vue';
 	export default{
 		components: {
-			emojiInput
+			emojiInput,
+			keyBoard
 		},
 		mounted() {
 			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
@@ -114,12 +99,10 @@
 		},
 		data(){
 			return{
-				inputMsg:'',
-				active:0,
-				type:[ 
-					'/static/img/emoji/face.png',
-					'/static/img/emoji/food.png'
-				],
+				/**
+				 * 是否语音输入
+				 */
+				isVoice: false,
 				/**
 				 * 是否显示表情面板
 				 */
@@ -167,26 +150,15 @@
 					// }
 				],
 				content:'',//消息输入内容
-				index:0,  //初始表情类型
 				pressActive:false, //是否弹出语音取消框
 				bottom:0,  //键盘高度后面获取
-				show:false,  //表情键盘是否出现
-				//语音输入与文字输入切换
-				inputActive:true, 
-				voiceActive:false,
 				voicePath: '',//录音
 				intervalTime: 0,
 				timer: null,
 				voice:'',
-				faceList:[],
-				foodList:[],
 				// 控制输入框聚焦
 				txtInput:false,
 				// 用户uid
-				account:'',
-				avatarUrl:'',
-				// 好友uid
-				fuid:'',
 				// 是否从通讯录进入
 				is_from_address:false
 			}
@@ -197,87 +169,43 @@
 			    return Math.round(this.intervalTime);
 			}
 		},
-		onShow() {
-		    // if(this.conversationMessageList){
-		    // 	for (let i in this.conversationMessageList) {
-		    // 		if(this.fuid==this.conversationMessageList[i].account){
-		    // 			this.messages=this.conversationMessageList[i].conversation;
-		    // 		}
-		    // 	}
-		    // 	// 处理时间显示
-		    // 	this.messages=tools.timeProcess(this.messages);
-		    // };
-		},
 		onLoad(e) {
-			//表情获取
-			for (let i in emoji) {
-				this.faceList.push(emoji[i].char);
-			};
-			for (let i in emojiFood) {
-				this.foodList.push(emojiFood[i].char);
-			};
-			// // 从state获取用户信息
-			// if(this.userInfo){
-			// 	let tp=this.userInfo;
-			// 	this.account=tp.account;
-			// 	this.avatarUrl=tp.avatarUrl;
-			// }
-			// this.is_from_address=e.voiceActive ? true:false;
-			// console.log("进入会话页");
-			// if (e.voiceActive==0) {
-			// 	console.log("语音输入");
-			// 	this.inputActive=false;
-			// 	this.voiceActive=true;
-			// 	this.txtInput=false;
-			// }
 			//获取录音权限相关
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
 			});
-			// // 接收f_uid
-			// if(e.f_uid){
-			// 	this.fuid=e.f_uid;
-			// 	// 修改导航栏
-			// 	uni.setNavigationBarTitle({
-			// 	    title: e.name
-			// 	});
-			// 	return;
-			// 	// 从服务器获取好友信息(后期可优化成从暂存获取)
-			// 	request.getUserInfo(this.fuid,(data)=>{
-			// 		let avatarUrl=data.avatarUrl;
-			// 		// 修改用户头像
-			// 		for (let i in this.messages) {
-			// 			if(this.messages[i].sign=='other' || this.messages[i].sign=='otherVoice'){
-			// 				this.messages[i].head=avatarUrl;
-			// 			}else if(this.messages[i].sign=='me' || this.messages[i].sign=='meVoice'){
-			// 				this.messages[i].head=this.avatarUrl;
-			// 			}
-			// 		}
-			// 	});
-			// }
-			
-		},
-		onBackPress() {
-			// // 删除消息数
-			// this.clearMsgNum(this.fuid);
-			// // 暂存对话消息
-			// let temp={
-			// 	fid:this.fuid,
-			// 	messages:this.messages
-			// }
-			// this.addConversationMessage(temp);
-			// // 修改消息页面显示的content
-			// let content=this.messages[this.messages.length-1].content;
-			// let time=this.messages[this.messages.length-1].time;
-			// time=tools.showTime(time);
-			// let obj={
-			// 	account:this.fuid,
-			// 	content:content,
-			// 	time:time
-			// }
-			// this.changeContent(obj);
 		},
 		methods:{
+			/**
+			 * 改变输入类型
+			 */
+			inputChange(){
+				this.isVoice = !this.isVoice;
+				this.showEmoji = false;
+				this.bottom = 0;
+			},
+			/**
+			 * 获取输入的值
+			 */
+			getInputMsg(val){
+				this.content = val;
+			},
+			/**
+			 * 显示表情键盘
+			 */
+			showEmojiKeyBoard(){
+				if(!this.showEmoji){
+					this.isVoice = false;
+					this.showEmoji = true;
+					this.bottom = 600;
+				}else{
+					this.showEmoji = false;
+					this.bottom = 0;
+				}	
+			},
+			/**
+			 * 选择表情类型
+			 */
 			changeEmojiType(item){
 				this.emojiData.forEach((v, i) => {
 					if (v.id == item.id) {
@@ -287,41 +215,34 @@
 					}
 				});
 			},
-			test(item){
-				console.log(item)
-			},
+			/**
+			 * 点击输入框/空白处隐藏表情键盘
+			 */
 			takeBack(){
-				this.show = false;
-				this.bottom=0;
+				this.showEmoji = false;
+				this.bottom = 0;
 			},
-			// 删除表情
+			/**
+			 * 删除表情
+			 */
 			backSpace(){
-				// console.log(this.content)
 				let msg = this.content;
-				msg=Array.from(msg);
+				msg = Array.from(msg);
 				msg.pop();
-				msg=msg.join("");
-				// console.log(msg);
+				msg = msg.join("");
 				this.content = msg;
 			},
-			// 表情类型选择
-			showType(index){
-				console.log(index)
-				this.active=index
-				if(index==0){
-					this.index=0					
-				}else if(index==1){
-					this.index=1
-				}
+			/**
+			 * 发送
+			 */
+			send(){
+				console.log(this.content);
 			},
-			//获取屏幕高度显示朋友圈
-			getScrollHeight(){
-				uni.getSystemInfo({
-					success: (res)=> {
-						this.scrollHeight = res.windowHeight;//获取屏幕高度
-					}
-				});
-				return this.scrollHeight
+			/**
+			 * 点击加号
+			 */
+			plus(){
+				console.log('plus++++++++++++++++++');
 			},
 			getScrollTop(){
 				uni.getSystemInfo({
@@ -339,97 +260,11 @@
 				});
 				return this.scrollTop;
 			},
-			// 发送数据
-			sendMsg(id, friendid, Data, ws) {
-				// let Json = {
-				// 	'ID': id,
-				// 	'FID': friendid,
-				// 	'Data': Data,
-				// 	'Op':'privateChat'
-				// };
-				// ws.send({
-				// 	data: JSON.stringify(Json),
-				// 	success:()=> {
-				// 		console.log("消息发送成功");
-				// 	},
-				// 	fail:()=> {
-				// 		console.log("消息发送失败");
-				// 	},
-				// });
-				//发送一条消息，消息始终在最底部
-				this.scrollTop = this.getScrollTop();
-				// if(this.is_from_address){
-				// 	// 如果消息页面有对应的数组项
-				// 	for (let i in this.conversationMessageList) {
-				// 		if(this.conversationMessageList[i].account==this.tempInfo.account){
-				// 			return;
-				// 		}
-				// 	}
-				// 	// message页面添加数组项
-				// 	let msg={
-				// 		imgUrl:this.tempInfo.avatarUrl,
-				// 		username:this.tempInfo.name,
-				// 		time:Data.showTime,
-				// 		content:Data.content,
-				// 		right: 0,
-				// 		msgNum:0,
-				// 		account:this.tempInfo.account,
-				// 		intervalTime:Data.intervalTime,
-				// 		realContent:Data.realContent,
-				// 		conversation:this.messages
-				// 	}
-				// 	this.addMessageListFirst(msg);
-				// }
-			},
-			//获取键盘高度
-			getKeyboardHight(e){
-				let height = e.detail.height;
-			},
-			//消息发送
-			sendMessage(){
-				// let msg = this.content;
-				// if(this.content!=''){
-				// 	const time=Date.parse(new Date);
-				// 	let data={
-				// 		sign:'me',
-				// 		head:this.avatarUrl,
-				// 		content:msg,
-				// 		time:time,
-				// 		showTime:null
-				// 	};
-				// 	this.messages.push(data);
-				// 	// 处理时间显示
-				// 	this.messages=tools.timeProcess(this.messages);
-				// 	if (this.is_open_socket) {
-				// 		this.sendMsg(this.account, this.fuid, data, this.socketTask);
-				// 	}
-				// 	this.content='';
-				// };
-			},
-			//输入表情
+			/**
+			 * 输入表情
+			 */
 			showFaces(item){
 				this.content += item;
-			},
-			//从表情键盘恢复普通键盘输入
-			inputFocus(){
-				if(this.bottom==600){
-					this.showEmoji = false;
-					this.bottom=0;
-				}
-			},
-			//显示表情键盘
-			showFacesBox(){
-				if(this.showEmoji == false){
-					this.voiceActive = false;
-					this.inputActive = true;
-					this.showEmoji = true;
-					this.bottom = 600;
-					
-				}else if(this.showEmoji == true){
-					this.showEmoji = false;
-					this.bottom = 0;
-					
-				}				
 			},
 			//前往朋友资料页面
 			toFriendInfo(){
@@ -441,20 +276,8 @@
 			//前往我的界面
 			toMyInfo(){
 				uni.switchTab({
-					url: '/pages/tabBar/my/my',
+					url: '/pages/tabBar/my',
 				});
-			},
-			//点击录音图标显示开始录音按钮
-			toStartRecord(){
-				if(this.voiceActive==false){
-					this.voiceActive=true;
-					this.inputActive=false;
-					this.show=false;
-					this.bottom=0;
-				}else if(this.voiceActive==true){
-					this.voiceActive=false;
-					this.inputActive=true
-				}
 			},
 			// 长按开始录音，取消录音提示框出现
 			startRecord() {				
@@ -629,69 +452,9 @@
 	}
 	.conversationBottom{
 		position: fixed;
-		/* z-index: 1; */
 		width: 100%;
-		/* height:100upx; */
-		display: flex;
-		align-items: flex-end;
 		background-color: @codeBorder;
 		padding-top: 10upx;
 		padding-bottom: 20upx;
-	}
-	.voice{
-		width: 120upx;
-		display: flex;
-		justify-content: center;
-	}
-	.voice image{
-		width: 60upx;
-		height: 60upx;
-	}
-	.keyboardInput{
-		background-color: @colorF;
-		border: 1upx solid @codeBorder;
-		width: 400upx;
-		/* height: auto; */
-		border-radius: 15upx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-	.keyboardInput textarea{
-		width: 400upx;
-		min-height: 40upx;
-		max-height: 150upx;
-		font-size: 30upx;
-		padding-top: 15upx;
-		padding-bottom: 15upx;
-		/* line-height: 65upx; */
-	}
-	.keyboardInput button{
-		width: 400upx;
-		height: 65upx;
-		line-height: 65upx;
-	}
-	.faces{
-		width: 110upx;
-		display: flex;
-		justify-content: center;
-	}
-	.faces image{
-		width: 70upx;
-		height: 70upx;
-	}
-	.messageSend{
-		height: 70upx;
-		width: 70upx;
-		border: 1upx solid @codeBorder;
-		border-radius: 50%;
-		background-color: @sendMsgBtn;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.messageSend image{		
-		height: 35upx;
-		width: 35upx;
 	}
 </style>

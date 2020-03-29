@@ -1,124 +1,89 @@
 <template>
 	<!-- 对话页面 -->
 	<view>
-		<scroll-view scroll-y="true" :scroll-top="scrollTop" class="conversationContent" :style="{height:scrollHeight + 'px'}">
-			<view class="scroll" @tap="takeBack">
-				<view v-for="(item,index) in messages" :key="index">
-					<view class="messageTime" v-if="item.ifShow">
-						<text>{{item.showTime}}</text>
-					</view>
-					<view v-if="item.sign==='other'" class="message friendMessage">
-						<view class="messageHead" @tap="toFriendInfo">
-							<image :src="item.head" mode=""></image>
+			<scroll-view scroll-y="true" :scroll-top="scrollTop" class="conversationContent" :style="{height:scrollHeight + 'px'}">
+				<view class="scroll" @tap="takeBack">
+					<view v-for="(item,index) in messages" :key="index">
+						<view class="messageTime" v-if="item.ifShow">
+							<text>{{item.showTime}}</text>
 						</view>
-						<view class="messageContent">
-							<text>{{item.content}}</text>
+						<view v-if="item.sign==='other'" class="message friendMessage">
+							<view class="messageHead" @tap="toFriendInfo">
+								<image :src="item.head" mode=""></image>
+							</view>
+							<view class="messageContent">
+								<text>{{item.content}}</text>
+							</view>
 						</view>
-					</view>
-					<view v-if="item.sign==='otherVoice'" class="message friendMessage">
-						<view class="messageHead" @tap="toFriendInfo">
-							<image :src="item.head" mode=""></image>
-						</view>
-						<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
-							<text>{{item.intervalTime}}</text>
-							<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
-						</view>
+						<view v-if="item.sign==='otherVoice'" class="message friendMessage">
+							<view class="messageHead" @tap="toFriendInfo">
+								<image :src="item.head" mode=""></image>
+							</view>
+							<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
+								<text>{{item.intervalTime}}</text>
+								<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
+							</view>
 
-					</view>
-					<view v-if="item.sign==='me'" class="message myMessage">
-						<view class="messageContent" style="background-color: #95ec69;">
-							<text>{{item.content}}</text>
 						</view>
-						<view class="messageHead" @tap="toMyInfo">
-							<image :src="item.head" mode=""></image>
+						<view v-if="item.sign==='me'" class="message myMessage">
+							<view class="messageContent" style="background-color: #95ec69;">
+								<text>{{item.content}}</text>
+							</view>
+							<view class="messageHead" @tap="toMyInfo">
+								<image :src="item.head" mode=""></image>
+							</view>
 						</view>
-					</view>
-					<view v-if="item.sign==='meVoice'" class="message myMessage">
-						<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
-							<text>{{item.intervalTime}}</text>
-							<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
-						</view>
-						<view class="messageHead" @tap="toMyInfo">
-							<image :src="item.head" mode=""></image>
+						<view v-if="item.sign==='meVoice'" class="message myMessage">
+							<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
+								<text>{{item.intervalTime}}</text>
+								<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
+							</view>
+							<view class="messageHead" @tap="toMyInfo">
+								<image :src="item.head" mode=""></image>
+							</view>
 						</view>
 					</view>
 				</view>
-			</view>
-			<!-- 获取scroll-view高度用 -->
-			<!-- <view class="scrollBottom" style="height: 10upx;width: 100%;">
-	</view> -->
-		</scroll-view>
-		<!-- 底部文字语言输入框 -->
-		<view class="">
-			<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
-				<!-- 语音消息按钮 -->
-				<view class="voice" @tap="toStartRecord()">
-					<image src="/static/img/voice.png" mode=""></image>
-				</view>
-				<!-- 消息输入框 -->
-				<view class="keyboardInput">
-					<!-- 文字输入 -->
-					<textarea :focus="txtInput" @focus="getKeyboardHight" v-model="content" auto-height="true" v-if="inputActive" type="text"
-					 @tap="inputFocus" />
-					<!-- 语音输入 -->
-				<button v-else type="default"  @longpress="startRecord" @touchend="endRecord">按 住 说 话</button>				
-			</view>
-			<!-- 表情键盘按钮 -->
-			<view class="faces" @tap="showFacesBox()">
-				<image src="/static/img/face.png" mode=""></image>
-			</view>
-			<!-- 消息发送按钮 -->
-			<view class="messageSend" @tap="sendMessage()">
-				<image src="/static/img/send.png" mode=""></image>
-			</view>
-		</view>
-		
-	</view>
-	<!-- 取消语音弹框 -->
-	<view class="cancelVoice" v-show="pressActive">
-		<view class="flex flex-jc flex-vc" style="width: 100%;height: 200upx;">
-			<image src="/static/img/cancelVoice.png" mode=""></image>
-		</view>	
-		<view class="flex flex-jc" style="width: 100%;height: 50upx;">
-			<text>手指松开，取消发送</text>
-		</view>		
-	</view>
-	<!-- 表情键盘 -->
-	<view class="facesBox" v-show="show">
-		<!-- 表情类型 -->
-		<view class="facesHead" >
-			<view class="type flex flex-vc flex-jc" v-for="(item,index) in type" :key="item" @tap="showType(index)">
-				<image :class="active === index ? 'bg':''" :src="item"></image>
-			</view>
-			<!-- 回车-->
-			<view class="backspace flex flex-vc flex-jc" @tap="backSpace">
-				<image src="../../static/img/backspace.png" ></image>
-			</view>
-		</view>
-		<!-- 表情内容 -->
-		<view class="facesContent">					
-			<scroll-view scroll-y="true" v-show="index==0" style="height: 500upx; ">
-				
-					<!-- style="height: 600upx;" -->
-					<!-- <image :src="emoji" mode=""></image> -->
-					<view class="face" v-for="(item,index) in faceList" :key="index" @tap="showFaces(item)">
-						{{item}}
-					</view>
-					<!-- <uni-list>
-						<uni-list-item style="width: 100upx;height: 100upx;" v-for="(item,index) in faceList" :key="index" title="" note="">{{item}}</uni-list-item>
-					</uni-list> -->
 			</scroll-view>
-			<scroll-view scroll-y="true" v-show="index==1" style="height: 500upx;">
-				<view class="face" v-for="(item,index) in foodList" :key="index" @tap="showFaces(item)">
-					{{item}}
+			<!-- 底部文字语言输入框 -->
+			<view class="">
+				<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
+					<!-- 语音消息按钮 -->
+					<view class="voice" @tap="toStartRecord()">
+						<image src="/static/img/conversation/voice.png" mode=""></image>
+					</view>
+					<!-- 消息输入框 -->
+					<view class="keyboardInput">
+						<!-- 文字输入 -->
+						<textarea :focus="txtInput" @focus="getKeyboardHight" v-model="content" auto-height="true" v-if="inputActive" type="text"
+						@tap="inputFocus" />
+						<!-- 语音输入 -->
+					<button v-else type="default"  @longpress="startRecord" @touchend="endRecord">按 住 说 话</button>				
 				</view>
-				<!-- <view class="face" v-for="(item,index) in faceList" :key="index" @tap="showFaces(item)">
-					1
-				</view> -->
-			</scroll-view>
+				<!-- 表情键盘按钮 -->
+				<view class="faces" @tap="showFacesBox()">
+					<image src="/static/img/face.png" mode=""></image>
+				</view>
+				<!-- 消息发送按钮 -->
+				<view class="messageSend" @tap="sendMessage()">
+					<image src="/static/img/send.png" mode=""></image>
+				</view>
+			</view>
+			
 		</view>
+		<!-- 取消语音弹框 -->
+		<view class="cancelVoice" v-show="pressActive">
+			<view class="flex flex-jc flex-vc" style="width: 100%;height: 200upx;">
+				<image src="/static/img/cancelVoice.png" mode=""></image>
+			</view>	
+			<view class="flex flex-jc" style="width: 100%;height: 50upx;">
+				<text>手指松开，取消发送</text>
+			</view>		
+		</view>
+		<!-- 表情键盘组件 -->
+		<emoji-input :showEmoji="showEmoji" :emojiData="emojiData"
+		@showFaces="showFaces" @deleteEmoji="backSpace" @select="changeEmojiType"></emoji-input>
 	</view>
-</view>
 </template>
 
 <script>
@@ -131,10 +96,10 @@
 	const innerAudioContext = uni.createInnerAudioContext();	
 	innerAudioContext.autoplay = true;
 	
-	import uniSegmentedControl from "@/components/uni-segmented-control/uni-segmented-control.vue";
+	import emojiInput from '@/components/young-emoji-input/young-emoji-input.vue';
 	export default{
 		components: {
-			uniSegmentedControl
+			emojiInput
 		},
 		mounted() {
 			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
@@ -152,9 +117,29 @@
 				inputMsg:'',
 				active:0,
 				type:[ 
-					'../../static/img/facetype.png',
-					'../../static/img/food.png'
+					'/static/img/emoji/face.png',
+					'/static/img/emoji/food.png'
 				],
+				/**
+				 * 是否显示表情面板
+				 */
+				showEmoji: false,
+				/**
+				 * 表情面板的数据
+				 */
+				emojiData:[{
+					id: 0,
+					emojiSrc: emoji,
+					emojiList: [],
+					src: '/static/img/emoji/face.png',
+					select: true
+				}, {
+					id: 1,
+					emojiSrc: emojiFood,
+					emojiList: [],
+					src: '/static/img/emoji/food.png',
+					select: false
+				}],
 				scrollHeight:'',
 				scrollTop:0,
 				messages:[
@@ -293,6 +278,18 @@
 			// this.changeContent(obj);
 		},
 		methods:{
+			changeEmojiType(item){
+				this.emojiData.forEach((v, i) => {
+					if (v.id == item.id) {
+						v.select = true;
+					}else{
+						v.select = false;
+					}
+				});
+			},
+			test(item){
+				console.log(item)
+			},
 			takeBack(){
 				this.show = false;
 				this.bottom=0;
@@ -411,26 +408,26 @@
 			},
 			//输入表情
 			showFaces(item){
-				this.content = this.content + item
+				this.content += item;
 			},
 			//从表情键盘恢复普通键盘输入
 			inputFocus(){
 				if(this.bottom==600){
-					this.show=false;
+					this.showEmoji = false;
 					this.bottom=0;
 				}
 			},
 			//显示表情键盘
 			showFacesBox(){
-				if(this.show==false){
-					this.voiceActive=false;
-					this.inputActive=true;
-					this.show=true;
-					this.bottom=600;
+				if(this.showEmoji == false){
+					this.voiceActive = false;
+					this.inputActive = true;
+					this.showEmoji = true;
+					this.bottom = 600;
 					
-				}else if(this.show==true){
-					this.show=false;
-					this.bottom=0;
+				}else if(this.showEmoji == true){
+					this.showEmoji = false;
+					this.bottom = 0;
 					
 				}				
 			},
@@ -537,7 +534,6 @@
 		height: 200upx;
 	}
 	.facesHead{
-		width: 1005;
 		height: 80upx;
 		background-color: @colorF;
 	}

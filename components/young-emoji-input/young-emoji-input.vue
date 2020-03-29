@@ -1,27 +1,28 @@
 <template>
 	<view>
-		<view class="facesBox width-full" :style="{height: emojiHeight+'px'}" v-show="showEmoji">
-			<view class="height-500">
-				<scroll-view scroll-y="true" class="height-600">
-					<view class="width-750 flex flex-direction-row wrap" v-for="(item, index) in emojiData" :key="index+'l0'">
-						<view v-if="item.select">
-							<view class="inline-block mg-lt15" v-for="(it,id) in item.emojiList" :key="id+'l2'" @tap="showFaces(it)">{{it}}</view>
-						</view>
-					</view>
-				</scroll-view>
-			</view>
-			<view class="emojiData">
-				<scroll-view scroll-x="true" class="width-640">
-					<view class="height-100 flex flex-direction-row flex-vc">
-						<view class="width-60 height-60 mg-lt30" v-for="(item,index) in emojiData" :key="index">
-							<image @tap="select(item)" class="width-60 height-60" v-if="!item.select" :src="item.src" mode=""></image>
-							<image class="width-60 height-60" v-else :src="item.activeSrc" mode=""></image>
-						</view>
-					</view>
-				</scroll-view>
-				<view class="height-100 flex flex-vc">
-					<image @tap="deleteEmoji" src="/static/img/emoji/backspace.png" class="width-64 height-64" mode=""></image>
+		<!-- 表情键盘组件 -->
+		<view class="facesBox" v-show="showEmoji">
+			<!-- 表情类型 -->
+			<view class="facesHead" >
+				<view class="type flex flex-vc flex-jc" v-for="(item,index) in emojiData" :key="index" @tap="select(item)">
+					<image class="type-img" :class="item.select ? 'bg' : ''" :src="item.src"></image>
 				</view>
+				<!-- 删除按钮 -->
+				<view class="backspace flex flex-vc flex-jc" @tap="deleteEmoji">
+					<image class="backspace-img" :src="delImg" ></image>
+				</view>
+			</view>
+			<!-- 表情内容 -->
+			<view class="facesContent">
+				<scroll-view scroll-y="true" style="height: 500upx;">
+					<view class="emoji" v-for="(item, index) in emojiData" :key="index">
+						<view v-show="item.select">
+							<view class="face" v-for="(tp,id) in item.emojiList" :key="id" @tap="showFaces(tp)">
+								{{showProcess(tp)}}
+							</view>
+						</view>
+					</view>
+				</scroll-view>
 			</view>
 		</view>
 	</view>
@@ -37,10 +38,6 @@
 		 * 组件属性
 		 */
 		props:{
-			emojiHeight: {
-				type: [Number, String],
-				default: 0
-			},
 			showEmoji: {
 				type: [Boolean, String],
 				default: false
@@ -49,6 +46,22 @@
 				type: Array,
 				default(){
 					return []
+				}
+			},
+			delImg: {
+				type: String,
+				default: '/static/img/backspace.png'
+			}
+		},
+		beforeUpdate() {
+			/**
+			 * 遍历每一个表情
+			 */
+			for (let i in this.emojiData) {
+				let emoji = this.emojiData[i].emojiSrc;
+				this.emojiData[i].emojiList = [];
+				for (let j in emoji) {
+					this.emojiData[i].emojiList.push(emoji[j].char);
 				}
 			}
 		},
@@ -74,27 +87,97 @@
 			 * 删除表情
 			 */
 			deleteEmoji(){
-				this.$emit('deleteEmoji');
+				this.$emit('deleteEmoji', 'ddddd');
 			},
 			/**
 			 * 选择表情类型
 			 */
 			select(item){
 				this.$emit('select', item);
+			},
+			/**
+			 * 兼容手机
+			 */
+			showProcess(tp){
+				return tp;
 			}
 		}
 	}
 </script>
 
-<style lang="less">
-	/* 公共样式 */
-	@import '~@/common/common.less';
-	/* ------表情键盘------ */
+<style>
+	.facesContent{
+		height: 520upx;
+	}
+	.emoji{
+		width: 750upx;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.face{
+		width: 80upx;
+		height: 80upx;
+		text-align: center;
+		line-height: 80upx;
+		display: inline-block;
+	}
+	.backspace{
+		width: 80upx;
+		height: 80upx;
+		float: right;
+	}
+	.backspace-img{
+		width: 60upx;
+		height: 60upx;
+	}
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+
+	.flex-jc { 
+		justify-content: center;
+	}
+	.type{
+		width: 80upx;
+		height: 80upx;
+		float: left;
+	}
+	.type-img{
+		width: 50upx;
+		height: 50upx;
+		border-radius: 50%;
+	}
+	.bg{
+		background-color: #344955;
+	}
 	.facesBox{
+		width: 100%;
+		height: 600upx;
+		background-color: #edf0f2;
 		position: fixed;
 		bottom: 0;
-		background-color: #EBEFF2;
-		
+	}
+	.facesHead{
+		height: 80upx;
+		background-color: #ffffff;
 	}
 	.emojiData{
 		border-top:1px solid #CED2D5;

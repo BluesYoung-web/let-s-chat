@@ -3,7 +3,7 @@
 	<view>
 		<view class="m-item" :id="'message'+id">
 			<!-- 时间 -->
-			<view class="time width-750 flex flex-jc mg-tp20" v-if="message.time.length != 0">
+			<view class="time width-750 flex flex-jc mg-tp20" v-if="message.time">
 				<text class="ft-26 color-666">{{message.time}}</text>
 			</view>
 			
@@ -37,16 +37,18 @@
 					</view>
 					<view class="left-Textcontent">
 						<view class="">
-							<span class="iconfont">&#xe743;</span>
-							<text class="mg-lt10">{{voiceTime}}'</text>
+							<image src="/static/img/voiceMessage.png" mode=""></image>
+							<!-- <span class="iconfont">&#xe743;</span> -->
+							<text class="mg-lt10">{{message.voiceTime}}'</text>
 						</view>
 					</view>
 				</view>
 				<view class="flex flex-direction-row width-750 flex-as pd-rt30 flex-je mg-tp30" v-if="message.user == 'myself'">
 					<view class="right-Textcontent">
 						<view class="">
-							<text class="mg-rt10">{{voiceTime}}'</text>
-							<span class="iconfont">&#xe743;</span>
+							<text class="mg-rt10">{{message.voiceTime}}'</text>
+							<!-- <span class="iconfont">&#xe743;</span> -->
+							<image src="/static/img/voiceMessage.png" mode=""></image>
 						</view>
 					</view>
 					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
@@ -75,7 +77,9 @@
 
 			<!-- ------------系统消息------------ -->
 			<view class="" v-if="message.type == 3">
-				
+				<view class="system width-750 flex flex-jc mg-tp20">
+					<text class="ft-26 color-666">{{message.content}}</text>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -127,14 +131,58 @@
 	}
 </script>
 
-<style lang="less">
-    /* 引入公共样式 */
-    @import '~@/common/common.less';
+<style>
+	.pd-lt30{
+		padding-left: 30upx;
+	}
+	.pd-rt30{
+		padding-right: 30upx;
+	}
+	.mg-tp20{
+		margin-top: 20upx;
+	}
+	.mg-tp30{
+		margin-top: 30upx;
+	}
+	.mg-lt10{
+		margin-left: 10upx;
+	}
+	.mg-rt10{
+		margin-right: 10upx;
+	}
+	.ft-26{
+		font-size: 26upx;
+	}
+	.color-666{
+		color: #666666;
+	}
+	.width-750{
+		width: 750upx;
+	}
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+	}
+	.flex-as{
+		align-items: flex-start;
+	}
+	.flex-jc { 
+		justify-content: center;
+	}
+	.flex-je {
+		justify-content: end;
+	}
+	.flex-direction-row{
+		flex-direction: row;
+	}
 	.m-item {
 		display: flex;
 		flex-direction: column;
 		width: 750upx;
-		/* border: 1px solid red; */
 	}
 
 	.head_icon {
@@ -192,17 +240,6 @@
 		content: ' '
 	}
 
-	/* ------------语音消息样式------------- */
-	@font-face {
-		font-family: 'iconfont';
-		src: url('/static/ttf/voice/iconfont.eot');
-		src: url('/static/ttf/voice/iconfont.eot?#iefix') format('embedded-opentype'),
-			url('/static/ttf/voice/iconfont.woff2') format('woff2'),
-			url('/static/ttf/voice/iconfont.woff') format('woff'),
-			url('/static/ttf/voice/iconfont.ttf') format('truetype'),
-			url('/static/ttf/voice/iconfont.svg#iconfont') format('svg');
-	}
-
 	.iconfont {
 		font-family: "iconfont" !important;
 		font-size: 16px;
@@ -212,13 +249,11 @@
 	}
 
 	/* ------------图片消息样式------------- */
-	.leftImgMessage image,
-	.rightImgMessage image {
+	.leftImgMessage image, .rightImgMessage image {
 		max-width: 400upx;
 	}
 
-	.leftImgMessage,
-	.rightImgMessage {
+	.leftImgMessage, .rightImgMessage {
 		border-radius: 10upx;
 		overflow: hidden;
 		background-color: #FFFFFF;
@@ -230,5 +265,9 @@
 
 	.rightImgMessage {
 		margin-right: 20upx;
+	}
+
+	.system{
+		background-color: cyan;
 	}
 </style>

@@ -1,7 +1,7 @@
 <!-- 自定义消息组件 -->
 <template>
 	<view>
-		<view class="m-item" :id="'message'+id">
+		<view class="m-item">
 			<!-- 时间 -->
 			<view class="time width-750 flex flex-jc mg-tp20" v-if="message.time">
 				<text class="ft-26 color-666">{{message.time}}</text>
@@ -10,75 +10,65 @@
 			<!-- ------------文字消息-------------- -->
 			<view class="" v-if="message.type == 0">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<view class="">
-						<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
-					</view>
+					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
 					<view class="left-Textcontent">
-						<view class="">
-							{{message.content}}
-						</view>
+						{{message.content}}
 					</view>
 				</view>
 				<view class="flex flex-direction-row width-750 flex-as pd-rt30 flex-je mg-tp30" v-if="message.user == 'myself'">
 					<view class="right-Textcontent">
-						<view class="">
-							{{message.content}}
-						</view>
+						{{message.content}}
 					</view>
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
+					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
 				</view>
 			</view>
 
 			<!-- ------------语音消息------------ -->
 			<view class="" v-if="message.type == 1">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<view class="">
-						<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
-					</view>
-					<view class="left-Textcontent">
-						<view class="">
-							<image src="/static/img/voiceMessage.png" mode=""></image>
-							<!-- <span class="iconfont">&#xe743;</span> -->
-							<text class="mg-lt10">{{message.voiceTime}}'</text>
-						</view>
+					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
+					<view class="left-Textcontent flex flex-direction-row flex-ac" @tap="playVoice(message.content)">
+						<image class="voice-img" src="/static/img/voiceMessage.png" mode=""></image>
+						<text class="mg-lt10 voice-txt">{{message.voiceTime + '"'}}</text>
 					</view>
 				</view>
 				<view class="flex flex-direction-row width-750 flex-as pd-rt30 flex-je mg-tp30" v-if="message.user == 'myself'">
-					<view class="right-Textcontent">
-						<view class="">
-							<text class="mg-rt10">{{message.voiceTime}}'</text>
-							<!-- <span class="iconfont">&#xe743;</span> -->
-							<image src="/static/img/voiceMessage.png" mode=""></image>
-						</view>
+					<view class="right-Textcontent flex flex-direction-row flex-ac" @tap="playVoice(message.content)">
+						<text class="mg-rt10 voice-txt">{{message.voiceTime + '"'}}</text>
+						<image class="voice-img" src="/static/img/voiceMessage.png" mode=""></image>
 					</view>
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
+					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
 				</view>
 			</view>
 
 			<!-- ------------图片消息------------ -->
 			<view class="" v-if="message.type == 2">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<view class="">
-						<image class="head_icon" :src="message.imgUrl" mode="aspectFill"></image>
-					</view>
-					<view class="leftImgMessage">
-						<image :src="message.content"  @click="preImg(message.content)" mode="aspectFit"></image>
+					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
+					<view class="left-Textcontent">
+						<image :src="message.content"  class="content-img"
+						@click="preImg(message.content)" mode="aspectFit"></image>
 					</view>
 				</view>
-				<view class="flex flex-direction-row width-750 flex-as pd-rt30 flex-je mg-tp30" v-if="message.user == 'myself'">
-					<view class="rightImgMessage">
-						<image :src="message.content"  @click="preImg(message.content)" mode="aspectFit"></image>
+				<view class="flex flex-direction-row width-750 pd-rt30 flex-je mg-tp30" v-if="message.user == 'myself'">
+					<view class="right-Textcontent">
+						<image :src="message.content"  class="content-img"
+						@click="preImg(message.content)" mode="aspectFit"></image>
 					</view>
-					<view class="">
-						<image class="head_icon" :src="message.imgUrl"  mode="aspectFill"></image>
-					</view>
+					<image class="head_icon" :src="message.imgUrl"  mode="aspectFill"
+					@tap="clickAvatar(message.uid)"></image>
 				</view>
 			</view>
 
 			<!-- ------------系统消息------------ -->
 			<view class="" v-if="message.type == 3">
-				<view class="system width-750 flex flex-jc mg-tp20">
-					<text class="ft-26 color-666">{{message.content}}</text>
+				<view class="width-750 flex flex-jc mg-tp20">
+					<text class="ft-26 color-ccc">系统消息：{{message.content}}</text>
 				</view>
 			</view>
 		</view>
@@ -88,50 +78,33 @@
 <script>
 	export default {
 		name: 'msgItem',
-		data() {
-			return {
-				voiceTime: 4, //模拟事件长度
-			}
-		},
-		methods: {
-			preImg(imgUrl) {
-				console.log(1)
-				uni.previewImage({
-					urls: [imgUrl],
-					longPressActions: {
-						itemList: ['保存图片'],
-						success: function(data) {
-							console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
-						},
-						fail: function(err) {
-							console.log(err.errMsg);
-						}
-					}
-				});
-			}
-		},
 		props: {
 			message: {
 				type: Object,
 				default () {
-					return {
-						user: "others", //消息发送者： 包括myself-自己、others-其他人
-						time: '2019-08-21 21:58', //如果time长度为0说明不显示时间
-						type: 0, //消息类型： 包括0-文字消息、1-语音消息、2-图片、3-系统消息
-						content: "/static/img/337C393466ABAB31425CE09E655515F9.png",
-						imgUrl: "/static/img/finds_01.jpg"
-					}
+					return {}
 				}
-			},
-			id: {
-				type: Number,
-				default: 0
 			}
 		},
+		methods: {
+			preImg(src) {
+				this.$emit('preImg', src);
+			},
+			clickAvatar(uid){
+				this.$emit('clickAvatar', uid);
+			},
+			playVoice(src){
+				this.$emit('playVoice', src);
+			}
+		}
 	}
 </script>
 
 <style>
+	.content-img{
+		width: 200upx;
+		height: 200upx;
+	}
 	.pd-lt30{
 		padding-left: 30upx;
 	}
@@ -153,8 +126,8 @@
 	.ft-26{
 		font-size: 26upx;
 	}
-	.color-666{
-		color: #666666;
+	.color-ccc{
+		color: #ccc;
 	}
 	.width-750{
 		width: 750upx;
@@ -170,11 +143,14 @@
 	.flex-as{
 		align-items: flex-start;
 	}
+	.flex-ac{
+		align-items: center;
+	}
 	.flex-jc { 
 		justify-content: center;
 	}
 	.flex-je {
-		justify-content: end;
+		justify-content: flex-end;
 	}
 	.flex-direction-row{
 		flex-direction: row;
@@ -194,7 +170,7 @@
 	/* ------------文字消息样式------------- */
 	.left-Textcontent {
 		text-align: left;
-		background: #FFFFFF;
+		background: rgb(6, 216, 17);
 		border-radius: 20upx;
 		padding: 20upx;
 		color: black;
@@ -207,7 +183,7 @@
 
 	.left-Textcontent:before {
 		border: 8px solid transparent;
-		border-right: 8px solid #FFFFFF;
+		border-right: 8px solid rgb(6, 216, 17);
 		left: -16px;
 		top: 10px;
 		width: 0;
@@ -240,34 +216,11 @@
 		content: ' '
 	}
 
-	.iconfont {
-		font-family: "iconfont" !important;
-		font-size: 16px;
-		font-style: normal;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
+	.voice-img{
+		width: 50upx;
+		height: 50upx;
 	}
-
-	/* ------------图片消息样式------------- */
-	.leftImgMessage image, .rightImgMessage image {
-		max-width: 400upx;
-	}
-
-	.leftImgMessage, .rightImgMessage {
-		border-radius: 10upx;
-		overflow: hidden;
-		background-color: #FFFFFF;
-	}
-
-	.leftImgMessage {
-		margin-left: 20upx;
-	}
-
-	.rightImgMessage {
-		margin-right: 20upx;
-	}
-
-	.system{
-		background-color: cyan;
+	.voice-txt{
+		font-size: 32upx;
 	}
 </style>

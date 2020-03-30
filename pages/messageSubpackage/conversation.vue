@@ -1,67 +1,23 @@
 <template>
 	<!-- 对话页面 -->
-	<view>
-			<scroll-view scroll-y="true" :scroll-top="scrollTop" class="conversationContent" :style="{height:scrollHeight + 'px'}">
-				<view class="scroll" @tap="takeBack">
-					<view v-for="(item,index) in messages" :key="index">
-						<view class="messageTime" v-if="item.ifShow">
-							<text>{{item.showTime}}</text>
-						</view>
-						<view v-if="item.sign==='other'" class="message friendMessage">
-							<view class="messageHead" @tap="toFriendInfo">
-								<image :src="item.head" mode=""></image>
-							</view>
-							<view class="messageContent">
-								<text>{{item.content}}</text>
-							</view>
-						</view>
-						<view v-if="item.sign==='otherVoice'" class="message friendMessage">
-							<view class="messageHead" @tap="toFriendInfo">
-								<image :src="item.head" mode=""></image>
-							</view>
-							<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
-								<text>{{item.intervalTime}}</text>
-								<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
-							</view>
-
-						</view>
-						<view v-if="item.sign==='me'" class="message myMessage">
-							<view class="messageContent" style="background-color: #95ec69;">
-								<text>{{item.content}}</text>
-							</view>
-							<view class="messageHead" @tap="toMyInfo">
-								<image :src="item.head" mode=""></image>
-							</view>
-						</view>
-						<view v-if="item.sign==='meVoice'" class="message myMessage">
-							<view class="messageContent flex flex-js flex-vc" style="background-color: #95ec69;" @tap="playVoice(item)">
-								<text>{{item.intervalTime}}</text>
-								<image src="/static/img/voiceMessage.png" style="height: 50upx;width: 50upx;"></image>
-							</view>
-							<view class="messageHead" @tap="toMyInfo">
-								<image :src="item.head" mode=""></image>
-							</view>
-						</view>
-					</view>
-				</view>
+	<view class="flex flex-direction-column">
+		<view class="content" @tap="takeBack">
+			<scroll-view scroll-y="true" :scroll-with-animation="true" :style="{height:scrollHeight + 'px'}"
+			 :scroll-top="scrollTop" id="sc">
+			 <view class="scroll">
+			 	<msg-item v-for="(item, index) in messages" :message="item" :key="index"
+				@preImg="preImg" @clickAvatar="clickAvatar" @playVoice="playVoice"></msg-item>
+			 </view>
 			</scroll-view>
-			
-			<!-- 底部文字语言输入框 -->
-			<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
-				<!-- 输入键盘组件 -->
-				<key-board :isVoice="isVoice" :content="content" 
-				@getInputMsg="getInputMsg" @inputChange="inputChange"
-				@showEmoji="showEmojiKeyBoard" @inputFocus="takeBack"
-				@send="send" @plus="plus"></key-board>
-			</view>
-		<!-- 取消语音弹框 -->
-		<view class="cancelVoice" v-show="pressActive">
-			<view class="flex flex-jc flex-vc" style="width: 100%;height: 200upx;">
-				<image src="/static/img/cancelVoice.png" mode=""></image>
-			</view>	
-			<view class="flex flex-jc" style="width: 100%;height: 50upx;">
-				<text>向上滑动，取消发送</text>
-			</view>		
+		</view>
+		<!-- 底部文字语言输入框 -->
+		<view class="conversationBottom" :style="'bottom: '+ bottom +'upx'">
+			<!-- 输入键盘组件 -->
+			<key-board :isVoice="isVoice" :content="content" :pressActive="pressActive"
+			@getInputMsg="getInputMsg" @inputChange="inputChange"
+			@showEmoji="showEmojiKeyBoard" @inputFocus="takeBack"
+			@startRecord="startRecord" @endRecord="endRecord" @cancelVoice="cancelVoice"
+			@send="send" @plus="plus"></key-board>
 		</view>
 		<!-- 表情键盘组件 -->
 		<emoji-input :showEmoji="showEmoji" :emojiData="emojiData"
@@ -81,21 +37,15 @@
 	
 	import emojiInput from '@/components/young-emoji-input/young-emoji-input.vue';
 	import keyBoard from '@/components/young-key-board/young-key-board.vue';
+	import msgItem from '@/components/young-msg-item/young-msg-item.vue';
 	export default{
 		components: {
 			emojiInput,
-			keyBoard
+			keyBoard,
+			msgItem
 		},
 		mounted() {
-			this.scrollHeight = uni.getSystemInfoSync().windowHeight;
-			let info2 = uni.createSelectorQuery().select(".conversationBottom");
-			info2.boundingClientRect((data)=>{
-				this.scrollHeight =this.scrollHeight - data.height;//屏幕高度-底部键盘区高度
-			}).exec();
-			let info = uni.createSelectorQuery().select(".scroll");
-				info.boundingClientRect((data)=>{
-				this.scrollTop = data.height - this.scrollHeight;
-			}).exec();
+			this.scrollToBottom();
 		},
 		data(){
 			return{
@@ -116,63 +66,104 @@
 					emojiList: [],
 					src: '/static/img/emoji/face.png',
 					select: true
-				}, {
+					}, {
 					id: 1,
 					emojiSrc: emojiFood,
 					emojiList: [],
 					src: '/static/img/emoji/food.png',
 					select: false
 				}],
-				scrollHeight:'',
-				scrollTop:0,
-				messages:[
-					// {
-					// 	sign:'other',
-					// 	head:'../../static/img/avatar.png',
-					// 	content:'今天晚上8点，五排组起来',
-					// 	time:'1分钟前'
-					// },
-					// {
-					// 	sign:'me',
-					// 	head:'../../static/img/avatar.png',
-					// 	content:'没问题',
-					// 	time:'刚刚'
-					// },
-					// {
-					// 	"sign":"otherVoice",
-					// 	"head":"http://192.168.10.136/img/1576831759230.png",
-					// 	"content":"语音",
-					// 	"realContent":"http://192.168.10.136/audio/1577179862943.aac",
-					// 	"time":1577179866000,
-					// 	"intervalTime":3,
-					// 	"showTime":"17:31:06",
-					// 	"ifShow":true,
-					// }
-				],
-				content:'',//消息输入内容
-				pressActive:false, //是否弹出语音取消框
-				bottom:0,  //键盘高度后面获取
-				voicePath: '',//录音
+				scrollHeight: '',
+				scrollTop: 0,
+				/**
+				 * 聊天记录
+				 */
+				messages:[{
+					type: 3,
+					content: '打招呼'
+				},{
+					type: 0,
+					uid: 7575838,
+					time: '11:15',
+					user: 'others',
+					imgUrl: '/static/img/avatar.png',
+					content: '来了老弟！'
+				}, {
+					type: 0,
+					uid: 7575838,
+					user: 'myself',
+					imgUrl: '/static/img/friendhead.png',
+					content: '好嗨哟！'
+				}, {
+					uid: 7575838,
+					type: 1,
+					user: 'others',
+					imgUrl: '/static/img/avatar.png',
+					voiceTime: 30,
+					content: '/static/img/defaultHead.jpg'
+				}, {
+					uid: 7575838,
+					type: 1,
+					user: 'myself',
+					imgUrl: '/static/img/friendhead.png',
+					voiceTime: 30,
+					content: '/static/img/defaultHead.jpg'
+				}, {
+					uid: 7575838,
+					type: 2,
+					user: 'others',
+					imgUrl: '/static/img/avatar.png',
+					content: '/static/img/defaultHead.jpg'
+				}, {
+					uid: 7575838,
+					type: 2,
+					user: 'myself',
+					imgUrl: '/static/img/friendhead.png',
+					content: '/static/img/defaultHead.jpg'
+				}],
+				/**
+				 * 要发送的消息内容
+				 */
+				content:'',
+				/**
+				 * 是否显示取消发送语音
+				 */
+				pressActive: false,
+				/**
+				 * 控制键盘高度变化
+				 */
+				bottom:0,
+				/**
+				 * 语音临时路径
+				 */
+				voicePath: '', 
+				/**
+				 * 语音时间长度
+				 */
 				intervalTime: 0,
+				/**
+				 * 录音计时定时器
+				 */
 				timer: null,
-				voice:'',
-				// 控制输入框聚焦
-				txtInput:false,
-				// 用户uid
-				// 是否从通讯录进入
+				/**
+				 * 滑动位置记录
+				 */
+				swiper: null,
+				/**
+				 * 是否从通讯录进入
+				 */
 				is_from_address:false
-			}
-		},
-		computed:{
-			intIntervalTime() {
-			    // 用于显示整数的秒数
-			    return Math.round(this.intervalTime);
 			}
 		},
 		onLoad(e) {
 			//获取录音权限相关
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
+				if(this.swiper === true){
+					this.uploadVoice();
+				}else {
+					console.log('取消发送');
+				}
 			});
 		},
 		methods:{
@@ -233,10 +224,18 @@
 				this.content = msg;
 			},
 			/**
+			 * 上传语音文件
+			 */
+			uploadVoice(){
+				innerAudioContext.src = this.voicePath;
+				innerAudioContext.play();
+			},
+			/**
 			 * 发送
 			 */
 			send(){
 				console.log(this.content);
+				this.content = '';
 			},
 			/**
 			 * 点击加号
@@ -244,21 +243,25 @@
 			plus(){
 				console.log('plus++++++++++++++++++');
 			},
-			getScrollTop(){
-				uni.getSystemInfo({
-					success: (res)=> {
-						this.scrollHeight = res.windowHeight;//获取屏幕高度
-						let info2 = uni.createSelectorQuery().select(".conversationBottom");
-						info2.boundingClientRect((data)=>{
-							this.scrollHeight =this.scrollHeight - data.height;//屏幕高度-底部键盘区高度
-						}).exec();
-						let info = uni.createSelectorQuery().select(".scroll");
-						info.boundingClientRect((data)=>{
-							this.scrollTop = data.height - this.scrollHeight;
-						}).exec();
-					}
-				});
-				return this.scrollTop;
+			/**
+			 * 滚动到最底部
+			 */
+			scrollToBottom(){
+				this.scrollHeight = uni.getSystemInfoSync().windowHeight;
+				let info2 = uni.createSelectorQuery().select(".conversationBottom");
+				info2.boundingClientRect((data)=>{
+					//屏幕高度-底部键盘区高度
+					// #ifdef APP-PLUS
+					this.scrollHeight = this.scrollHeight - data.height - 10;
+					// #endif
+					// #ifdef H5
+					this.scrollHeight = this.scrollHeight - data.height + 50; 
+					// #endif
+				}).exec();
+				let info = uni.createSelectorQuery().select(".scroll");
+					info.boundingClientRect((data)=>{
+					this.scrollTop = data.height - this.scrollHeight;
+				}).exec();
 			},
 			/**
 			 * 输入表情
@@ -266,70 +269,74 @@
 			showFaces(item){
 				this.content += item;
 			},
-			//前往朋友资料页面
-			toFriendInfo(){
-				let uid = this.fuid
-				uni.navigateTo({
-					url: `/pages/addressSubpackage/friendsInfo?uid=${uid}&isF=true`,
-				});
+			/**
+			 * 预览图片
+			 */
+			preImg(src){
+				console.log('预览图片',src);
 			},
-			//前往我的界面
-			toMyInfo(){
-				uni.switchTab({
-					url: '/pages/tabBar/my',
-				});
+			/**
+			 * 点击头像
+			 */
+			clickAvatar(src){
+				console.log('点击头像',src)
 			},
-			// 长按开始录音，取消录音提示框出现
-			startRecord() {				
+			/**
+			 * 播放语音
+			 */
+			playVoice(src){
+				console.log('播放语音',src);
+				// innerAudioContext.src = item.src;
+				// innerAudioContext.play();
+			},
+			/**
+			 * 长按开始录音，取消录音提示框出现
+			 */
+			startRecord() {
+				// #ifdef H5
+				uni.showToast({
+					icon: 'none',
+					title: '浏览器暂不支持发送语音'
+				});
+				// #endif
+				// #ifdef APP-PLUS
 				this.timer = setInterval(() => {
 				    this.intervalTime += 0.5;
 					if (this.intervalTime >= 0.5 && !this.pressActive) {
-				        //如果用户录制的时间太短,就不会去开启录音, 因为有个bug: recorderManager.stop()在短时间内开启在关闭的话,实际上他还在不停地录音,不知道你们有没有遇到过
-        		        console.log("开始录音");
- 			            this.pressActive=true;
+				        // 如果用户录制的时间太短,就不会去开启录音
+				        console.log("开始录音");
+				        this.pressActive = true;
 				        this.intervalTime = 0;
 				        recorderManager.start();
 				    }
 				}, 500);
+				// #endif
 			},
-			// 松开手指，录音结束，取消录音提示框消失
-			endRecord() {				
+			/**
+			 * 可能要取消发送语音
+			 */
+			cancelVoice(e){
+				console.log('开始滑动');
+				this.swiper = e.changedTouches[0].clientY;
+			},
+			/**
+			 * 松开手指，录音结束/上滑取消发送，取消录音提示框消失
+			 */
+			endRecord(e) {
+				// #ifdef APP-PLUS
+				let end = e.changedTouches[0].clientY;
+				this.pressActive = false;
 				clearInterval(this.timer);
 				recorderManager.stop();
 				console.log('录音结束');
-				this.pressActive = false;
-				setTimeout(()=>{
-					const voice = this.voicePath;
-					const intervalTime = this.intervalTime;
-					const time=Date.parse(new Date);
-					// let data={
-					// 	sign:'meVoice',
-					// 	intervalTime:intervalTime,
-					// 	head:this.avatarUrl,
-					// 	content:"语音",
-					// 	realContent:voice,
-					// 	time:time,
-					// 	showTime:null
-					// };
-					// this.messages.push(data);
-					// // 处理时间显示
-					// this.messages=tools.timeProcess(this.messages);
-					// // 语音上传到服务器
-					// let task = plus.uploader.createUpload(`${this.serverUrl}?op=upload&file=audio`,{},(t,status)=>{
-					// 	if(t.state==4 && status==200){
-					// 		data.realContent=t.responseText;
-					// 		if (this.is_open_socket) {
-					// 			this.sendMsg(this.account, this.fuid, data, this.socketTask);
-					// 		}
-					// 	}
-					// });
-					// task.addFile(voice,{key:"audio"});
-					// task.start();
-				}, 500);
-			},
-			playVoice(item){
-				innerAudioContext.src = item.realContent;
-				innerAudioContext.play();
+				if(this.swiper - end > 80){
+					// 取消发送
+					this.swiper = false;
+				}else {
+					// 正常发送
+					this.swiper = true;
+				}
+				// #endif
 			}
 		}
 	}
@@ -338,118 +345,6 @@
 <style lang="less">
 	// 引入预先定义好的less
 	@import "~@/common/common.less";
-	.conversationContent{
-		width: 100%;
-	}
-	.cancelVoice{
-		width: 250upx;
-		height: 250upx;
-		color: @colorF;
-		font-size: 25upx;
-		background-color: @bgcolor;
-		position: fixed;
-		bottom: 200upx;
-		left: 250upx;
-		z-index: 5;
-	}
-	.cancelVoice image{
-		width: 200upx;
-		height: 200upx;
-	}
-	.facesHead{
-		height: 80upx;
-		background-color: @colorF;
-	}
-	.type{
-		width: 80upx;
-		height: 80upx;
-		float: left;
-	}
-	.type image{
-		width: 50upx;
-		height: 50upx;
-		border-radius: 50%;
-	}
-	.bg{
-		background-color: @codeBorder;
-	}
-	// .type image:hover{
-	// 	background-color: @codeBorder;
-	// }
-	.backspace{
-		width: 80upx;
-		height: 80upx;
-		float: right;
-	}
-	.backspace image{
-		width: 60upx;
-		height: 60upx;
-	}
-	.facesContent{
-		height: 520upx;
-	}
-	.facesBox{
-		width: 100%;
-		height: 600upx; //后期与键盘高度统一
-		background-color: @bgcolor;
-		position: fixed;
-		bottom: 0;
-	}
-	.face{
-		width: 83upx;
-		height: 100upx;
-		text-align: center;
-		line-height: 100upx;
-		display: inline-block;
-	}
-	.messageTime{
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 60upx;
-		width: 100%;
-	}
-	.messageTime text{
-		font-size: 20upx;
-		color: @msgTimeColor;
-	}
-	.message{
-		width: 100%;
-		display: flex;
-		border-bottom: 20upx solid @colorF;
-	}
-	.friendMessage{
-		justify-content: flex-start;
-		padding-right: 200upx;
-	}
-	.myMessage{
-		justify-content: flex-end;
-		padding-left: 200upx;
-	}
-	.messageContent{
-		background-color: @bgcolor;
-		display: flex;
-		border-radius: 10upx;
-		/* max-width: 500upx; */
-		height: auto;
-	}
-	.messageContent text{
-		font-size: 25upx;
-		margin: 20upx 10upx;
-		
-	}
-	.messageContent image{
-		margin-right: 10upx;
-	}
-	.messageHead{
-		display: flex;
-		justify-content: center;
-		padding: 0 20upx;
-	}
-	.messageHead image{
-		width: 80upx;
-		height: 80upx;
-	}
 	.conversationBottom{
 		position: fixed;
 		width: 100%;

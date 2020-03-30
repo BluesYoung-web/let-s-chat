@@ -9,11 +9,20 @@
 		<view class="keyboardInput">
 			<!-- 语音输入 -->
 			<button v-if="isVoice" type="default" class="keyboardInput-button"
-			@longpress="startRecord" @touchend="endRecord">按 住 说 话</button>
+			@longpress="startRecord" @touchstart="cancelVoice" @touchend="endRecord">按住 说话</button>
 			<!-- 文字输入 -->
-			<textarea :focus="!isVoice" class="keyboardInput-textarea"
+			<textarea :auto-focus="!isVoice" :focus="!isVoice" class="keyboardInput-textarea"
 			v-model="ct" auto-height="true" v-else type="text" @tap="inputFocus" 
 			@input="$emit('getInputMsg', $event.target.value)"/>
+		</view>
+		<!-- 取消语音弹框 -->
+		<view class="cancelVoice" v-show="pressActive">
+			<view class="flex flex-jc flex-vc" style="width: 100%;height: 200upx;">
+				<image class="cancelVoice-image" src="/static/img/cancelVoice.png" mode=""></image>
+			</view>	
+			<view class="flex flex-jc" style="width: 100%;height: 50upx;">
+				<text>向上滑动，取消发送</text>
+			</view>		
 		</view>
 		<!-- 表情键盘按钮 -->
 		<view class="faces" @tap="showEmoji">
@@ -42,6 +51,10 @@
 			content: {
 				type: String,
 				default: ''
+			},
+			pressActive: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data(){
@@ -61,8 +74,11 @@
 			startRecord(){
 				this.$emit('startRecord');
 			},
-			endRecord(){
-				this.$emit('endRecord');
+			cancelVoice(e){
+				this.$emit('cancelVoice', e);
+			},
+			endRecord(e){
+				this.$emit('endRecord', e);
 			},
 			inputFocus(){
 				this.$emit('inputFocus');
@@ -94,6 +110,21 @@
 	.voice-img{
 		width: 70upx;
 		height: 70upx;
+	}
+	.cancelVoice{
+		width: 250upx;
+		height: 250upx;
+		color: #ffffff;
+		font-size: 25upx;
+		background-color: #edf0f2;
+		position: fixed;
+		bottom: 500upx;
+		left: 250upx;
+		z-index: 5;
+	}
+	.cancelVoice-image{
+		width: 200upx;
+		height: 200upx;
 	}
 	.keyboardInput{
 		background-color: #FFFFFF;
@@ -145,5 +176,29 @@
 	.plus-img{
 		width: 65upx;
 		height: 65upx;
+	}
+	.flex {
+		display: box; /* OLD - Android 4.4- */
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+		display: -ms-flexbox; /* TWEENER - IE 10 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+
+	}
+	/* 垂直居中 */
+	.flex-vc {
+		/* 09版 */
+		-webkit-box-align: center;
+		/* 12版 */
+		-webkit-align-items: center;
+		-moz-align-items: center;
+		-ms-align-items: center;
+		-o-align-items: center;
+		align-items: center;
+	}
+
+	.flex-jc { 
+		justify-content: center;
 	}
 </style>

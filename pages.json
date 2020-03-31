@@ -3,8 +3,7 @@
 		{
 			"path": "pages/tabBar/message",
 			"style": {
-				"navigationStyle": "custom",
-				"enablePullDownRefresh": true //是否开启下拉刷新
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -192,7 +191,6 @@
 			"path": "pages/findsSubpackage/circle",
 			"style": {
 				"navigationBarTitleText": "好友圈",
-				"enablePullDownRefresh": true, //是否开启下拉刷新
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{

@@ -233,7 +233,7 @@ const get_likes_list = function(findId){
  */
 const get_comments_list = function(findId){
     let sql = `SELECT comments.id, user.uid, user.avatar, user.nick, comments.content, comments.toNick from 
-    user, comments where comments.findId = ${findId} and user.uid = comments.userId;`;
+    user, comments where comments.findId = ${findId} and user.uid = comments.userId ORDER BY id asc;`;
     return new Promise((resolve, reject) => {
         mysqlQuery(sql).then((data) => {
             resolve(data);

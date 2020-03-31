@@ -128,7 +128,7 @@
 				success: (res) => {
 					for (const iterator of res) {
 						data.friend.get_info({
-							uid: iterator,
+							uid: Number(iterator),
 							success: (dt) => {
 								this.likesList.push(dt);
 							}

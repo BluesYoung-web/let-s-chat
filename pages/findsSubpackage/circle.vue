@@ -2,7 +2,9 @@
 	<!-- 好友圈界面 -->
 	<view class="content">
 		<scroll-view enable-back-to-top="true" scroll-y="true" :scroll-top="scrollTop" :style="{height:scrollHeight + 'px'}"
-		 @scroll="scroll">		 	
+		@scroll="scroll" refresher-enabled="true" :refresher-triggered="triggered"
+		:refresher-threshold="45" refresher-background="#666" @refresherrefresh="onRefresh" 
+		@refresherrestore="onRestore" @refresherabort="onAbort">		 	
 			<!-- 一个好友圈动态 -->
 			<view class="finds-body" v-for="(item,index) in findsList" :key="index">
 				<find-item :item="item" @watchImg="watchImg" @like="like" @comment="comment"></find-item>
@@ -65,6 +67,14 @@
 		},
 		data() {
 			return {
+				/**
+				 * 自定义下拉刷新状态
+				 */
+				triggered: false,
+				/**
+				 * 刷新标志
+				 */
+				freshing: false,
 				page: 1,
 				user: null,
 				pagecount: null,
@@ -85,6 +95,10 @@
 			}
 		},
 		onLoad(){
+			this.freshing = false;
+			setTimeout(() => {
+				this.triggered = true;
+			}, 1000);
 			this.getnewsList(1);
 			data.user.get_info({
 				success: (res) => {
@@ -92,22 +106,53 @@
 				}
 			});
 		},
-		// 下拉刷新
-		onPullDownRefresh() {
-			this.findsList = [];
-			this.loadingText = '点击加载更多...';
-			// 从服务器拉取新数据
-			this.getnewsList(1, true);
-			// 关闭下拉刷新动画
-			setTimeout(() => {
-				uni.stopPullDownRefresh();
-			}, 1000);
+		onShow() {
+			// #ifdef APP-PLUS
+			this.onRefresh();
+			// #endif
 		},
 		// 监听发表动态按钮的点击事件
 		onNavigationBarButtonTap(e) {
 			this.popup = true;
 		},
 		methods: {
+			/**
+			 * 从服务器获取最新数据
+			 */
+			getLatest(){
+				this.findsList = [];
+				this.loadingText = '点击加载更多...';
+				// 从服务器拉取新数据
+				this.getnewsList(1, true);
+			},
+			/**
+			 * 自定义下拉刷新
+			 */
+			onRefresh(){
+				if (this.freshing) {
+					return;
+				} else {
+					this.freshing = true;
+					this.getLatest();
+					setTimeout(() => {
+						this.freshing = false;
+						this.triggered = false;
+					}, 1500);
+				}
+			},
+			/**
+			 * 复位下拉刷新
+			 */
+			onRestore() {
+                this.triggered = 'restore'; // 需要重置
+                console.log("onRestore");
+			},
+			/**
+			 * 终止下拉刷新
+			 */
+            onAbort() {
+                console.log("onAbort");
+            },
 			/**
 			 * 前往用户信息页面
 			 * @param {number} uid
@@ -130,24 +175,22 @@
 			 */
 			goTop(e) {
 				this.scrollTop = this.old.scrollTop;
-				// this.$nextTick(() => {
-					// 5毛动画
-					let it = setInterval(() => {
-						if(this.scrollTop){
-							this.scrollTop -= 10;
-						}
-					}, 10);
-					if (this.scrollTop + 10 > 3000) {
-						setTimeout(() => {
-							clearInterval(it);
-							this.scrollTop = 0;
-						}, 3000);
-					} else{
-						setTimeout(() => {
-							clearInterval(it);
-						}, this.scrollTop + 10);
+				// 5毛动画
+				let it = setInterval(() => {
+					if(this.scrollTop){
+						this.scrollTop -= 10;
 					}
-				// });
+				}, 10);
+				if (this.scrollTop + 10 > 3000) {
+					setTimeout(() => {
+						clearInterval(it);
+						this.scrollTop = 0;
+					}, 3000);
+				} else{
+					setTimeout(() => {
+						clearInterval(it);
+					}, this.scrollTop + 10);
+				}
 			},
 			/**
 			 * 点赞
@@ -263,7 +306,7 @@
 						uni.showToast({
 							title: '好友圈发布成功！'
 						});
-						uni.startPullDownRefresh();
+						this.getLatest();
 					},
 					fail: (code, err) => {
 						uni.hideLoading();

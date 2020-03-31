@@ -195,10 +195,14 @@
         switch (cmd) {
             case 300:
                 store.get_user_info_by_uid(data.uid).then((dt) => {
-                    store.get_room_id_by_users([data.uid]).then((tp) => {
-                        dt.data.roomId = tp.data;
+                    if (data.uid == this.uid) {
                         this.opSuccess(dt, cbk, extra);
-                    });
+                    } else {
+                        store.get_room_id_by_users([data.uid]).then((tp) => {
+                            dt.data.roomId = tp.data;
+                            this.opSuccess(dt, cbk, extra);
+                        });
+                    }
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });

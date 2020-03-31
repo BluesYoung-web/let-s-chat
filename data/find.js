@@ -226,6 +226,32 @@ const get_my_release = function(args){
         }
     });
 }
+/**
+ * 清空好友圈缓存
+ * @param {object} args 
+ * @param {Function} args.success
+ * @param {Function} args.fail
+ */
+const clear_cache = function(args){
+    let {success, fail} = {...args};
+    get({
+        page: 1,
+        success: (res) => {
+            let pagecount = res.pagecount;
+            data.user.get_info({
+                success: (res) => {
+                    for(let i = 1; i <= pagecount; i++){
+                        store.del({
+                            key: `${res.uid}.finds.${i}`
+                        });
+                    }
+                    success && success('已清空好友圈缓存');
+                }
+            });
+        },
+        fail
+    });
+}
 export default {
     put_up,
     get,
@@ -236,5 +262,6 @@ export default {
     del_comments,
     get_likes,
     get_comments,
-    get_my_release
+    get_my_release,
+    clear_cache
 }

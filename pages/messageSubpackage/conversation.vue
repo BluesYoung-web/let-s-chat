@@ -1,6 +1,7 @@
 <template>
 	<!-- 对话页面 -->
 	<view class="flex flex-direction-column">
+		<!-- 聊天记录 -->
 		<view class="content" @tap="takeBack">
 			<scroll-view scroll-y="true" :scroll-with-animation="true" :style="{height:scrollHeight + 'px'}"
 			 :scroll-top="scrollTop" id="sc">
@@ -17,11 +18,13 @@
 			@getInputMsg="getInputMsg" @inputChange="inputChange"
 			@showEmoji="showEmojiKeyBoard" @inputFocus="takeBack"
 			@startRecord="startRecord" @endRecord="endRecord" @cancelVoice="cancelVoice"
-			@send="send" @plus="plus"></key-board>
+			@send="send" @plus="showPlusKeyBoard"></key-board>
 		</view>
 		<!-- 表情键盘组件 -->
 		<emoji-input :showEmoji="showEmoji" :emojiData="emojiData"
 		@showFaces="showFaces" @deleteEmoji="backSpace" @select="changeEmojiType"></emoji-input>
+		<!-- 扩展菜单组件 -->
+		<ext-input :showPlus="showPlus" :plusMenu="plusMenu" @clickItem="clickItem"></ext-input>
 	</view>
 </template>
 
@@ -38,11 +41,13 @@
 	import emojiInput from '@/components/young-emoji-input/young-emoji-input.vue';
 	import keyBoard from '@/components/young-key-board/young-key-board.vue';
 	import msgItem from '@/components/young-msg-item/young-msg-item.vue';
+	import extInput from '@/components/young-ext-input/young-ext-input.vue';
 	export default{
 		components: {
 			emojiInput,
 			keyBoard,
-			msgItem
+			msgItem,
+			extInput
 		},
 		mounted() {
 			this.scrollToBottom();
@@ -58,6 +63,10 @@
 				 */
 				showEmoji: false,
 				/**
+				 * 是否显示扩展面板（发送图片）
+				 */
+				showPlus: false,
+				/**
 				 * 表情面板的数据
 				 */
 				emojiData:[{
@@ -72,6 +81,16 @@
 					emojiList: [],
 					src: '/static/img/emoji/food.png',
 					select: false
+				}],
+				/**
+				 * 扩展菜单
+				 */
+				plusMenu: [{
+					op: 'chooseImg',
+					src: '/static/img/album.png'
+					},{
+					op: 'takePhoto',
+					src: '/static/img/photo.png'
 				}],
 				scrollHeight: '',
 				scrollTop: 0,
@@ -173,6 +192,7 @@
 			inputChange(){
 				this.isVoice = !this.isVoice;
 				this.showEmoji = false;
+				this.showPlus = false;
 				this.bottom = 0;
 			},
 			/**
@@ -185,12 +205,27 @@
 			 * 显示表情键盘
 			 */
 			showEmojiKeyBoard(){
+				this.showPlus = false;
 				if(!this.showEmoji){
 					this.isVoice = false;
 					this.showEmoji = true;
 					this.bottom = 600;
 				}else{
 					this.showEmoji = false;
+					this.bottom = 0;
+				}	
+			},
+			/**
+			 * 显示扩展键盘
+			 */
+			showPlusKeyBoard(){
+				this.showEmoji = false;
+				if(!this.showPlus){
+					this.isVoice = false;
+					this.showPlus = true;
+					this.bottom = 600;
+				}else{
+					this.showPlus = false;
 					this.bottom = 0;
 				}	
 			},
@@ -211,6 +246,7 @@
 			 */
 			takeBack(){
 				this.showEmoji = false;
+				this.showPlus = false;
 				this.bottom = 0;
 			},
 			/**
@@ -238,12 +274,6 @@
 				this.content = '';
 			},
 			/**
-			 * 点击加号
-			 */
-			plus(){
-				console.log('plus++++++++++++++++++');
-			},
-			/**
 			 * 滚动到最底部
 			 */
 			scrollToBottom(){
@@ -268,6 +298,12 @@
 			 */
 			showFaces(item){
 				this.content += item;
+			},
+			/**
+			 * 点击扩展菜单
+			 */
+			clickItem(item){
+				console.log(item);
 			},
 			/**
 			 * 预览图片

@@ -12,10 +12,10 @@
 			@clickButton="clickButton" @checkImg="checkImg" ></person-info>
 			<!-- 加好友与发消息 -->
 			<view class="friendsInfoBottom bg-344955 width-full" v-if="isF">
-				<view class="btn width-full height-100" @tap="toConversation(0)">
+				<view class="btn width-full height-100" @tap="toConversation(1)">
 					<button class="bg-849aa5 color-fff">发语音消息</button>
 				</view>
-				<view class="btn width-full height-100" @tap="toConversation(1)">
+				<view class="btn width-full height-100" @tap="toConversation(0)">
 					<button class="bg-f9aa33 color-fff">发消息</button>
 				</view>						
 			</view>
@@ -209,7 +209,7 @@
 			toConversation(e){
 				let voiceActive = e;
 				uni.navigateTo({
-					url: `/pages/messageSubpackage/conversation?voiceActive=${voiceActive}&name=${this.user.nick}&f_uid=${this.user.uid}`,
+					url: `/pages/messageSubpackage/conversation?voiceActive=${voiceActive}&title=${this.user.nick}&roomId=${this.user.roomId}`,
 				});
 			},
 		}

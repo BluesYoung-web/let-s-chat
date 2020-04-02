@@ -42,6 +42,7 @@
 	import keyBoard from '@/components/young-key-board/young-key-board.vue';
 	import msgItem from '@/components/young-msg-item/young-msg-item.vue';
 	import extInput from '@/components/young-ext-input/young-ext-input.vue';
+	import data from '@/data.js';
 	export default{
 		components: {
 			emojiInput,
@@ -97,49 +98,7 @@
 				/**
 				 * 聊天记录
 				 */
-				messages:[{
-					type: 3,
-					content: '打招呼'
-				},{
-					type: 0,
-					uid: 7575838,
-					time: '11:15',
-					user: 'others',
-					imgUrl: '/static/img/avatar.png',
-					content: '来了老弟！'
-				}, {
-					type: 0,
-					uid: 7575838,
-					user: 'myself',
-					imgUrl: '/static/img/friendhead.png',
-					content: '好嗨哟！'
-				}, {
-					uid: 7575838,
-					type: 1,
-					user: 'others',
-					imgUrl: '/static/img/avatar.png',
-					voiceTime: 30,
-					content: '/static/img/defaultHead.jpg'
-				}, {
-					uid: 7575838,
-					type: 1,
-					user: 'myself',
-					imgUrl: '/static/img/friendhead.png',
-					voiceTime: 30,
-					content: '/static/img/defaultHead.jpg'
-				}, {
-					uid: 7575838,
-					type: 2,
-					user: 'others',
-					imgUrl: '/static/img/avatar.png',
-					content: '/static/img/defaultHead.jpg'
-				}, {
-					uid: 7575838,
-					type: 2,
-					user: 'myself',
-					imgUrl: '/static/img/friendhead.png',
-					content: '/static/img/defaultHead.jpg'
-				}],
+				messages:[],
 				/**
 				 * 要发送的消息内容
 				 */
@@ -169,12 +128,63 @@
 				 */
 				swiper: null,
 				/**
-				 * 是否从通讯录进入
+				 * 聊天室id
 				 */
-				is_from_address:false
+				roomId: null,
+				/**
+				 * 聊天室内所有用户的个人信息
+				 */
+				users: {},
+				/**
+				 * 当前用户信息
+				 */
+				user: {}
 			}
 		},
 		onLoad(e) {
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
+			if(e.voiceActive == 1) {
+				this.isVoice = true;
+			} 
+			if(e.title) {
+				uni.setNavigationBarTitle({
+					title: e.title
+				});
+			}
+			this.roomId = e.roomId;
+			data.chat.get_room_info({
+				roomId: this.roomId,
+				success: (res) => {
+					if (res.title != 'null' && res.title != e.title) {
+						uni.setNavigationBarTitle({
+							title: res.title
+						});
+						// 存储所有用户信息，方便获取
+						for (const item of res.users) {
+							if (item == this.user.uid) {
+								this.users[item] = this.user;
+							} else {
+								data.friend.get_info({
+									uid: item,
+									success: (res) => {
+										this.users[item] = res;
+									},
+									fail: (code, err) => {
+										console.log(code, err);
+									}
+								});
+							}
+						}
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
+				}
+			});
 			//获取录音权限相关
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
@@ -184,6 +194,17 @@
 					console.log('取消发送');
 				}
 			});
+		},
+		onShow(){
+			data.chat.get_chat_log_list({
+				roomId: this.roomId,
+				success: (res) => {
+					for (const item of res) {
+						item.imgUrl = this.users[item.uid];
+					}
+					this.messages = res;
+				}
+			})
 		},
 		methods:{
 			/**
@@ -267,11 +288,27 @@
 				innerAudioContext.play();
 			},
 			/**
-			 * 发送
+			 * 发送文字消息
 			 */
 			send(){
-				console.log(this.content);
-				this.content = '';
+				data.chat.send_msg({
+					roomId: this.roomId,
+					msg: {
+						type: 0,
+						uid: this.user.uid,
+						roomId: this.roomId,
+						ot: Date.parse(new Date()),
+						content: this.content				
+					},
+					success: (res) => {
+						console.log(this.content);
+						console.log(res);
+						this.content = '';
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
 			},
 			/**
 			 * 滚动到最底部

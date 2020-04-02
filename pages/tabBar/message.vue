@@ -21,6 +21,7 @@
 	import chatItem from '@/components/young-chat-item/young-chat-item.vue';
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
 	import bubbleMenu from "@/components/young-bubble-menu/young-bubble-menu.vue";
+	import data from '@/data.js';
 	export default {
 		components:{
 			chatItem,
@@ -48,27 +49,10 @@
 					title: '帮助与反馈',
 					icon: 'email'
 				}],
-				dataList: [{
-					"imgUrl":"http://106.15.53.15:8808/data/head/15.jpg",
-					"nick":"Mike",
-					"ot":1581472633000,
-					"isTop":0,
-					"time":"09:57",
-					"content":" 啦啦啦",
-					"right":0,
-					"msgNum":1,
-					"roomId":"47",
-					"conversation":[{
-						"time":"09:57",
-						"user":"others",
-						"content":" 啦啦啦",
-						"ot":1581472633000,
-						"imgUrl":"http://106.15.53.15:8808/data/head/15.jpg",
-						"type":0,
-					}],
-				}],
+				dataList: [],
 				freshing: false,
-				triggered: false
+				triggered: false,
+				user: {}
 			}
 		},
 		created() {
@@ -79,11 +63,10 @@
 			this.x = sys.screenWidth * 0.9;
 			this.y = sys.screenHeight / 20;
 		},
+		onShow(){
+			this.init();
+		},
 		onLoad(){
-			/**
-			 * 获取消息列表
-			 */
-			
 			/**
 			 * 初始化自定义下拉刷新
 			 */
@@ -98,6 +81,11 @@
 				index: 0,
 				text: this.countMsg + ''
 			});
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			})
 		},
 		// 观察者
 		watch: {
@@ -259,7 +247,7 @@
 			 */
 			onClickInto(item){
 				uni.navigateTo({
-					url:`../messageSubpackage/conversation?id=${item.roomId}&title=${item.nick}`
+					url:`../messageSubpackage/conversation?roomId=${item.roomId}&title=${item.nick}`
 				});
 			},
 			/**
@@ -315,6 +303,49 @@
 			 */
 			onAbort() {
 				console.log("onAbort");
+			},
+			/**
+			 * 页面初始化
+			 */
+			init(){
+				setTimeout(() => {
+					// 从缓存获取聊天列表
+					data.chat.get_room_list((res) => {
+						console.log(res);
+						this.dataList = res;
+						// 获取每个聊天室的详细信息(头像，名称)
+						for (let item of this.dataList) {
+							data.chat.get_room_info({
+								roomId: item.roomId,
+								success: (rs) => {
+									if (rs.type == 0) {
+										// 点对点
+										let users = rs.users;
+										users = users.filter((it) => it != this.user.uid);
+										data.friend.get_info({
+											uid: users[0],
+											success: (rt) => {
+												item.imgUrl = rt.avatar;
+												item.nick = rt.nick;
+											}
+										});
+									} else {
+										item.nick = rs.title;
+										item.imgUrl = rs.avatar;
+									}
+								},
+								fail: (code, err) => {
+									console.log(code, err);
+								}
+							})
+						}
+						// 后收到的消息排到前面
+						// 置顶的消息排到前面
+						console.log(JSON.stringify(this.dataList));
+						// 显示tabBar的角标
+						this.changMsgNum();
+					});
+				}, 500);
 			}
 		},
 		computed:{

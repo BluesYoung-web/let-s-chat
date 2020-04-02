@@ -266,11 +266,13 @@
                             store.create_chat_room(room).then((data) => {
                                 let msg = {
                                     roomId: data.roomId,
-                                    ot: Date.parse(new Date()), // 原始时间戳
-                                    type: 3, //系统消息
-                                    content: '你们已经是好友了，打个招呼吧!',
+                                    msg: {
+                                        ot: Date.parse(new Date()), // 原始时间戳
+                                        type: 3, //系统消息
+                                        content: '你们已经是好友了，打个招呼吧!',
+                                    }
                                 }
-                                this.push(102, 0, 1, msg, [this.uid, room.users[0]]);
+                                this.push(103, 0, 0, msg, [this.uid, room.users[0]]);
                             });
                         });
                     }
@@ -340,7 +342,11 @@
                 let roomId = data.roomId;
                 store.get_room_info(roomId).then((dt) => {
                     this.push(103, 0, 0, data, dt.data.users);
+                    this.opSuccess({data: '消息发送成功'}, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail('消息发送失败', cbk, extra);
                 });
+                break;
             default:
                 break;
         }

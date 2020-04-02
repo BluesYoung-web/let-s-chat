@@ -118,11 +118,10 @@
 			wxlogin() {
 				// #ifdef H5
 				this.toMain({
-					// openId: '111',
-					openId:'oRrdQt0VnoxDYW9K8HdI9Cuoklyw'
+					openId:'test'
 				});
-				return;
 				// #endif
+				// #ifdef APP-PLUS
 				let config={
 					provider: 'weixin',
 					success: (res) => {
@@ -141,8 +140,8 @@
 						console.error('授权登录失败：' + JSON.stringify(err));
 					}
 				}
-				
 				uni.login(config);
+				// #endif
 			},
 			toMain(userInfo) {
 				console.log(userInfo);

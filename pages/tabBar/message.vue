@@ -216,8 +216,13 @@
 			 */
 			setIKnow(item){
 				this.dataList.map((v) => v.roomId == item.roomId ? v.msgNum = 0 : null);
-				// // 存储到缓存
-				// data.chat.clear_msg_num(item.roomId, item.content, item.ot);
+				// 存储到缓存
+				data.chat.clear_msg_num({
+					roomId: item.roomId,
+					success: () => {
+						console.log(item.roomId, '设为已读成功');
+					}
+				});
 			},
 			/**
 			 * 删除某条对话
@@ -225,20 +230,20 @@
 			deleteMessage(item, index) {
 				this.dataList.splice(index, 1);
 				//同时减少消息tabBar右上角数字，num为零时移除
-				// this.changMsgNum();
-				// let roomId = item.roomId;
-				// // 存储到缓存
-				// data.chat.set_list({
-				// 	value: this.dataList,
-				// 	success: () => {
-				// 		console.log("缓存修改成功");
-				// 		// 重新渲染
-				// 		this.init();
-				// 	},
-				// 	fail: () => {
-				// 		console.log("缓存修改失败");
-				// 	}
-				// });
+				this.changMsgNum();
+				let roomId = item.roomId;
+				// 存储到缓存
+				data.chat.set_room_list({
+					roomList: this.dataList,
+					success: () => {
+						console.log("缓存修改成功");
+						// 重新渲染
+						this.init();
+					},
+					fail: () => {
+						console.log("缓存修改失败");
+					}
+				});
 				
 			},
 			/**
@@ -313,32 +318,6 @@
 					data.chat.get_room_list((res) => {
 						console.log(res);
 						this.dataList = res;
-						// 获取每个聊天室的详细信息(头像，名称)
-						for (let item of this.dataList) {
-							data.chat.get_room_info({
-								roomId: item.roomId,
-								success: (rs) => {
-									if (rs.type == 0) {
-										// 点对点
-										let users = rs.users;
-										users = users.filter((it) => it != this.user.uid);
-										data.friend.get_info({
-											uid: users[0],
-											success: (rt) => {
-												item.imgUrl = rt.avatar;
-												item.nick = rt.nick;
-											}
-										});
-									} else {
-										item.nick = rs.title;
-										item.imgUrl = rs.avatar;
-									}
-								},
-								fail: (code, err) => {
-									console.log(code, err);
-								}
-							})
-						}
 						// 后收到的消息排到前面
 						// 置顶的消息排到前面
 						console.log(JSON.stringify(this.dataList));

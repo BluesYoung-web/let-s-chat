@@ -32,6 +32,11 @@ event.register({
                 } else if(res.uid) {
                     // 别人发的消息
                     msg.user = 'others';
+                    uni.vibrateLong({
+                        success: function () {
+                            console.log('振动。。。。。。。');
+                        }
+                    });
                 } else{
                     // 系统消息
                     null;
@@ -39,6 +44,7 @@ event.register({
                 // 添加到消息列表
                 add_to_room_list({
                     roomId,
+                    userUid: res.uid,
                     item: msg,
                     success: () => {
                         console.log('添加到消息列表成功');
@@ -48,9 +54,10 @@ event.register({
                             item: msg,
                             success: () => {
                                 console.log('添加到聊天记录成功');
-                                // 震动-----------
+                                // 消息滚动
+                                uni.$emit(roomId+'.onMsg');
                             }
-                        })
+                        });
                     },
                     fail: (code, err) => {
                         console.log(code, err);
@@ -163,12 +170,13 @@ const set_room_list = function(args){
  * 添加到消息列表 
  * @param {object} args 
  * @param {number} args.roomId 聊天室id
+ * @param {number} args.userUid 当前用户uid
  * @param {object} args.item 要展示的内容
  * @param {Function} args.success
  * @param {Function} args.fail
  */
 const add_to_room_list = function(args) {
-    let {roomId, item, success, fail} = {...args};
+    let {roomId, userUid, item, success, fail} = {...args};
     let tp1 = '[语音消息]';
     let tp2 = '[图片消息]';
     let tp3 = '[系统消息]';
@@ -192,7 +200,43 @@ const add_to_room_list = function(args) {
                             break;
                     }
                 }
-                res.push(item);
+                get_room_info({
+                    roomId,
+                    success: (rs) => {
+                        if (rs.type == 0) {
+                            // 点对点
+                            let users = rs.users;
+                            users = users.filter((i) => i != userUid);
+                            data.friend.get_info({
+                                uid: users[0],
+                                success: (tp) => {
+                                    item.nick = tp.nick;
+                                    item.imgUrl = tp.avatar;
+                                    console.log(item)
+                                    console.log(item.imgUrl)
+                                    res.push(item);
+                                    set_room_list({
+                                        roomId,
+                                        roomList: res,
+                                        success,
+                                        fail
+                                    });
+                                }
+                            });
+                        } else {
+                            // 群聊
+                            item.nick = rs.title;
+                            item.imgUrl = rs.avatar;
+                            res.push(item);
+                            set_room_list({
+                                roomId,
+                                roomList: res,
+                                success,
+                                fail
+                            });
+                        }
+                    }
+                });
             } else {
                 for (let i of res) {
                     if (i.roomId == roomId) {
@@ -227,13 +271,13 @@ const add_to_room_list = function(args) {
                 // 不存在，新增
                 item.msgNum = 1;
                 res.push(item);
+                set_room_list({
+                    roomId,
+                    roomList: res,
+                    success,
+                    fail
+                });
             }
-            set_room_list({
-                roomId,
-                roomList: res,
-                success,
-                fail
-            });
     });
 }
 /**
@@ -307,20 +351,88 @@ const add_to_chat_log_list = function(args){
     get_chat_log_list({
         roomId,
         success: (res) => {
-            res.push(item);
-            set_chat_log_list({
-                roomId,
-                logList: res,
-                success,
-                fail
+            data.friend.get_info({
+                uid: item.uid,
+                success: (rs) => {
+                    item.imgUrl = rs.avatar;
+                    res.push(item);
+                    set_chat_log_list({
+                        roomId,
+                        logList: res,
+                        success,
+                        fail
+                    });
+                }
             });
         }
     });
 }
-
+/**
+ * 清除聊天记录
+ * @param {number} args.roomId 聊天室id
+ * @param {Function} args.success
+ */
+const clear_chat_log_list = function(args){
+    let {roomId, success} = {...args};
+    console.log('1111')
+    if (roomId) {
+        // 清除某个聊天记录
+        set_chat_log_list({
+            roomId,
+            logList: [],
+            success: () => {
+                get_room_list((res) => {
+                    res= res.filter((item) => item.roomId != roomId);
+                    set_room_list({
+                        roomList: res,
+                        success
+                    });
+                });
+            }
+        });
+    } else {
+        // 清空聊天记录
+        get_room_list((list) => {
+            for (const iterator of list) {
+                let roomId = iterator.roomId;
+                set_chat_log_list({
+                    roomId,
+                    logList: []
+                });
+            }
+            set_room_list({
+                roomList: [],
+                success
+            });
+        })
+    }
+}
+/**
+ * 清除未读消息数(标为已读)
+ * @param {object} args
+ * @param {number} args.roomId 聊天室id
+ * @param {Function} args.success
+ */
+const clear_msg_num = function(args){
+    let {roomId, success} = {...args};
+    get_room_list((res) => {
+        for (const iterator of res) {
+            if (iterator.roomId == roomId) {
+                iterator.msgNum = 0;
+            }
+        }
+        set_room_list({
+            roomList: res,
+            success
+        });
+    });
+}
 export default{
     get_room_info,
     send_msg,
     get_room_list,
-    get_chat_log_list
+    set_room_list,
+    get_chat_log_list,
+    clear_chat_log_list,
+    clear_msg_num
 }

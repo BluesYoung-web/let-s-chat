@@ -43,6 +43,7 @@
 	import msgItem from '@/components/young-msg-item/young-msg-item.vue';
 	import extInput from '@/components/young-ext-input/young-ext-input.vue';
 	import data from '@/data.js';
+	import tools from '@/core/tools';
 	export default{
 		components: {
 			emojiInput,
@@ -51,7 +52,7 @@
 			extInput
 		},
 		mounted() {
-			this.scrollToBottom();
+			this.scrollToBottom(-50);
 		},
 		data(){
 			return{
@@ -163,27 +164,26 @@
 						uni.setNavigationBarTitle({
 							title: res.title
 						});
-						// 存储所有用户信息，方便获取
-						for (const item of res.users) {
-							if (item == this.user.uid) {
-								this.users[item] = this.user;
-							} else {
-								data.friend.get_info({
-									uid: item,
-									success: (res) => {
-										this.users[item] = res;
-									},
-									fail: (code, err) => {
-										console.log(code, err);
-									}
-								});
-							}
-						}
 					}
 				},
 				fail: (code, err) => {
 					console.log(code, err);
 				}
+			});
+			/**
+			 * 收到新消息，滚动到底部
+			 */
+			uni.$on(this.roomId+'.onMsg', () => {
+				// 显示时间处理
+				this.messages[0].time = tools.timeFormat(this.messages[0].ot);
+				for (let i = 1; i < this.messages.length; i++) {
+					let ot = this.messages[i].ot;
+					let lt = this.messages[i-1].ot;
+					this.messages[i].time = tools.timeDec(ot, lt, 60000);
+				}
+				setTimeout(() => {
+					this.scrollToBottom();
+				}, 100);
 			});
 			//获取录音权限相关
 			recorderManager.onStop((res)=>{
@@ -199,12 +199,24 @@
 			data.chat.get_chat_log_list({
 				roomId: this.roomId,
 				success: (res) => {
-					for (const item of res) {
-						item.imgUrl = this.users[item.uid];
-					}
 					this.messages = res;
+					// 显示时间处理
+					this.messages[0].time = tools.timeFormat(this.messages[0].ot);
+					for (let i = 1; i < this.messages.length; i++) {
+						let ot = this.messages[i].ot;
+						let lt = this.messages[i-1].ot;
+						this.messages[i].time = tools.timeDec(ot, lt, 60000);
+					}
 				}
-			})
+			});
+		},
+		onBackPress() {
+			data.chat.clear_msg_num({
+				roomId: this.roomId,
+				success: () => {
+					console.log(this.roomId, '设为已读成功');
+				}
+			});
 		},
 		methods:{
 			/**
@@ -301,7 +313,6 @@
 						content: this.content				
 					},
 					success: (res) => {
-						console.log(this.content);
 						console.log(res);
 						this.content = '';
 					},
@@ -313,7 +324,8 @@
 			/**
 			 * 滚动到最底部
 			 */
-			scrollToBottom(){
+			scrollToBottom(h){
+				h = h || 5;
 				this.scrollHeight = uni.getSystemInfoSync().windowHeight;
 				let info2 = uni.createSelectorQuery().select(".conversationBottom");
 				info2.boundingClientRect((data)=>{
@@ -322,7 +334,7 @@
 					this.scrollHeight = this.scrollHeight - data.height - 10;
 					// #endif
 					// #ifdef H5
-					this.scrollHeight = this.scrollHeight - data.height + 50; 
+					this.scrollHeight = this.scrollHeight - data.height - h;
 					// #endif
 				}).exec();
 				let info = uni.createSelectorQuery().select(".scroll");

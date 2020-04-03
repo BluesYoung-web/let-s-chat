@@ -116,16 +116,20 @@
 			clearChatLog(){
 				uni.showModal({
 					title:"提示",
-					content:"确定要清除聊天记录吗?",
+					content:"确定要清除所有聊天记录吗?",
 					success: (res) => {
 						if(res.confirm == true){
-							// ....
-							uni.showToast({
-								title:"清除成功"
-							});
-							// 跳转到消息页
-							uni.reLaunch({
-								url: "/pages/tabBar/message/message"
+							data.chat.clear_chat_log_list({
+								uid: this.user.uid,
+								success: () => {
+									uni.showToast({
+										title:"清除成功"
+									});
+									// 跳转到消息页
+									uni.reLaunch({
+										url: "/pages/tabBar/message"
+									});
+								}
 							});
 						};
 					},
@@ -143,7 +147,7 @@
 			clearFinds(){
 				uni.showModal({
 					title:"提示",
-					content:"确定要清除聊天记录吗?",
+					content:"确定要清除好友圈缓存吗?",
 					success: (res) => {
 						if(res.confirm == true){
 							data.find.clear_cache({

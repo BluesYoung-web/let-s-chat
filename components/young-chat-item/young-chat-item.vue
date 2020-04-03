@@ -145,7 +145,7 @@
 				}else{
 					// 直接显示日期+时间
 					let t = new Date(timestamp);
-					str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日  ${t.getHours()}:${t.getMinutes()}`;
+					str = `${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日`;
 				}
 				return str;
 			},

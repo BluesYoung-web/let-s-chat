@@ -133,16 +133,15 @@
 				 */
 				roomId: null,
 				/**
-				 * 聊天室内所有用户的个人信息
-				 */
-				users: {},
-				/**
 				 * 当前用户信息
 				 */
 				user: {}
 			}
 		},
 		onLoad(e) {
+			/**
+			 * 获取当前用户信息
+			 */
 			data.user.get_info({
 				success: (res) => {
 					this.user = res;
@@ -189,6 +188,7 @@
 			recorderManager.onStop((res)=>{
 				this.voicePath = res.tempFilePath;
 				if(this.swiper === true){
+					// 录音结束，自动发送
 					this.uploadVoice();
 				}else {
 					console.log('取消发送');
@@ -296,8 +296,24 @@
 			 * 上传语音文件
 			 */
 			uploadVoice(){
-				innerAudioContext.src = this.voicePath;
-				innerAudioContext.play();
+				// 上传到服务器
+				data.user.upload({
+					filePath: this.voicePath,
+					name: 'audio',
+					success: (res) => {
+						console.log(res);
+						if(res.status == 0){
+							// 上传成功
+							this.voicePath = res.data.url;
+							this.sendVoice();
+						}else{
+							uni.hideLoading();
+							uni.showToast({
+								title:"语音文件上传失败！"
+							});
+						}
+					}
+				});
 			},
 			/**
 			 * 发送文字消息
@@ -315,6 +331,29 @@
 					success: (res) => {
 						console.log(res);
 						this.content = '';
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
+			},
+			/**
+			 * 发送语音消息
+			 */
+			sendVoice(){
+				data.chat.send_msg({
+					roomId: this.roomId,
+					msg: {
+						type: 1,
+						uid: this.user.uid,
+						roomId: this.roomId,
+						ot: Date.parse(new Date()),
+						content: this.voicePath,
+						voiceTime: this.intervalTime
+					},
+					success: (res) => {
+						console.log(res);
+						console.log('语音消息发送成功');
 					},
 					fail: (code, err) => {
 						console.log(code, err);
@@ -363,16 +402,16 @@
 			/**
 			 * 点击头像
 			 */
-			clickAvatar(src){
-				console.log('点击头像',src)
+			clickAvatar(uid){
+				console.log('点击头像',uid)
 			},
 			/**
 			 * 播放语音
 			 */
 			playVoice(src){
 				console.log('播放语音',src);
-				// innerAudioContext.src = item.src;
-				// innerAudioContext.play();
+				innerAudioContext.src = src;
+				innerAudioContext.play();
 			},
 			/**
 			 * 长按开始录音，取消录音提示框出现
@@ -392,7 +431,9 @@
 				        console.log("开始录音");
 				        this.pressActive = true;
 				        this.intervalTime = 0;
-				        recorderManager.start();
+				        recorderManager.start({
+							format: 'mp3'
+						});
 				    }
 				}, 500);
 				// #endif

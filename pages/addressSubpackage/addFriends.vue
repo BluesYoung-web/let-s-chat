@@ -141,7 +141,7 @@
 					});
 				}else{
 					uni.navigateTo({
-						url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}&isF=${item.isF}&isFocus=${item.isFocus}`
+						url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}`
 					});
 				}
 			}

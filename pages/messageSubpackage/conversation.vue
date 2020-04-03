@@ -117,6 +117,10 @@
 				 */
 				voicePath: '', 
 				/**
+				 * 图片临时路径
+				 */
+				imgPath: '',
+				/**
 				 * 语音时间长度
 				 */
 				intervalTime: 0,
@@ -307,9 +311,30 @@
 							this.voicePath = res.data.url;
 							this.sendVoice();
 						}else{
-							uni.hideLoading();
 							uni.showToast({
 								title:"语音文件上传失败！"
+							});
+						}
+					}
+				});
+			},
+			/**
+			 * 上传图片文件
+			 */
+			uploadImg(){
+				// 上传到服务器
+				data.user.upload({
+					filePath: this.imgPath,
+					name: 'img',
+					success: (res) => {
+						console.log(res);
+						if(res.status == 0){
+							// 上传成功
+							this.imgPath = res.data.url;
+							this.sendImg();
+						}else{
+							uni.showToast({
+								title:"图片文件上传失败！"
 							});
 						}
 					}
@@ -361,6 +386,28 @@
 				});
 			},
 			/**
+			 * 发送图片消息
+			 */
+			sendImg(){
+				data.chat.send_msg({
+					roomId: this.roomId,
+					msg: {
+						type: 2,
+						uid: this.user.uid,
+						roomId: this.roomId,
+						ot: Date.parse(new Date()),
+						content: this.imgPath,
+					},
+					success: (res) => {
+						console.log(res);
+						console.log('图片消息发送成功');
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
+			},
+			/**
 			 * 滚动到最底部
 			 */
 			scrollToBottom(h){
@@ -391,19 +438,81 @@
 			 * 点击扩展菜单
 			 */
 			clickItem(item){
-				console.log(item);
+				let src = '';
+				switch (item.op) {
+					case 'chooseImg':
+						src = 'album';
+						break;
+					case 'takePhoto':
+						src = 'camera';
+						break;
+					default:
+						break;
+				}
+				let config={
+					count: 1,
+					sourceType: [src],
+					sizeType: ['compressed'],
+					success: res => {
+						this.imgPath = res.tempFilePaths[0];
+						this.uploadImg();
+					},
+					fail: res => {
+						uni.showToast({
+							title:"用户取消或加载超时",
+							icon:"none"
+						});
+					},
+				}
+				uni.chooseImage(config);
 			},
 			/**
 			 * 预览图片
 			 */
 			preImg(src){
-				console.log('预览图片',src);
+				uni.previewImage({
+					urls: [src],
+					longPressActions: {
+						itemList: ['保存图片'],
+						success: (data)=>{
+							//点击保存就调用保存到相册的接口
+							if (data.tapIndex == 0) {
+								uni.saveImageToPhotosAlbum({
+									filePath: item.dynamicImg,
+									success: ()=> {
+										uni.showToast({
+											icon: "none",
+											title: "保存成功"
+										})
+									},
+									fail:()=> {
+										uni.showToast({
+											icon: "none",
+											title: "保存失败"
+										})
+									}
+								});
+							}
+						},
+						fail: (err)=> {
+							console.log(err.errMsg);
+						}
+					}
+				});
 			},
 			/**
 			 * 点击头像
 			 */
 			clickAvatar(uid){
-				console.log('点击头像',uid)
+				if (uid == this.user.uid) {
+					uni.switchTab({
+						url: '/pages/tabBar/my'
+					});
+				} else {
+					uni.navigateTo({
+						url: `/pages/addressSubpackage/friendsInfo?uid=${uid}`
+					});
+				}
 			},
 			/**
 			 * 播放语音

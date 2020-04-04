@@ -39,9 +39,11 @@ const tokenCheck = function(sign, uid, conn){
         let token = data;
         if (md5(uid + token) == sign) {
             // 验证成功
+            let socket = new Socket(uid, conn, websocketServer);
+            // 清空离线消息队列
+            socket.offLineSend();
             conn.on('text', (str) => {
                 str = JSON.parse(str);
-                let socket = new Socket(uid, conn, websocketServer);
                 socket.msgProcess(str);
             });
             conn.on('close', (reason) => {

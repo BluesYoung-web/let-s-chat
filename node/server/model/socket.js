@@ -402,20 +402,49 @@
      */
     push(model, type, id, data, uidList){
         const {pushFormat} = require('../core/tools');
+        const {myredis} = require('../database/conn');
         let onlines = this.getOnlines();
         for (let iterator of uidList) {
+            let toBePush = pushFormat({
+                                model, 
+                                type,
+                                id, 
+                                data
+                            });
             if (onlines[iterator]) {
-                onlines[iterator].sendText(
-                    pushFormat({
-                        model, 
-                        type,
-                        id, 
-                        data
-                    }));
+                onlines[iterator].sendText(toBePush);
             }else{
                 // 放入离线队列，待上线之后推送
+                myredis.get(`${iterator}.toBePush`).then((dt) => {
+                    if (dt) {
+                        dt = JSON.parse(dt);
+                    } else {
+                        dt = [];
+                    }
+                    dt.push(toBePush);
+                    myredis.set(`${iterator}.toBePush`, JSON.stringify(dt)).then(() => {
+                        console.log('对方不在线，已启用离线发送')
+                    });
+                });
             }
         }
+    }
+    /**
+     * 离线发送
+     */
+    offLineSend(){
+        const {myredis} = require('../database/conn');
+        myredis.get(`${this.uid}.toBePush`).then((data) => {
+            if (data) {
+                data = JSON.parse(data);
+                for (const iterator of data) {
+                    this.conn.sendText(iterator);
+                }
+                myredis.del(`${this.uid}.toBePush`).then(() => {
+                    console.log('离线发送队列已清空');
+                });
+            }
+        });
     }
  }
 

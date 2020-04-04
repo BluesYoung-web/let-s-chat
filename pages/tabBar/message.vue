@@ -85,7 +85,7 @@
 				success: (res) => {
 					this.user = res;
 				}
-			})
+			});
 		},
 		// 观察者
 		watch: {
@@ -251,6 +251,7 @@
 			 * @param {Object} item
 			 */
 			onClickInto(item){
+				this.setIKnow(item);
 				uni.navigateTo({
 					url:`../messageSubpackage/conversation?roomId=${item.roomId}&title=${item.nick}`
 				});

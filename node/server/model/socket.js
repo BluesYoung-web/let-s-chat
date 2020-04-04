@@ -109,6 +109,10 @@
                 // 发布好友圈
                 store.put_up(data).then((data) => {
                     this.opSuccess(data, cbk, extra);
+                    // 给粉丝推送好友圈更新
+                    store.get_follows(this.uid).then((dt) => {
+                        this.push(101, 0, 0, '有新的好友圈啦，快去看吧！', dt.data);
+                    });
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -400,6 +404,8 @@
                         id, 
                         data
                     }));
+            }else{
+                // 放入离线队列，待上线之后推送
             }
         }
     }

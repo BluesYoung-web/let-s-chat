@@ -22,10 +22,19 @@
 				hasNewCircle: false
 			}
 		},
+		onShow(){
+			uni.$once('hasNewCircle', () => {
+				this.hasNewCircle = true;
+			});
+		},
 		methods:{
 			toGo(item){
 				switch (item.title){
 					case '好友圈':
+						uni.hideTabBarRedDot({
+							index: 2
+						});
+						this.hasNewCircle = false;
 						this.toCircle();
 						break;
 					default:

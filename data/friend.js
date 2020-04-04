@@ -47,7 +47,11 @@ event.register({
         console.log(res);
         uni.$emit('newFriend');
         uni.$emit('hasFriendCheck');
-        uni.vibrate();
+        uni.vibrateLong({
+            success: function () {
+                console.log('振动。。。。。。。');
+            }
+        });
     }
 });
 /**

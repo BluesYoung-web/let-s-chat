@@ -6,9 +6,7 @@
 import store from '@/core/store.js';
 import data from '@/data.js';
 import net from '@/core/net.js';
-import err from '@/core/err.js';
 import event from '@/core/event.js';
-import tools from '@/core/tools.js';
 /**
  *  存储前缀
  */
@@ -18,7 +16,16 @@ const prefix = 'find';
  * 模块id
  */
 const model = 101;
-
+event.register({
+    model,
+    type: 0,
+    id: 0,
+    on_event: (model, type, id, data) => {
+        console.log(data);
+        uni.$emit('newFinds');
+        uni.$emit('hasNewCircle');
+    }
+});
 /**
  * 指令集
  */

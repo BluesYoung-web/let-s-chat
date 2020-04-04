@@ -39,7 +39,7 @@ const tokenCheck = function(sign, uid, conn){
         let token = data;
         if (md5(uid + token) == sign) {
             // 验证成功
-            conn.on('text', (str) =>{
+            conn.on('text', (str) => {
                 str = JSON.parse(str);
                 let socket = new Socket(uid, conn, websocketServer);
                 socket.msgProcess(str);
@@ -70,7 +70,7 @@ const tokenCheck = function(sign, uid, conn){
                 conn.close();
             }, 1000);
         }
-    })
+    });
 }
 
 

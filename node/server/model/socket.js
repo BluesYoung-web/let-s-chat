@@ -202,7 +202,15 @@
                     if (data.uid == this.uid) {
                         this.opSuccess(dt, cbk, extra);
                     } else {
+                        // 获取对应的点对点聊天室id
                         store.get_room_id_by_users([data.uid]).then((tp) => {
+                            // 获取在线状态
+                            let onlines = this.getOnlines();
+                            if (onlines[data.uid]) {
+                                dt.data.online = true;
+                            } else {
+                                dt.data.online = false;
+                            }
                             dt.data.roomId = tp.data;
                             this.opSuccess(dt, cbk, extra);
                         });

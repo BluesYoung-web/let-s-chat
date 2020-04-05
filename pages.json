@@ -178,11 +178,6 @@
 				"navigationStyle":"custom"
 			}
 		}, {
-            "path": "pages/games/gobang",
-            "style": {
-            	"navigationBarTitleText": "五子棋"            
-            }
-        }, {
 			"path": "pages/error/error",
 			"style": {
 				"navigationBarTitleText": "错误"

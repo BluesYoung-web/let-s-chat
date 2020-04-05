@@ -13,7 +13,7 @@
 		<!-- 同步显示搜索内容 -->
 		<view v-if="ifShowSearch" class="inputActive flex flex-js" @tap="searchUser">
 			<view class="img flex flex-jc flex-vc">
-				<image src="/static/img/friendSearch.png" mode=""></image>
+				<image src="/static/img/attention.png" mode=""></image>
 			</view>
 			<view class="inputMessage flex flex-vc">
 				<text >找人：{{inputMsg}}</text>

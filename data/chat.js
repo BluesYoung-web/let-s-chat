@@ -51,7 +51,8 @@ event.register({
                         // 添加到聊天记录
                         add_to_chat_log_list({
                             roomId,
-                            item: msg,
+                            // 修复聊天记录首条消息自动变化的bug
+                            item: JSON.parse(JSON.stringify(msg)),
                             success: () => {
                                 console.log('添加到聊天记录成功');
                                 // 消息滚动

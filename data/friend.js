@@ -7,9 +7,7 @@
 import store from '@/core/store.js';
 import data from '@/data.js';
 import net from '@/core/net.js';
-import err from '@/core/err.js';
 import event from '@/core/event.js';
-import tools from '@/core/tools.js';
 /**
  *  存储前缀
  */

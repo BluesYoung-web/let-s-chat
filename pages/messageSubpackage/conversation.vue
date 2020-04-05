@@ -142,6 +142,22 @@
 				user: {}
 			}
 		},
+		watch: {
+			messages: {
+				handler: function(newVal, oldVal){
+					console.log('观察者处理--------');
+					// 显示时间处理
+					this.messages[0].time = tools.timeFormat(this.messages[0].ot);
+					console.log(this.messages[0]);
+					for (let i = 1; i < this.messages.length; i++) {
+						let ot = this.messages[i].ot;
+						let lt = this.messages[i-1].ot;
+						this.messages[i].time = tools.timeDec(ot, lt, 60000);
+					}
+				},
+				deep: true
+			}
+		},
 		onLoad(e) {
 			/**
 			 * 获取当前用户信息
@@ -204,13 +220,6 @@
 				roomId: this.roomId,
 				success: (res) => {
 					this.messages = res;
-					// 显示时间处理
-					this.messages[0].time = tools.timeFormat(this.messages[0].ot);
-					for (let i = 1; i < this.messages.length; i++) {
-						let ot = this.messages[i].ot;
-						let lt = this.messages[i-1].ot;
-						this.messages[i].time = tools.timeDec(ot, lt, 60000);
-					}
 				}
 			});
 		},

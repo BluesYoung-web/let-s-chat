@@ -8,9 +8,7 @@
 		<bubble-menu :ifShow="isShowbubble" :x='x' :y="y" theme="dark" 
 		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 聊天列表组件 -->
-		<scroll-view scroll-y="true" refresher-enabled="true" :refresher-triggered="triggered"
-		:refresher-threshold="45" refresher-background="#666" @refresherrefresh="onRefresh" 
-		@refresherrestore="onRestore" @refresherabort="onAbort">
+		<scroll-view scroll-y="true">
 			<chat-item :dataList = "dataList" @clickInto = "onClickInto" @clickChoice = "onClickChoice"
 			></chat-item>
 		</scroll-view>
@@ -50,8 +48,6 @@
 					icon: 'email'
 				}],
 				dataList: [],
-				freshing: false,
-				triggered: false,
 				user: {}
 			}
 		},
@@ -67,13 +63,6 @@
 			this.init();
 		},
 		onLoad(){
-			/**
-			 * 初始化自定义下拉刷新
-			 */
-			this.freshing = false;
-			setTimeout(() => {
-				this.triggered = true;
-			}, 1000);
 			/**
 			 * 改变tabBar角标
 			 */
@@ -281,34 +270,6 @@
 						this.deleteMessage(item, index);
 						break;
 				}
-			},
-			/**
-			 * 自定义下拉刷新
-			 */
-			onRefresh(){
-				if (this.freshing) {
-					return;
-				} else {
-					this.freshing = true;
-					// this.getLatest();
-					setTimeout(() => {
-						this.freshing = false;
-						this.triggered = false;
-					}, 1500);
-				}
-			},
-			/**
-			 * 复位下拉刷新
-			 */
-			onRestore() {
-				this.triggered = 'restore'; // 需要重置
-				console.log("onRestore");
-			},
-			/**
-			 * 终止下拉刷新
-			 */
-			onAbort() {
-				console.log("onAbort");
 			},
 			/**
 			 * 页面初始化

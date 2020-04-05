@@ -198,11 +198,13 @@
         let {cmd, data, cbk, extra, store} = {...args};
         switch (cmd) {
             case 300:
+                // 通过uid获取用户详细信息
                 store.get_user_info_by_uid(data.uid).then((dt) => {
-                    if (data.uid == this.uid) {
+                    if (data.uid == this.uid || dt.data.isF == 0) {
+                        // 是自己或者不是好友
                         this.opSuccess(dt, cbk, extra);
-                    } else {
-                        // 获取对应的点对点聊天室id
+                    } else if(dt.data.isF == 1) {
+                        // 是好友，获取对应的点对点聊天室id
                         store.get_room_id_by_users([data.uid]).then((tp) => {
                             // 获取在线状态
                             let onlines = this.getOnlines();
@@ -220,6 +222,7 @@
                 });
                 break;
             case 301:
+                // 获取好友列表
                 store.get_friend_list().then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -237,6 +240,7 @@
                 });
                 break;
             case 303:
+                // 删好友
                 store.del_friend(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -244,6 +248,7 @@
                 });
                 break;
             case 304: 
+                // 关注
                 store.focus(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -251,6 +256,7 @@
                 });
                 break;
             case 305:
+                // 取消关注
                 store.dis_focus(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {
@@ -277,14 +283,16 @@
                             }
                             store.create_chat_room(room).then((data) => {
                                 let msg = {
-                                    roomId: data.roomId,
-                                    msg: {
-                                        ot: Date.parse(new Date()), // 原始时间戳
-                                        type: 3, //系统消息
-                                        content: '你们已经是好友了，打个招呼吧!',
-                                    }
+                                    ot: Date.parse(new Date()), // 原始时间戳
+                                    type: 3, //系统消息
+                                    content: '你们已经是好友了，打个招呼吧!',
+                                    roomId: data.data.roomId
                                 }
-                                this.push(103, 0, 0, msg, [this.uid, room.users[0]]);
+                                let dt = {
+                                    roomId: msg.roomId,
+                                    msg
+                                }
+                                this.push(103, 0, 0, dt, data.data.users);
                             });
                         });
                     }
@@ -302,7 +310,7 @@
                 });
                 break;
             case 309:
-                // 关注
+                // 获取关注的
                 store.get_focus_list(data.uid).then((data) => {
                     this.opSuccess(data, cbk, extra);
                 }).catch((msg) => {

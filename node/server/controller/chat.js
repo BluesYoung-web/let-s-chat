@@ -56,6 +56,23 @@ const create_chat_room = function(args){
     });
 }
 /**
+ * 删除聊天室
+ * @param {number} roomId 
+ */
+const del_chat_room = function(roomId) {
+    let sql = `delete from chat_room where id = ${roomId};`;
+    let sql2 = `delete from chat_room_users where chatRoomId = ${roomId};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then(() => {
+            mysqlQuery(sql2).then((data) => {
+                resolve(data);
+            });
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+/**
  * 根据房间id获取房间详细信息
  * @param {number} roomId 
  */
@@ -78,7 +95,6 @@ const get_room_info = function(roomId){
         });
     });
 }
-
 /**
  * 根据成员uid列表获取房间id
  * @param {Array} uidList 
@@ -97,9 +113,44 @@ const get_room_id_by_users = function(uidList){
         });
     });
 }
+/**
+ * 拉人进群(未加验证)
+ * @param {object} args
+ * @param {number} args.roomId 聊天室id
+ * @param {Array} args.users 被邀请人的列表
+ */
+const invite_into_chat_room = function(args){
+    let {roomId, users} = {...args};
+    let sql = `insert into chat_room_users(chatRoomId, uid)`;
+    return new Promise((resolve, reject) => {
+        let values = '';
+        for (const iterator of users) {
+            values += `(${roomId}, ${iterator}),`;
+        }
+        values = values.split('');
+        values.pop();
+        values = values.join('');
+        let sql2 = `${sql} values${values};`;
+        mysqlQuery(sql2).then((data) => {
+            resolve(data);
+        }).catch((err) => {
+            resolve(err);
+        });
+    });
+}
+/**
+ * 退群
+ */
+const quit_from_chat_room = function(uid, roomId){
+    let sql = `delete from chat_room_users where uid = ${uid} and chatRoomId = ${roomId};`;
+    return sqlPro(sql);
+}
 
 module.exports = {
     create_chat_room,
     get_room_info,
-    get_room_id_by_users
+    get_room_id_by_users,
+    del_chat_room,
+    invite_into_chat_room,
+    quit_from_chat_room,
 }

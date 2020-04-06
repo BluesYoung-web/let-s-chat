@@ -72,7 +72,10 @@ event.register({
 const cmds = {
     create_room: 400,
     get_room_info: 401,
-    send_msg: 402
+    send_msg: 402,
+    invite: 403,
+    quit: 404,
+    set_room_info: 405
 }
 /**
  * 根据聊天室id获取聊天室详细信息
@@ -375,9 +378,7 @@ const add_to_chat_log_list = function(args){
             console.log(item);
             if (item.type == 3) {
                 // 系统消息
-                console.log('------------',JSON.stringify(res));
                 res.push(item);
-                console.log(JSON.stringify(res), '-----------')
                 set_chat_log_list({
                     roomId,
                     logList: res,
@@ -463,6 +464,60 @@ const clear_msg_num = function(args){
         });
     });
 }
+/**
+ * 创建群聊
+ * @param {object} args 
+ * @param {array} args.users 群聊用户数组(不包含当前用户) 
+ * @param {Function} args.success
+ * @param {Function} args.fail 
+ */
+const create_room = function(args){
+    let {users, success, fail} = {...args};
+    net.send({
+        cmd: cmds.create_room,
+        data: {
+            users
+        },
+        success,
+        fail
+    });
+}
+/**
+ * 拉人进群
+ * @param {object} args 
+ * @param {array} args.users 群聊用户数组(不包含当前用户) 
+ * @param {Function} args.success
+ * @param {Function} args.fail 
+ */
+const invite = function(args){
+    let {roomId, users, success, fail} = {...args};
+    net.send({
+        cmd: cmds.invite,
+        data: {
+            users,
+            roomId
+        },
+        success,
+        fail
+    });
+}
+/**
+ * 退群
+ * @param {*} args 
+ */
+const quit = function(args) {
+    let {roomId, success, fail} = {...args};
+    let {roomId, users, success, fail} = {...args};
+    net.send({
+        cmd: cmds.quit,
+        data: {
+            users,
+            roomId
+        },
+        success,
+        fail
+    });
+}
 export default{
     get_room_info,
     send_msg,
@@ -470,5 +525,8 @@ export default{
     set_room_list,
     get_chat_log_list,
     clear_chat_log_list,
-    clear_msg_num
+    clear_msg_num,
+    create_room,
+    invite,
+    quit
 }

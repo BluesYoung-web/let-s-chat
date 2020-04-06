@@ -170,11 +170,21 @@
 						if (res.confirm) {
 							data.friend.del({
 								fid: this.user.uid, 
+								roomId: this.user.roomId,
 								success: () => {
 									this.isF = 0;
 									this.isFocus = 0;
-									uni.showToast({
-										title: "好友删除成功"
+									// 删除对应的聊天记录缓存
+									data.chat.clear_chat_log_list({
+										roomId: this.user.roomId,
+										success: () => {
+											uni.showToast({
+												title: "好友删除成功"
+											});
+											uni.reLaunch({
+												url: '/pages/tabBar/message'
+											});
+										}
 									});
 								},
 								fail: (code, err) => {

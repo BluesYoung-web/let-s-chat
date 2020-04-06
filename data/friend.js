@@ -41,15 +41,40 @@ event.register({
     model,
     type: 0,
     id: 0,
-    on_event: (res) => {
-        console.log(res);
-        uni.$emit('newFriend');
-        uni.$emit('hasFriendCheck');
-        uni.vibrateLong({
-            success: function () {
-                console.log('振动。。。。。。。');
-            }
-        });
+    on_event: (model, type, id, dt) => {
+        if (type == 0 && id == 0) {
+            uni.$emit('newFriend');
+            uni.$emit('hasFriendCheck');
+            uni.vibrateLong({
+                success: function () {
+                    console.log('振动。。。。。。。');
+                }
+            });
+        }
+    }
+});
+/**
+ * 被删了
+ */
+event.register({
+    model,
+    type: 0,
+    id: 1,
+    on_event: (model, type, id, dt) => {
+        if (type == 0 && id == 1) {
+            console.log(dt);
+            data.chat.clear_chat_log_list({
+                roomId: dt.roomId,
+                success: () => {
+                    uni.showToast({
+                        title: dt.tips
+                    });
+                    uni.reLaunch({
+                        url: '/pages/tabBar/message'
+                    });
+                }
+            });
+        }
     }
 });
 /**
@@ -127,19 +152,22 @@ const add = function(args){
  * 删好友
  * @param {object} args 
  * @param {number} args.fid 好友uid
+ * @param {number} args.roomId 聊天室id
  * @param {function} args.success
  * @param {function} args.fail
  */
 const del = function(args){
-    let {fid, success, fail} = {...args};
+    let {fid, roomId, success, fail} = {...args};
     data.user.get_info({
         success: (result) => {
             net.send({
                 cmd: cmds.del,
                 data: {
-                    uid: fid
+                    uid: fid,
+                    roomId
                 },
                 success : (res) => {
+                    // 本地删除通讯录缓存
                     store.set({
                         key: `${prefix}.${result.uid}.address`,
                         data: res,

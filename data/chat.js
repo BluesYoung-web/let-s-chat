@@ -411,7 +411,6 @@ const add_to_chat_log_list = function(args){
  */
 const clear_chat_log_list = function(args){
     let {roomId, success} = {...args};
-    console.log('1111')
     if (roomId) {
         // 清除某个聊天记录
         set_chat_log_list({
@@ -506,7 +505,6 @@ const invite = function(args){
  * @param {*} args 
  */
 const quit = function(args) {
-    let {roomId, success, fail} = {...args};
     let {roomId, users, success, fail} = {...args};
     net.send({
         cmd: cmds.quit,

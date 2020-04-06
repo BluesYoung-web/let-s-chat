@@ -241,8 +241,15 @@
                 break;
             case 303:
                 // 删好友
-                store.del_friend(data.uid).then((data) => {
-                    this.opSuccess(data, cbk, extra);
+                store.del_friend(data.uid).then((dt) => {
+                    // 删除对应聊天室
+                    store.del_chat_room(data.roomId).then(() => {
+                        this.opSuccess(dt, cbk, extra);
+                        this.push(102, 0, 1, {
+                            roomId: data.roomId,
+                            tips: '您已被删除/移出聊天室'
+                        }, [data.uid]);
+                    });
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });

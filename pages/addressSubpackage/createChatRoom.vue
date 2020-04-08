@@ -32,6 +32,7 @@
 	import addressItem from "@/components/young-address-item/young-address-item.vue";
 	import inputPrompt from '@/components/young-input-prompt/young-input-prompt.vue';
 	import searchInput from '@/components/young-search-input/young-search-input.vue';
+	import data from '@/data.js';
 	export default {
 		/**
 		 * 调用的组件
@@ -49,6 +50,10 @@
 				 */
 				promptVisible: false,
 				/**
+				 * 当前用户信息
+				 */
+				user: {},
+				/**
 				 * 是否可以点击按钮
 				 */
 				canSure: false,
@@ -59,23 +64,7 @@
 				/**
 				 * 好友列表
 				 */
-				friendsList: [{
-					avatar: '/static/img/defaultHead.jpg',
-					uid: 11,
-					nick: '张三丰'
-				}, {
-					avatar: '/static/img/finds_01.jpg',
-					uid: 12,
-					nick: '张无忌'
-				}, {
-					avatar: '/static/img/finds_02.jpeg',
-					uid: 13,
-					nick: '张翠山'
-				}, {
-					avatar: '/static/img/avatar.png',
-					uid: 14,
-					nick: '张召忠'
-				}],
+				friendsList: [],
 				/**
 				 * 好友列表备份
 				 */
@@ -90,8 +79,36 @@
 				defaultName: ''
 			}
 		},
+		onLoad(){
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			});
+		},
 		onShow() {
-			this.allFriends = JSON.parse(JSON.stringify(this.friendsList));
+			this.friendsList = [];
+			this.allFriends = [];
+			data.friend.get_list({
+				force: true,
+				success: (dt) => {
+					for(let item of dt){
+						data.friend.get_info({
+							uid: item,
+							success: (dt) => {
+								this.allFriends.push(dt);
+								this.friendsList.push(dt);
+							},
+							fail: (code, err) => {
+								console.log(code, err);
+							}
+						});
+					}
+				},
+				fail: (code, err) => {
+					console.log(code, err);
+				}
+			});
 		},
 		watch: {
 			checked(newValue, oldValue) {
@@ -121,7 +138,7 @@
 					this.defaultName = this.defaultName.split('');
 					this.defaultName.pop();
 					this.defaultName = this.defaultName.join('');
-					this.defaultName ='与' + this.defaultName + '的群聊';
+					this.defaultName =this.user.nick + '、' + this.defaultName + '的群聊';
 				}
 			},
 			/**
@@ -146,8 +163,27 @@
 			 * 确认
 			 */
 			clickPromptConfirm(val){
-				this.defaultName = '';
 				// 向服务器发送请求。。。
+				let temp = {
+					type: 1,
+					title: this.defaultName,
+					users: this.checked
+				}
+				data.chat.create_room({
+					data: temp,
+					success: () => {
+						uni.showToast({
+							title: "群聊创建成功"
+						});
+						this.defaultName = '';
+						uni.reLaunch({
+							url: '/pages/tabBar/message'
+						});
+					},
+					fail: (code, err) => {
+						console.log(code, err);
+					}
+				});
 			},
 			/**
 			 * 取消

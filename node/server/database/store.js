@@ -676,13 +676,17 @@ class Store{
      */
     del_chat_room(roomId){
         const chat = require('../controller/chat');
+        const {myredis} = require('../database/conn');
         return new Promise((resolve, reject) => {
-            chat.del_chat_room(roomId).then((data) => {
-                resolve({
-                    data
+            // 先删缓存再删库
+            myredis.del(`${roomId}.roomInfo`).then(() => {
+                chat.del_chat_room(roomId).then((data) => {
+                    resolve({
+                        data
+                    });
+                }).catch((err) => {
+                    reject(err);
                 });
-            }).catch((err) => {
-                reject(err);
             });
         });
     }
@@ -730,6 +734,75 @@ class Store{
             chat.get_room_id_by_users(uidList).then((data) => {
                 resolve({
                     data
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+    /**
+     * 拉人进聊天室
+     */
+    invite_into_chat_room(data){
+        const chat = require('../controller/chat');
+        return new Promise((resolve, reject) => {
+            chat.invite_into_chat_room(data).then((dt) => {
+                // 更新聊天室信息缓存
+                chat.get_room_info(data.roomId).then((tp) => {
+                    myredis.set(`${roomId}.roomInfo`, JSON.stringify(tp)).then(() => {
+                        resolve({
+                            data: dt,
+                            extra: {
+                                tips: '已邀请'
+                            }
+                        });
+                    });
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+    /**
+     * 退出聊天室
+     */
+    quit_from_chat_room(roomId){
+        const chat = require('../controller/chat');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            chat.quit_from_chat_room(this.uid, roomId).then((dt) => {
+                // 更新聊天室信息缓存
+                chat.get_room_info(roomId).then((tp) => {
+                    myredis.set(`${roomId}.roomInfo`, JSON.stringify(tp)).then(() => {
+                        resolve({
+                            data: dt,
+                            extra: {
+                                tips: '退出聊天室成功'
+                            }
+                        });
+                    });
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
+    /**
+     * 设置聊天室信息
+     */
+    set_room_info(data){
+        const chat = require('../controller/chat');
+        const {myredis} = require('../database/conn');
+        return new Promise((resolve, reject) => {
+            chat.set_room_info(data).then((dt) => {
+                // 更新聊天室信息缓存
+                myredis.set(`${data.id}.roomInfo`, JSON.stringify(data)).then(() => {
+                    resolve({
+                        data: dt,
+                        extra: {
+                            tips: '聊天室信息修改成功'
+                        }
+                    });
                 });
             }).catch((err) => {
                 reject(err);

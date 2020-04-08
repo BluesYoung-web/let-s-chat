@@ -22,6 +22,9 @@ event.register({
     type: 0,
     id: 0,
     on_event: (model, type, id, dt) => {
+        if (type != 0 || id != 0) {
+            return;
+        }
         let roomId = dt.roomId;
         let msg = dt.msg;
         data.user.get_info({
@@ -65,6 +68,38 @@ event.register({
             }
         });
     }
+});
+/**
+ * 聊天室信息被修改
+ */
+event.register({
+    model,
+    type: 0,
+    id: 1,
+    on_event: (model, type, id, dt) => {
+        if (type != 0 || id != 1) {
+            return;
+        }
+        console.log(dt);
+        let roomId = dt.id;
+        get_room_list((list) => {
+            for (const iterator of list) {
+                if (iterator.roomId == roomId) {
+                    iterator.imgUrl = dt.avatar;
+                    iterator.nick = dt.title;
+                }
+            }
+            set_room_list({
+                roomList: list,
+                success: () => {
+                    console.log('群聊详细信息修改成功');
+                },
+                fail: () => {
+                    console.log('群聊详细信息修改失败');
+                }
+            });
+        });
+    } 
 });
 /**
  * 指令集
@@ -290,6 +325,8 @@ const add_to_room_list_process = function(args){
                     }
                 });
             } else {
+                console.log('----------------------')
+                console.log(rs)
                 // 群聊
                 item.nick = rs.title;
                 item.imgUrl = rs.avatar;
@@ -466,19 +503,32 @@ const clear_msg_num = function(args){
 /**
  * 创建群聊
  * @param {object} args 
- * @param {array} args.users 群聊用户数组(不包含当前用户) 
+ * @param {object} args.data 群聊详细信息
  * @param {Function} args.success
  * @param {Function} args.fail 
  */
 const create_room = function(args){
-    let {users, success, fail} = {...args};
+    let {data, success, fail} = {...args};
     net.send({
         cmd: cmds.create_room,
-        data: {
-            users
-        },
+        data,
         success,
         fail
+    });
+}
+/**
+ * 修改群聊详细信息
+ * @param {object} args 
+ * @param {object} args.roomInfo 聊天室信息（头像，名称）
+ * @param {Function} args.success 
+ * @param {Function} args.fail 
+ */
+const set_room_info = function(args){
+    let {roomInfo, success, fail} = {...args};
+    net.send({
+        cmd: cmds.set_room_info,
+        data: roomInfo,
+        success,fail
     });
 }
 /**
@@ -518,6 +568,7 @@ const quit = function(args) {
 }
 export default{
     get_room_info,
+    set_room_info,
     send_msg,
     get_room_list,
     set_room_list,

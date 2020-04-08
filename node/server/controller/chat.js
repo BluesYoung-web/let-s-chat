@@ -140,12 +140,25 @@ const invite_into_chat_room = function(args){
 }
 /**
  * 退群
+ * @param {number} uid 当前用户uid
+ * @param {number} roomId 聊天室id
  */
 const quit_from_chat_room = function(uid, roomId){
     let sql = `delete from chat_room_users where uid = ${uid} and chatRoomId = ${roomId};`;
     return sqlPro(sql);
 }
-
+/**
+ * 设置聊天室信息(名称，头像)
+ * @param {object} args 
+ * @param {string} args.title 聊天室名称
+ * @param {string} args.avatar 聊天室头像
+ * @param {number} args.id 聊天室id
+ */
+const set_room_info = function(args){
+    let {title, avatar, id} = {...args};
+    let sql = `update chat_room set title = '${title}', avatar = '${avatar}' where id = ${id};`;
+    return sqlPro(sql);
+}
 module.exports = {
     create_chat_room,
     get_room_info,
@@ -153,4 +166,5 @@ module.exports = {
     del_chat_room,
     invite_into_chat_room,
     quit_from_chat_room,
+    set_room_info
 }

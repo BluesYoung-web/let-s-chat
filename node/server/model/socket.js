@@ -290,8 +290,8 @@
                             }
                             store.create_chat_room(room).then((data) => {
                                 let msg = {
-                                    ot: Date.parse(new Date()), // 原始时间戳
-                                    type: 3, //系统消息
+                                    ot: Date.parse(new Date()),
+                                    type: 3,
                                     content: '你们已经是好友了，打个招呼吧!',
                                     roomId: data.data.roomId
                                 }
@@ -350,8 +350,20 @@
         switch (cmd) {
             case 400:
                 // 创建聊天室
-                store.create_chat_room(data).then((data) => {
-                    this.opSuccess(data, cbk, extra);
+                store.create_chat_room(data).then((dt) => {
+                    this.opSuccess(dt, cbk, extra);
+                    // 向群聊内的所有人推送系统消息
+                    let msg = {
+                        ot: Date.parse(new Date()), 
+                        type: 3, 
+                        content: '群聊创建成功，快来聊天吧！',
+                        roomId: dt.data.roomId
+                    }
+                    let tp = {
+                        roomId: msg.roomId,
+                        msg
+                    }
+                    this.push(103, 0, 0, tp, data.users);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -372,6 +384,23 @@
                     this.opSuccess({data: '消息发送成功'}, cbk, extra);
                 }).catch((msg) => {
                     this.opFail('消息发送失败', cbk, extra);
+                });
+                break;
+            case 403: 
+                // 拉人进聊天室
+
+                break;
+            case 404: 
+                // 退群
+                break;
+            case 405:
+                // 设置聊天室信息
+                store.set_room_info(data).then((dt) => {
+                    this.opSuccess(dt, cbk, extra);
+                    // 推送修改后的消息
+                    this.push(103, 0, 1, data, data.users);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
                 });
                 break;
             default:

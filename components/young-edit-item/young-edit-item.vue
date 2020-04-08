@@ -125,6 +125,12 @@
 </script>
 
 <style>
+	/* 文字只显示一行，超出部分省略号 */
+	.one-line-ellipsis{
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	}
 	.mg-rt20{
 		margin-right: 20upx;
 	}
@@ -238,6 +244,7 @@
 	}
 	.signOutItem{
 		height: 100upx;
+		width: 750upx;
 		background-color: #FFFFFF;
 		margin-top: 20upx;
 	}

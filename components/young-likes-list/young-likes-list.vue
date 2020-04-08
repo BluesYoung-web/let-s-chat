@@ -73,7 +73,7 @@
 	.userHead image{
 		height: 65upx;
 		width: 65upx;
-		border: 1upx solid @codeBorder;
+		border: 1upx solid #344955;
 		border-radius: 50%;
 	}
 	.commentContent{
@@ -84,6 +84,6 @@
 	}
 	.userName text{
 		font-size: 25upx;
-		color: @codeBorder;
+		color: #344955;
 	}
 </style>

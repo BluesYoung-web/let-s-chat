@@ -16,7 +16,7 @@
 				</view>
 				<view class="uni-navbar__header-container uni-navbar__content_view">
 					<view class="uni-navbar__header-container-inner uni-navbar__content_view" v-if="title.length">
-						<text class="uni-nav-bar-text" :style="{color: color, fontSize: '39upx', fontWeight: 'bold'}">{{ title }}</text>
+						<text class="uni-nav-bar-text one-line-ellipsis" :style="{color: color, fontSize: '39upx', fontWeight: 'bold'}">{{ title }}</text>
 					</view>
 					<!-- 标题插槽 -->
 					<slot />
@@ -117,6 +117,14 @@
 </script>
 
 <style lang="scss" scoped>
+	/* 文字只显示一行，超出部分省略号 */
+	.one-line-ellipsis{
+		width: 500upx;
+		text-align: center;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
 	$nav-height: 44px;
 	.uni-nav-bar-text {
 		/* #ifdef APP-PLUS */

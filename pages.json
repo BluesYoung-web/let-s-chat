@@ -115,7 +115,19 @@
 		{
 			"path": "pages/messageSubpackage/conversation",
 			"style": {
-				"navigationBarTitleText": "用户昵称"
+				// "navigationBarTitleText": "用户昵称",
+				// "app-plus": {
+				// 	"titleNView": {
+				// 		"buttons": [
+				// 			{
+				// 				"fontSize": "24px",
+				// 				"text": "\ue532",
+				// 				"fontSrc": "/static/ttf/uni.ttf"
+				// 			}
+				// 		]
+				// 	}
+				// }
+				"navigationStyle":"custom"
 			}
 		}, {
 			"path": "pages/findsSubpackage/comments",
@@ -201,7 +213,26 @@
 			"style": {
 				"navigationBarTitleText": "新的朋友"
 			}
-		}
+		}, {
+            "path" : "pages/messageSubpackage/chatRoomInfo",
+            "style" : {
+				"navigationBarTitleText": "群聊详情"
+			}
+        }, {
+            "path" : "pages/messageSubpackage/changeChatRoomName",
+            "style" : {
+				"navigationBarTitleText": "修改群聊名称",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue6a3",
+							"fontSize": "25px",
+							"fontSrc": "/static/ttf/finish.ttf"
+						}]
+					}
+				}
+			}
+        }
     ],
 	// 全局样式配置
 	"globalStyle": {

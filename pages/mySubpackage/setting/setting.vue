@@ -247,19 +247,6 @@
 	page{
 		background-color: @bgcolor;
 	}
-	.changePhoneItem, .aboutItem, .clearItem, .signOutItem{
-		height: 100upx;
-		background-color: @colorF;
-		margin-bottom: 20upx;
-	}
-	
-	/* 右图标 */
-	.rightIcon{
-		width: 30upx;
-		height: 30upx;
-		margin-left: 30upx;
-	}
-	
 	
 	/* 弹出层样式集合 */
 	.item{

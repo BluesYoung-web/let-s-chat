@@ -1,12 +1,16 @@
 <template>
 	<!-- 对话页面 -->
 	<view class="flex flex-direction-column">
+		<!-- 自定义导航栏 -->
+		<uni-nav-bar left-icon="back" :right-icon="roomType == 1 ? 'more-filled' : ''"
+		background-color="#344955" color="#fff" :title="title"
+		@clickLeft="back" @clickRight="toSetting"></uni-nav-bar>
 		<!-- 聊天记录 -->
 		<view class="content" @tap="takeBack">
 			<scroll-view scroll-y="true" :scroll-with-animation="true" :style="{height:scrollHeight + 'px'}"
 			 :scroll-top="scrollTop" id="sc">
 			 <view class="scroll">
-			 	<msg-item v-for="(item, index) in messages" :message="item" :key="index"
+				<msg-item v-for="(item, index) in messages" :message="item" :key="index"
 				@preImg="preImg" @clickAvatar="clickAvatar" @playVoice="playVoice"></msg-item>
 			 </view>
 			</scroll-view>
@@ -42,6 +46,7 @@
 	import keyBoard from '@/components/young-key-board/young-key-board.vue';
 	import msgItem from '@/components/young-msg-item/young-msg-item.vue';
 	import extInput from '@/components/young-ext-input/young-ext-input.vue';
+	import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue';
 	import data from '@/data.js';
 	import tools from '@/core/tools';
 	export default{
@@ -49,7 +54,8 @@
 			emojiInput,
 			keyBoard,
 			msgItem,
-			extInput
+			extInput,
+			uniNavBar
 		},
 		mounted() {
 			this.scrollToBottom(-50);
@@ -137,9 +143,17 @@
 				 */
 				roomId: null,
 				/**
+				 * 聊天室类型 0-私聊 1-群聊
+				 */
+				roomType: 0,
+				/**
 				 * 当前用户信息
 				 */
-				user: {}
+				user: {},
+				/**
+				 * 聊天室名称
+				 */
+				title: ''
 			}
 		},
 		watch: {
@@ -171,6 +185,7 @@
 				this.isVoice = true;
 			} 
 			if(e.title) {
+				this.title = e.title;
 				uni.setNavigationBarTitle({
 					title: e.title
 				});
@@ -179,7 +194,9 @@
 			data.chat.get_room_info({
 				roomId: this.roomId,
 				success: (res) => {
+					this.roomType = res.type;
 					if (res.title != 'null' && res.title != e.title) {
+						this.title = res.title;
 						uni.setNavigationBarTitle({
 							title: res.title
 						});
@@ -232,6 +249,20 @@
 			});
 		},
 		methods:{
+			/**
+			 * 点击导航栏返回
+			 */
+			back(){
+				uni.navigateBack();
+			},
+			/**
+			 * 去群聊设置页
+			 */
+			toSetting(){
+				uni.navigateTo({
+					url: `chatRoomInfo?roomId=${this.roomId}`
+				});
+			},
 			/**
 			 * 改变输入类型
 			 */
@@ -426,10 +457,10 @@
 				info2.boundingClientRect((data)=>{
 					//屏幕高度-底部键盘区高度
 					// #ifdef APP-PLUS
-					this.scrollHeight = this.scrollHeight - data.height - 10;
+					this.scrollHeight = this.scrollHeight - data.height - 54;
 					// #endif
 					// #ifdef H5
-					this.scrollHeight = this.scrollHeight - data.height - h;
+					this.scrollHeight = this.scrollHeight - data.height -44 - h;
 					// #endif
 				}).exec();
 				let info = uni.createSelectorQuery().select(".scroll");

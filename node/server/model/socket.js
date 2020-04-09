@@ -388,10 +388,55 @@
                 break;
             case 403: 
                 // 拉人进聊天室
-
+                store.invite_into_chat_room(data).then((dt) => {
+                    this.opSuccess(dt, cbk, extra);
+                    // 给聊天室内的所有人推送系统消息
+                    store.get_room_info(data.roomId).then((tp) => {
+                        let users = data.users;
+                        for (const iterator of users) {
+                            store.get_user_info_by_uid(iterator).then((person) => {
+                                let content = `${person.data.nick} 加入了群聊，欢迎`;
+                                let msg = {
+                                    ot: Date.parse(new Date()), 
+                                    type: 3, 
+                                    content,
+                                    roomId: data.roomId
+                                }
+                                let temp = {
+                                    roomId: msg.roomId,
+                                    msg
+                                }
+                                this.push(103, 0, 0, temp, tp.data.users);
+                            });
+                        }
+                    });
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
                 break;
             case 404: 
                 // 退群
+                store.quit_from_chat_room(data.roomId).then((dt) => {
+                    this.opSuccess(dt, cbk, extra);
+                    // 给聊天室内剩余的人推送消息
+                    store.get_room_info(data.roomId).then((tp) => {
+                        let users = tp.data.users;
+                        store.get_user_info_by_uid(this.uid).then((person) => {
+                            let content = `${person.data.nick} 退出了群聊`;
+                            let msg = {
+                                ot: Date.parse(new Date()), 
+                                type: 3, 
+                                content,
+                                roomId: data.roomId
+                            }
+                            let temp = {
+                                roomId: msg.roomId,
+                                msg
+                            }
+                            this.push(103, 0, 0, temp, users);
+                        });
+                    });
+                })
                 break;
             case 405:
                 // 设置聊天室信息

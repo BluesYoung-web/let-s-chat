@@ -744,12 +744,13 @@ class Store{
      * 拉人进聊天室
      */
     invite_into_chat_room(data){
+        const {myredis} = require('../database/conn');
         const chat = require('../controller/chat');
         return new Promise((resolve, reject) => {
             chat.invite_into_chat_room(data).then((dt) => {
                 // 更新聊天室信息缓存
                 chat.get_room_info(data.roomId).then((tp) => {
-                    myredis.set(`${roomId}.roomInfo`, JSON.stringify(tp)).then(() => {
+                    myredis.set(`${data.roomId}.roomInfo`, JSON.stringify(tp)).then(() => {
                         resolve({
                             data: dt,
                             extra: {

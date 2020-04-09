@@ -232,6 +232,11 @@
 					}
 				}
 			}
+        }, {
+            "path" : "pages/messageSubpackage/inviteToChatRoom",
+            "style" : {
+				"navigationStyle":"custom"
+			}
         }
     ],
 	// 全局样式配置

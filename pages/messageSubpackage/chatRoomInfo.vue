@@ -69,24 +69,64 @@
 			});
 		},
 		methods: {
+			/**
+			 * 点击用户头像，进入用户详情页
+			 */
 			toUserInfo(uid){
 				uni.navigateTo({
 					url: `/pages/addressSubpackage/friendsInfo?uid=${uid}`
 				});
 			},
+			/**
+			 * 拉人进群
+			 */
 			invite(){
-				console.log('拉人进群');
+				uni.navigateTo({
+					url: `/pages/messageSubpackage/inviteToChatRoom?roomId=${this.roomId}`
+				});
 			},
+			/**
+			 * 退群
+			 */
 			quit(){
-				console.log('退群');
+				uni.showModal({
+					title: '确定退出该群？',
+					content: '将同时删除聊天记录',
+					success: (res) => {
+						if (res.confirm) {
+							data.chat.quit({
+								roomId: this.roomId,
+								success: (res) => {
+									console.log(res);
+									// 删记录
+									data.chat.clear_chat_log_list({
+										roomId: this.roomId,
+										success: () => {
+											uni.showToast({
+												title: '退出群聊成功'
+											});
+											uni.reLaunch({
+												url:'/pages/tabBar/message'
+											});
+										}
+									});
+								}
+							});
+						}
+					}
+				});
 			},
-			//去修改昵称的页面
+			/**
+			 * 修改群名
+			 */
 			toChangeName(){
 				uni.navigateTo({
 					url: `changeChatRoomName?roomId=${this.roomId}`
 				});
 			},
-			// 打开修改头像面板
+			/**
+			 * 修改群头像
+			 */
 			openPopup(){
 				this.showPopup = true;
 			},

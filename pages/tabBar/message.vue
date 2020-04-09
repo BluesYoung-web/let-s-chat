@@ -166,18 +166,18 @@
 						}
 					});
 				}
-				// // 存储到缓存
-				// data.chat.set_list({
-				// 	value: this.dataList,
-				// 	success: () => {
-				// 		console.log("缓存修改成功");
-				// 		// 重新渲染
-				// 		this.init();
-				// 	},
-				// 	fail: () => {
-				// 		console.log("缓存修改失败");
-				// 	}
-				// });
+				// 存储到缓存
+				data.chat.set_room_list({
+					roomList: this.dataList,
+					success: () => {
+						console.log("缓存修改成功");
+						// 重新渲染
+						this.init();
+					},
+					fail: () => {
+						console.log("缓存修改失败");
+					}
+				});
 			},
 			/**
 			 * 取消置顶
@@ -187,18 +187,18 @@
 				this.dataList.sort((a, b) => b.ot - a.ot);
 				// 改变样式
 				this.dataList.map((v) => v.roomId == item.roomId ? v.isTop = 0 : v.isTop = v.isTop || 0);
-				// // 存储到缓存
-				// data.chat.set_list({
-				// 	value: this.dataList,
-				// 	success: () => {
-				// 		console.log("缓存修改成功");
-				// 		// 重新渲染
-				// 		this.init();
-				// 	},
-				// 	fail: () => {
-				// 		console.log("缓存修改失败");
-				// 	}
-				// });
+				// 存储到缓存
+				data.chat.set_room_list({
+					roomList: this.dataList,
+					success: () => {
+						console.log("缓存修改成功");
+						// 重新渲染
+						this.init();
+					},
+					fail: () => {
+						console.log("缓存修改失败");
+					}
+				});
 			},
 			/**
 			 * 标记为已读
@@ -217,23 +217,41 @@
 			 * 删除某条对话
 			 */
 			deleteMessage(item, index) {
-				this.dataList.splice(index, 1);
-				//同时减少消息tabBar右上角数字，num为零时移除
-				this.changMsgNum();
-				let roomId = item.roomId;
-				// 存储到缓存
-				data.chat.set_room_list({
-					roomList: this.dataList,
-					success: () => {
-						console.log("缓存修改成功");
-						// 重新渲染
-						this.init();
-					},
-					fail: () => {
-						console.log("缓存修改失败");
+				uni.showModal({
+					title: '提示',
+					content: '删除该对话及删除对应的聊天记录？',
+					success: (res) => {
+						this.dataList.splice(index, 1);
+						//同时减少消息tabBar右上角数字，num为零时移除
+						this.changMsgNum();
+						let roomId = item.roomId;
+						if (res.confirm) {
+							data.chat.clear_chat_log_list({
+								roomId,
+								success: () => {
+									console.log('删除该聊天记录成功');
+									this.init();
+								},
+								fail: () => {
+									console.log('删除该聊天记录失败');
+								}
+							});
+						} else{
+							// 存储到缓存
+							data.chat.set_room_list({
+								roomList: this.dataList,
+								success: () => {
+									console.log("缓存修改成功");
+									// 重新渲染
+									this.init();
+								},
+								fail: () => {
+									console.log("缓存修改失败");
+								}
+							});
+						}
 					}
-				});
-				
+				})
 			},
 			/**
 			 * 直接点击对话进入某个聊天室
@@ -285,8 +303,8 @@
 						console.log(JSON.stringify(this.dataList));
 						// 显示tabBar的角标
 						this.changMsgNum();
-					});
-				}, 500);
+					}, true);
+				}, 100);
 			}
 		},
 		computed:{

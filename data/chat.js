@@ -153,9 +153,12 @@ const send_msg = function(args){
 /**
  * 获取消息列表
  * @param {Function} success
+ * @param {boolean} force 
  */
-const get_room_list = function(success){
+const get_room_list = function(success, force){
+    force = force || false;
     data.user.get_info({
+        force,
         success: (res) =>{
             let uid = res.uid;
             store.get({
@@ -552,14 +555,16 @@ const invite = function(args){
 }
 /**
  * 退群
- * @param {*} args 
+ * @param {object} args 
+ * @param {number} args.roomId
+ * @param {Function} args.success 
+ * @param {Function} args.fail 
  */
 const quit = function(args) {
-    let {roomId, users, success, fail} = {...args};
+    let {roomId, success, fail} = {...args};
     net.send({
         cmd: cmds.quit,
         data: {
-            users,
             roomId
         },
         success,

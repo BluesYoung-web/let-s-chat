@@ -14,6 +14,9 @@
 		<!-- 新朋友 -->
 		<icon-list iconType="personadd-filled" color='#1BB723' title="新的朋友" 
 		@click="toFriendCheck" :showRed="hasFriendCheck"></icon-list>
+		<!-- 我的群 -->
+		<icon-list iconType="chatboxes-filled" color='#2597E9' title="我加入的群聊" 
+		@click="toMyChatRoom"></icon-list>
 		<!-- 常用联系人列表 -->
 		<close-friend :closeFriend="closeFriend" @toFriendInfo="toFriendInfo"></close-friend>
 		<!-- 好友列表 -->
@@ -41,12 +44,20 @@
 			bubbleMenu,
 			iconList
 		},
+		onLoad(){
+			data.user.get_info({
+				success: (res) => {
+					this.user = res;
+				}
+			})
+		},
 		onShow(){
 			uni.$once('hasFriendCheck', () => {
 				this.hasFriendCheck = true;
 			});
 			this.allFriendList = [];
 			this.friendsList = [];
+			this.closeFriend = [];
 			data.friend.get_list({
 				force: true,
 				success: (dt) => {
@@ -67,6 +78,31 @@
 					console.log(code, err);
 				}
 			});
+			data.chat.get_room_list((res) => {
+				let arr = [];
+				for (const iterator of res) {
+					data.chat.get_room_info({
+						roomId: iterator.roomId,
+						success: (res) => {
+							if (res.type == 0) {
+								let users = res.users;
+								users = users.filter((item) => item != this.user.uid);
+								arr.push(users[0]);
+							}
+						}
+					});
+				}
+				setTimeout(() => {
+					for (const iterator of arr) {
+						data.friend.get_info({
+							uid: iterator,
+							success: (res) => {
+								this.closeFriend.push(res);
+							}
+						});
+					}
+				}, 500);
+			}, true);
 		},
 		onPullDownRefresh() {
 			this.allFriendList = [];
@@ -140,7 +176,8 @@
 					title: '帮助与反馈',
 					icon: 'email'
 				}],
-				hasFriendCheck: false
+				hasFriendCheck: false,
+				user: {}
 			}
 		},
 		methods: {
@@ -192,7 +229,7 @@
 			 */
 			toFriendInfo(item) {
 				uni.navigateTo({
-					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}`
+					url:`/pages/addressSubpackage/friendsInfo?uid=${item}`
 				});
 			},
 			/**
@@ -211,6 +248,14 @@
 				});
 				uni.navigateTo({
 					url:'/pages/addressSubpackage/friendCheck'
+				});
+			},
+			/**
+			 * 去我的群聊页面
+			 */
+			toMyChatRoom(){
+				uni.navigateTo({
+					url: '/pages/addressSubpackage/myChatRoom'
 				});
 			}
 		},

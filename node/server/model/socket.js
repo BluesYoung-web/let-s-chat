@@ -448,6 +448,14 @@
                     this.opFail(msg, cbk, extra);
                 });
                 break;
+            case 406:
+                // 获取我加入的群聊
+                store.get_my_qun().then((data) => {
+                    this.opSuccess(data, cbk, extra);
+                }).catch((msg) => {
+                    this.opFail(msg, cbk, extra);
+                });
+                break;
             default:
                 break;
         }

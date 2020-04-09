@@ -238,6 +238,12 @@
 				"navigationStyle":"custom"
 			}
         }
+        ,{
+            "path" : "pages/addressSubpackage/myChatRoom",
+            "style" : {
+				"navigationBarTitleText": "我的群聊"
+			}
+        }
     ],
 	// 全局样式配置
 	"globalStyle": {

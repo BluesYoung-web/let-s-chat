@@ -110,7 +110,8 @@ const cmds = {
     send_msg: 402,
     invite: 403,
     quit: 404,
-    set_room_info: 405
+    set_room_info: 405,
+    get_my_qun: 406
 }
 /**
  * 根据聊天室id获取聊天室详细信息
@@ -571,6 +572,21 @@ const quit = function(args) {
         fail
     });
 }
+/**
+ * 获取我加入的群聊
+ * @param {object} args
+ * @param {Function} args.success 
+ * @param {Function} args.fail 
+ */
+const get_my_qun = function(args){
+    let {success, fail} = {...args};
+    net.send({
+        cmd: cmds.get_my_qun,
+        data: {},
+        success, 
+        fail
+    });
+}
 export default{
     get_room_info,
     set_room_info,
@@ -582,5 +598,6 @@ export default{
     clear_msg_num,
     create_room,
     invite,
-    quit
+    quit,
+    get_my_qun
 }

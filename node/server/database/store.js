@@ -810,6 +810,21 @@ class Store{
             });
         });
     }
+    /**
+     * 获取我加入的群聊
+     */
+    get_my_qun(){
+        const chat = require('../controller/chat');
+        return new Promise((resolve, reject) => {
+            chat.get_my_qun(this.uid).then((dt) => {
+                resolve({
+                    data: dt
+                });
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = Store;

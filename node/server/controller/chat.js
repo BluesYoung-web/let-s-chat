@@ -159,6 +159,26 @@ const set_room_info = function(args){
     let sql = `update chat_room set title = '${title}', avatar = '${avatar}' where id = ${id};`;
     return sqlPro(sql);
 }
+/**
+ * 获取我加入的群聊
+ * @param {number} uid 当前用户uid
+ */
+const get_my_qun = function(uid){
+    let sql = `SELECT chat_room.id from chat_room,chat_room_users 
+                where chat_room.id = chat_room_users.chatRoomId
+                and chat_room.type = 1 and chat_room_users.uid = ${uid};`;
+    return new Promise((resolve, reject) => {
+        mysqlQuery(sql).then((data) => {
+            let arr = [];
+            for (const iterator of data) {
+                arr.push(iterator.id);
+            }
+            resolve(arr);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
 module.exports = {
     create_chat_room,
     get_room_info,
@@ -166,5 +186,6 @@ module.exports = {
     del_chat_room,
     invite_into_chat_room,
     quit_from_chat_room,
-    set_room_info
+    set_room_info,
+    get_my_qun
 }

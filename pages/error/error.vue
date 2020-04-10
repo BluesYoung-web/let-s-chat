@@ -8,7 +8,8 @@
 <script>
 	import data from '@/data.js';
 	const codeList = {
-		404: '/pages/common/login'
+		404: '/pages/common/login',
+		4000: '/pages/common/login'
 	}
 	export default {
 		onLoad(e) {

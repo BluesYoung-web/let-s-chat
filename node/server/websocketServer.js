@@ -13,7 +13,7 @@ const Socket = require('./model/socket');
  * websocket连接参数分离
  */
 const {paramsSeparate} = require('./core/tools');
-const {resFormat} = require('./core/tools');
+const {resFormat, pushFormat} = require('./core/tools');
 
 /**
  * 创建websocket服务器
@@ -46,11 +46,11 @@ const tokenCheck = function(sign, uid, conn){
                 str = JSON.parse(str);
                 socket.msgProcess(str);
             });
-            conn.on('close', (reason) => {
-                console.log('socket服务器关闭'+reason);
+            conn.on('close', (code, reason) => {
+                console.log('socket服务器关闭:\n' + code + reason);
             });
-            conn.on('error', (reason) => {
-                console.log('服务器异常关闭'+reason);
+            conn.on('error', (code, reason) => {
+                console.log('服务器异常关闭:\n' + code + reason);
             });
             let str = resFormat({
                 status: 0,
@@ -59,6 +59,23 @@ const tokenCheck = function(sign, uid, conn){
                 }
             });
             conn.sendText(str);
+            // 挤号
+            let onlines = getOnlines(websocketServer);
+            for (const iterator of onlines) {
+                if (iterator.uid == uid && iterator.key != socket.conn.key) {
+                    iterator.sendText(pushFormat({
+                        model: 100,
+                        type: 0,
+                        id: 4000,
+                        data: {
+                            tips: '账号异地登录，请重新登陆'
+                        }
+                    }));
+                    setTimeout(() => {
+                        iterator.close(4000, '账号异地登录');
+                    }, 1000);
+                }
+            }
         } else {
             // 验证失败
             let str = resFormat({
@@ -69,11 +86,24 @@ const tokenCheck = function(sign, uid, conn){
             });
             conn.sendText(str);
             setTimeout(() => {
-                conn.close();
+                conn.close(400, 'token验证失败');
             }, 1000);
         }
     });
 }
 
+/**
+ * 获取在线用户，后期用于挤号
+ */
+const getOnlines = function(server){
+    let connections = server.connections;
+    const onlines = [];
+    for (let i of connections) {
+        let {uid} = paramsSeparate(i.path);
+        i.uid = uid;
+        onlines.push(i);
+    }
+    return onlines;
+}
 
 module.exports = websocketServer;

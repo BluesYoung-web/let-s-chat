@@ -24,6 +24,16 @@ const prefix = 'user';
  * 模块id
  */
 const model = 100;
+event.register({
+    model,
+    type: 0,
+    id: 4000,
+    on_event: (mode, type, id, data) => {
+        if (type == 0 && id == 4000) {
+            err(4000);
+        }
+    }
+});
 /**
  * 指令集
  */

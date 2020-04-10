@@ -23,7 +23,7 @@
         const onlines = {};
         const {paramsSeparate} = require('../core/tools');
         for (let i of connections) {
-            let {uid} = paramsSeparate(i.path)
+            let {uid} = paramsSeparate(i.path);
             onlines[uid] = i;
         }
         return onlines;

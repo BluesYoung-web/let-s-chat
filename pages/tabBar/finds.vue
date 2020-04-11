@@ -3,7 +3,7 @@
 		<view class="" v-for="(item, index) in findsList" :key="index">
 			<icon-list @click="toGo(item)" class="mg-tp20" 
 			:iconType="item.iconType" :iconUrl="item.iconUrl" :title="item.title"
-			:showRed="hasNewCircle"></icon-list>
+			:showRed="item.hasNewCircle"></icon-list>
 		</view>
 	</view>
 </template>
@@ -18,13 +18,17 @@
 				findsList: [{
 					iconType: 'pengyouquan',
 					title: '好友圈'
+				},{
+					iconUrl: '/static/img/xinguan.png',
+					title: '新冠肺炎疫情'
 				}],
-				hasNewCircle: false
+				hasNewCircle: false,
+				xinguan: 'https://ncov.dxy.cn/ncovh5/view/pneumonia?share=0&source=xiaomi'
 			}
 		},
 		onShow(){
 			uni.$once('hasNewCircle', () => {
-				this.hasNewCircle = true;
+				this.findsList[0].hasNewCircle = true;
 			});
 		},
 		methods:{
@@ -34,9 +38,11 @@
 						uni.hideTabBarRedDot({
 							index: 2
 						});
-						this.hasNewCircle = false;
+						this.findsList[0].hasNewCircle = false;
 						this.toCircle();
 						break;
+					case '新冠肺炎疫情':
+						this.toXinguan();
 					default:
 						break;
 				}
@@ -45,6 +51,23 @@
 				uni.navigateTo({
 					url:'/pages/findsSubpackage/circle'
 				});
+			},
+			toXinguan(){
+				// #ifdef APP-PLUS
+				plus.runtime.openURL(this.xinguan);
+				// #endif
+				// #ifdef H5
+				window.open(this.xinguan);
+				// #endif
+				// #ifdef MP
+				uni.setClipboardData({
+					data: this.xinguan
+				});
+				uni.showModal({
+					content: '本网址无法直接在小程序内打开。已自动复制网址，请在手机浏览器里粘贴该网址',
+					showCancel: false
+				});
+				// #endif
 			}
 		}
 	}

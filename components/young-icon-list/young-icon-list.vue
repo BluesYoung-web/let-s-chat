@@ -4,7 +4,7 @@
 		<view @click="btnClick" class="bg-fff pd-lr20 width-750 height-100  flex flex-direction-row flex-vc flex-jsb">
 			<view class="h100 line-h100 flex flex-vc">
 				<uni-icons v-if="iconType" :type="iconType" :size="size" :color='color'></uni-icons>
-				<image v-if="!iconType" class="width-50 height-50" :src="iconUrl" mode=""></image>
+				<image v-if="!iconType" class="width-72 height-72" :src="iconUrl" mode=""></image>
 				<text class="pd-lt10 ft-30 color-333">{{title}}</text>
 			</view>
 			<view class="flex flex-ac">
@@ -38,12 +38,10 @@
 			iconUrl: {
 				type: String,
 				default: '/static/img/message.png',
-				// required: true
 			},
 			title: {
 				type: String,
 				default: '默认信息',
-				// required:true
 			},
 			showRed: {
 				type: [String, Boolean],
@@ -108,11 +106,11 @@
 	.width-750{
 		width: 750upx;
 	}
-	.width-50{
-		width: 50upx;
+	.width-72{
+		width: 72upx;
 	} 
-	.height-50{
-		height: 50upx;
+	.height-72{
+		height: 72upx;
 	}
 	.pd-lr20{
 		padding: 0 20upx;

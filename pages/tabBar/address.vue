@@ -229,7 +229,7 @@
 			 */
 			toFriendInfo(item) {
 				uni.navigateTo({
-					url:`/pages/addressSubpackage/friendsInfo?uid=${item}`
+					url:`/pages/addressSubpackage/friendsInfo?uid=${item.uid}`
 				});
 			},
 			/**

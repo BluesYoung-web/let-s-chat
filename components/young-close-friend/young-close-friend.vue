@@ -7,7 +7,7 @@
 			</view>
 			<!-- 后限制条件改为最近联系好友，消息发送时间 -->
 			<view class="top-contacts-head" v-for="(friend,index) in closeFriend" :key="index">
-				<image v-if="index < 4" :src="friend.avatar" mode="" @tap="toFriendInfo(friend.uid)"></image>
+				<image v-if="index < 4" :src="friend.avatar" mode="" @tap="toFriendInfo(friend)"></image>
 			</view>
 		</view>
 	</view>
@@ -31,8 +31,8 @@
 			}
 		},
 		methods: {
-			toFriendInfo(uid){
-				this.$emit('toFriendInfo', uid);
+			toFriendInfo(item){
+				this.$emit('toFriendInfo', item);
 			}
 		}
 	}

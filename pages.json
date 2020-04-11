@@ -244,6 +244,12 @@
 				"navigationBarTitleText": "我的群聊"
 			}
         }
+        ,{
+            "path" : "pages/error/networkError",
+            "style" : {
+				"navigationBarTitleText":"无网络连接"
+			}
+        }
     ],
 	// 全局样式配置
 	"globalStyle": {

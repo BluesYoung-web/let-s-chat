@@ -9,6 +9,7 @@
 		:popData="popData" @close="close" @clickMenu="clickMenu"></bubble-menu>
 		<!-- 聊天列表组件 -->
 		<scroll-view scroll-y="true">
+			<mz-network-error @clickFn="netError"></mz-network-error>
 			<chat-item :dataList = "dataList" @clickInto = "onClickInto" @clickChoice = "onClickChoice"
 			></chat-item>
 		</scroll-view>
@@ -17,6 +18,7 @@
 
 <script>
 	import chatItem from '@/components/young-chat-item/young-chat-item.vue';
+	import mzNetworkError from '@/components/mz-network-error/mz-network-error.vue'
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
 	import bubbleMenu from "@/components/young-bubble-menu/young-bubble-menu.vue";
 	import data from '@/data.js';
@@ -24,7 +26,8 @@
 		components:{
 			chatItem,
 			uniNavBar,
-			bubbleMenu
+			bubbleMenu,
+			mzNetworkError
 		},
 		data(){
 			return {
@@ -89,6 +92,14 @@
 			}
 		},
 		methods:{
+			/**
+			 * 网络错误
+			 */
+			netError(){
+				uni.navigateTo({
+					url: '/pages/error/networkError'
+				});
+			},
 			/**
 			 * 点击右上角加号
 			 */

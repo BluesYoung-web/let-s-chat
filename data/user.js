@@ -24,6 +24,9 @@ const prefix = 'user';
  * 模块id
  */
 const model = 100;
+/**
+ * 异地登录
+ */
 event.register({
     model,
     type: 0,
@@ -31,6 +34,32 @@ event.register({
     on_event: (mode, type, id, data) => {
         if (type == 0 && id == 4000) {
             err(4000);
+        }
+    }
+});
+/**
+ * websocket连接断开
+ */
+event.register({
+    model,
+    type: 4001,
+    id: 0,
+    on_event: (model, type, id, data) => {
+        if (type == 4001 && id == 0) {
+            err(4001);
+        }
+    }
+});
+/**
+ * 多次自动重连失败
+ */
+event.register({
+    model,
+    type: 4002,
+    id: 0,
+    on_event: (model, type, id, data) => {
+        if (type == 4002 && id == 0) {
+            err(4002);
         }
     }
 });

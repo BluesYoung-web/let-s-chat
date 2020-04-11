@@ -148,10 +148,10 @@ class Socket{
 		if(this.maxReConnectNum && !this.is_open_socket){
 			// 1s后自动重连
 			setTimeout(() => {
-				console.log("断线重连");
+				console.log("断线重连", this.maxReConnectNum);
 				this.init();
 				this.maxReConnectNum--;
-			},1000);
+			}, 1000);
 		}else{
 			// 超过最大重连次数
 			this.onDisconnect();

@@ -37,6 +37,12 @@ const onOpen = function(){
  */
 const onClose = function(){
     console.log("连接关闭");
+    event.dispatch({
+        model: 100,
+        type: 4001,
+        id: 0,
+        data: "连接已断开"
+    })
 }
 /**
  * 收到消息的回调函数
@@ -82,19 +88,14 @@ const onMessage = function(data){
 	}
 }
 /**
- * 连接出错的回调函数
- */
-const onError = function(){
-    console.log("连接出错");
-}
-/**
  * 连接失败的回调函数
  */
 const onDisconnect = function(){
     console.log("连无法连接到网络，请检查网络连接后重试");
     event.dispatch({
         model: 100,
-        type: 4001, 
+        type: 4002,
+        id: 0, 
         data:"超过最大重连次数"
     });
 }
@@ -116,7 +117,6 @@ const init = function(success){
         onOpen,
         onClose,
         onMessage,
-        onError,
         onDisconnect
     });
     success && socket.init(success);

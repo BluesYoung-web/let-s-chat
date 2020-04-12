@@ -12,7 +12,9 @@
 					<view class="height-200 flex flex-direction-row flex-vc pd-lr20" @click="onClickInto(item)">
 						<!-- 朋友头像框 -->
 						<view class="message-head relative">
-							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
+							<img-cache defaultImg="/static/img/qun.png" :src="item.imgUrl"
+							setStyle="width: 120upx; height: 120upx; border-radius: 50% !important;"
+							></img-cache>
 							<!-- 未读消息的角标 -->
 							<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
 							<text v-if="item.msgNum > 99" class="icon">99+</text>
@@ -32,7 +34,10 @@
 					<view :style="{'backgroundColor':(item.isTop == 1 ? 'aliceblue' : '#fff')}" class="height-200 flex flex-direction-row flex-vc pd-lr20">
 						<!-- 朋友头像框 -->
 						<view class="message-head relative">
-							<image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image>
+							<!-- <image class="width-120 height-120 bd-rd50" :src="item.imgUrl" mode="aspectFill"></image> -->
+							<img-cache defaultImg="/static/img/qun.png" :src="item.imgUrl"
+							setStyle="width: 120upx; height: 120upx; border-radius: 50% !important;"
+							></img-cache>
 							<!-- 未读消息的角标 -->
 							<text v-if="0 < item.msgNum && item.msgNum <= 99" class="icon">{{item.msgNum}}</text>
 							<text v-if="item.msgNum > 99" class="icon">99+</text>
@@ -55,6 +60,7 @@
 <script>
 	import uniSwipeAction from '@/components/uni-swipe-action/uni-swipe-action.vue';
 	import uniSwipeActionItem from '@/components/uni-swipe-action-item/uni-swipe-action-item.vue';
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		/**
 		 * 组件名
@@ -65,7 +71,8 @@
 		 */
 		components: {
 			uniSwipeAction,
-			uniSwipeActionItem
+			uniSwipeActionItem,
+			imgCache
 		},
 		/**
 		 * 组件属性

@@ -7,18 +7,27 @@
 			</view>
 			<!-- 后限制条件改为最近联系好友，消息发送时间 -->
 			<view class="top-contacts-head" v-for="(friend,index) in closeFriend" :key="index">
-				<image v-if="index < 4" :src="friend.avatar" mode="" @tap="toFriendInfo(friend)"></image>
+				<img-cache v-if="index < 4"
+				 defaultImg="/static/img/avatar.png" :src="friend.avatar"
+				@clickAvatar="toFriendInfo(friend)"></img-cache>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		/**
 		 * 组件名称
 		 */
 		name: 'closeFriend',
+		/**
+		 * 组件依赖
+		 */
+		components: {
+			imgCache
+		},
 		/**
 		 * 组件参数
 		 */

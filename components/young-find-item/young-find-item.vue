@@ -4,7 +4,7 @@
         <view class="dynamic-information">
             <!-- 好友头像 -->
             <view class="friends-head" @tap="toFriendsInfo(item.userId)">
-                <image lazy-load="true" :src="item.avatar" mode="aspectFill"></image>
+				<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"></img-cache>
             </view>
             <!-- 好友信息 -->
             <view class="friends-information">
@@ -29,7 +29,9 @@
         </view>
         <!-- 动态图片 -->
         <view class="dynamic-img" @tap="watchImg(item.img)">
-            <image :src="item.img" mode="aspectFit"></image>
+            <!-- <image :src="item.img" mode="aspectFit"></image> -->
+			<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.img"
+			></img-cache>
         </view>
         <!-- 赞与留言 -->
         <view class="likes-comments">
@@ -57,11 +59,18 @@
 </template>
 
 <script>
+import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 export default {
     /**
      * 组件名
      */
     name: 'findItem',
+	/**
+	 * 组件依赖
+	 */
+	components: {
+		imgCache
+	},
     /**
      * 参数
      */

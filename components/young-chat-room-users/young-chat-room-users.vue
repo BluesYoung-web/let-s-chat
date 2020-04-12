@@ -4,7 +4,8 @@
 			<text class="chatRoomUsers-text">群成员</text>
 			<view class="userInfo">
 				<view class="userHead" v-for="(item, index) in users" :key="index">
-					<image :src="item.avatar" mode="" @tap="clickAvatar(item.uid)"></image>
+					<img-cache defaultImg="/static/img/avatar.png" :src="item.avatar"
+					@clickAvatar="clickAvatar(item.uid)"></img-cache>
 				</view>
 				<view class="userHead">
 					<image class="plus" :src="plusSrc" mode="" @tap="clickPlus"></image>
@@ -15,8 +16,12 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		name: 'chatRoomUsers',
+		components:{
+			imgCache
+		},
 		props: {
 			users: {
 				type: Array,

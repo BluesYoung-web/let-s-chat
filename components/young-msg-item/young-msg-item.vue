@@ -10,8 +10,9 @@
 			<!-- ------------文字消息-------------- -->
 			<view class="" v-if="message.type == 0">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl" 
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 					<view class="left-Textcontent">
 						{{message.content}}
 					</view>
@@ -20,16 +21,18 @@
 					<view class="right-Textcontent">
 						{{message.content}}
 					</view>
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl"
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 				</view>
 			</view>
 
 			<!-- ------------语音消息------------ -->
 			<view class="" v-if="message.type == 1">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl"
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 					<view class="left-Textcontent flex flex-direction-row flex-ac" @tap="playVoice(message.content)">
 						<image class="voice-img" src="/static/img/voiceMessage.png" mode=""></image>
 						<text class="mg-lt10 voice-txt">{{message.voiceTime + '"'}}</text>
@@ -40,16 +43,18 @@
 						<text class="mg-rt10 voice-txt">{{message.voiceTime + '"'}}</text>
 						<image class="voice-img" src="/static/img/voiceMessage.png" mode=""></image>
 					</view>
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl"
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 				</view>
 			</view>
 
 			<!-- ------------图片消息------------ -->
 			<view class="" v-if="message.type == 2">
 				<view class="flex flex-direction-row width-750 flex-as pd-lt30 mg-tp30" v-if="message.user == 'others'">
-					<image class="head_icon" :src="message.imgUrl" mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl"
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 					<view class="left-Textcontent">
 						<image :src="message.content"  class="content-img"
 						@click="preImg(message.content)" mode="aspectFit"></image>
@@ -60,8 +65,9 @@
 						<image :src="message.content"  class="content-img"
 						@click="preImg(message.content)" mode="aspectFit"></image>
 					</view>
-					<image class="head_icon" :src="message.imgUrl"  mode="aspectFill"
-					@tap="clickAvatar(message.uid)"></image>
+					<img-cache defaultImg="/static/img/finds_01.jpg" :src="message.imgUrl"
+					setStyle="width: 100upx; height: 100upx; border-radius: 10upx;"
+					@clickAvatar="clickAvatar(message.uid)"></img-cache>
 				</view>
 			</view>
 
@@ -76,8 +82,12 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		name: 'msgItem',
+		components:{
+			imgCache
+		},
 		props: {
 			message: {
 				type: Object,

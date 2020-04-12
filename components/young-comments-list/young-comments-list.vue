@@ -2,7 +2,9 @@
 	<view>
 		<view class="contentRow flex flex-js"  v-for="(item,index) in commentsList" :key="index"     >
 			<view class="userHead flex flex-je" @tap="click(item)">
-				<image :src="item.avatar" class="userHead-image"></image>
+				<img-cache defaultImg="/static/img/avatar.png" :src="item.avatar"
+				setStyle="height: 65upx; width: 65upx; border: 1upx solid #344955; border-radius: 50%;"
+				></img-cache>
 			</view>
 			<view class="commentContent">
 				<view class="userName flex flex-js" v-if="item.toNick">
@@ -23,8 +25,12 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		name: 'commentsList',
+		components:{
+			imgCache
+		},
 		props: {
 			commentsList: {
 				type: Array,

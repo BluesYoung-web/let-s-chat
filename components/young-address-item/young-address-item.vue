@@ -3,7 +3,9 @@
 		<!-- 联系人列表(正常显示) -->
 		<view v-if="type == 'addressList'">
 			<view class="flex flex-direction-row flex-vc flex-jsb width-750 height-120 pd-lr30" v-for="(item, index) in friendsList" :key="index">
-				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill" @tap="toFriendInfo(item)"></image>
+				<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"
+				setStyle="width: 80upx; height: 80upx; border-radius: 50% !important;"
+				@clickAvatar="toFriendInfo(item)"></img-cache>
 				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro" @tap="toFriendInfo(item)">
 					<text class="ft-32" v-if="item.nick">{{item.nick}}</text>
 					<text class="ft-32" v-else>{{item.title}}</text>
@@ -20,7 +22,9 @@
 				<view class="uni-list" v-for="(item, index) in friendsList" :key="index">
 					<label>
 						<checkbox class="ckbox" :value="item.uid+''"/>
-						<image class="img width-80 height-80 bd-rd50 inline-block" :src="item.avatar" mode="aspectFill"></image>
+						<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"
+						setStyle="width: 80upx; height: 80upx; border-radius: 50% !important; position: relative; left: 100upx; top: -10upx; z-index: -1; display: inline-block;"
+						></img-cache>
 						<view class="nick width-500 mg-lt20 pd-lr20 inline-block bd-bt-gainsboro">
 							<text class="ft-32">{{item.nick}}</text>
 						</view>
@@ -32,11 +36,18 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		/**
 		 * 组件名称
 		 */
 		name: 'addressItem',
+		/**
+		 * 组件依赖
+		 */
+		components: {
+			imgCache
+		},
 		/**
 		 * 组件属性
 		 */

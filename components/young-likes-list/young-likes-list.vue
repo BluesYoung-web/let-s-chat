@@ -2,7 +2,7 @@
 	<view>
 		<view class="contentRow flex flex-js"  v-for="(item,index) in likesList" :key="index">
 			<view class="userHead flex flex-jc flex-vc" @tap="click(item)">
-				<image :src="item.avatar" mode=""></image>
+				<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"></img-cache>
 			</view>
 			<view class="commentContent flex flex-vc" @tap="click(item)">
 				<view class="userName flex flex-vc">
@@ -14,8 +14,12 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		name: 'likesList',
+		components:{
+			imgCache
+		},
 		props:{
 			likesList: {
 				type: Array,

@@ -29,7 +29,8 @@
 		<!-- 好友验证 -->
 		<view v-if="type == 4">
 			<view  v-for="(item, index) in checkList" :key="index" class="flex flex-direction-row flex-vc flex-jsb width-750 height-120 pd-lr30">
-				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill"></image>
+				<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"
+				setStyle="width: 80upx; height: 80upx; border-radius: 50% !important;"></img-cache>
 				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro">
 					<text class="ft-32">{{'好友请求-'+item.nick}}</text>
 					<!-- 未处理 -->
@@ -48,7 +49,9 @@
 		<!-- 粉丝互粉 -->
 		<view v-if="type == 5">
 			<view v-for="(item, index) in fansList" :key="index" class="flex flex-direction-row flex-vc flex-jsb width-750 height-120 pd-lr30">
-				<image class="width-80 height-80 bd-rd50" :src="item.avatar" mode="aspectFill" @tap="clickUser(item)"></image>
+				<img-cache defaultImg="/static/img/finds_01.jpg" :src="item.avatar"
+				setStyle="width: 80upx; height: 80upx; border-radius: 50% !important;"
+				@clickAvatar="clickUser(item)"></img-cache>
 				<!-- 关注/取消关注 -->
 				<view class="width-600 flex flex-direction-row flex-jsb pd-lr20 h120 line-h120 bd-bt-gainsboro">
 					<text class="ft-32" @tap="clickUser(item)">{{item.nick}}</text>
@@ -63,8 +66,12 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		name: 'editItem',
+		components:{
+			imgCache
+		},
 		props: {
 			type: {
 				type: [String, Number],

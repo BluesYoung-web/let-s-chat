@@ -50,11 +50,18 @@
 </template>
 
 <script>
+	import imgCache from '@/components/young-img-cache/young-img-cache.vue';
 	export default {
 		/**
 		 * 组件名
 		 */
 		name: 'personInfo',
+		/**
+		 * 组件依赖
+		 */
+		components: {
+			imgCache
+		},
 		/**
 		 * 组件属性
 		 */

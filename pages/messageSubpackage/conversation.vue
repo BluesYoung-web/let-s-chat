@@ -559,8 +559,27 @@
 			 */
 			playVoice(src){
 				console.log('播放语音',src);
+				// #ifndef H5
+				uni.getStorage({
+					key: src,
+					success: (res) => {
+						if (res.data != '') {
+							src = res.data;
+							innerAudioContext.src = src;
+							innerAudioContext.play();
+						} else {
+							this.downLoadMp3(src);
+						}
+					},
+					fail: () => {
+						this.downLoadMp3(src);
+					}
+				});
+				// #endif
+				// #ifdef H5
 				innerAudioContext.src = src;
 				innerAudioContext.play();
+				// #endif
 			},
 			/**
 			 * 长按开始录音，取消录音提示框出现
@@ -612,6 +631,37 @@
 					this.swiper = true;
 				}
 				// #endif
+			},
+			/**
+			 * 下载音频文件
+			 */
+			downLoadMp3(src){
+				uni.downloadFile({
+					url: src,
+					success: (res) => {
+						if (res.statusCode == 200) {
+							uni.saveFile({
+								tempFilePath: res.tempFilePath,
+								success: (res) => {
+									let saveFile = res.savedFilePath;
+									uni.setStorage({
+										key: src,
+										data: saveFile,
+										success: () => {
+											innerAudioContext.src = saveFile;
+											innerAudioContext.play();
+										}
+									});
+								}
+							});
+						}else{
+							console.log('音频文件下载失败');
+						}
+					},
+					fail: () => {
+						console.log('音频文件下载失败');
+					}
+				});
 			}
 		}
 	}

@@ -48,7 +48,11 @@ class Socket{
 		/**
 		 * @type {function} 连接失败的回调函数
 		 */
-        this.onDisconnect = onDisconnect;        
+		this.onDisconnect = onDisconnect;
+		/**
+		 * @type {boolean} 主动断开标志
+		 */ 
+		this.doClose = false;
     }
     /**
 	 * socket对象初始化
@@ -139,6 +143,7 @@ class Socket{
 			}
 		}
 		this.socketTask && this.socketTask.close(params);
+		this.doClose = true;
     }
     /**
 	 * 断线重连

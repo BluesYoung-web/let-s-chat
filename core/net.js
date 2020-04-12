@@ -37,12 +37,16 @@ const onOpen = function(){
  */
 const onClose = function(){
     console.log("连接关闭");
-    event.dispatch({
-        model: 100,
-        type: 4001,
-        id: 0,
-        data: "连接已断开"
-    })
+    if(socket.doClose){
+        console.log('主动断开websocket');
+    }else{
+        event.dispatch({
+            model: 100,
+            type: 4001,
+            id: 0,
+            data: "连接已断开"
+        });
+    }
 }
 /**
  * 收到消息的回调函数

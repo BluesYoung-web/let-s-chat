@@ -111,7 +111,7 @@
                     this.opSuccess(data, cbk, extra);
                     // 给粉丝推送好友圈更新
                     store.get_follows(this.uid).then((dt) => {
-                        this.push(101, 0, 0, '有新的好友圈啦，快去看吧！', dt.data);
+                        this.push(101, 0, 0, {msg: '有新的好友圈啦，快去看吧！'}, dt.data);
                     });
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
@@ -234,7 +234,7 @@
                 store.add_friend_pre(data.uid).then((dt) => {
                     // 推送给对应的申请对象
                     this.opSuccess(dt, cbk, extra);
-                    this.push(102, 0, 0, '收到新的好友申请', [data.uid]);
+                    this.push(102, 0, 0, {msg: '收到新的好友申请'}, [data.uid]);
                 }).catch((msg) => {
                     this.opFail(msg, cbk, extra);
                 });
@@ -534,8 +534,16 @@
         myredis.get(`${this.uid}.toBePush`).then((data) => {
             if (data) {
                 data = JSON.parse(data);
+                let i = 0;
                 for (const iterator of data) {
-                    this.conn.sendText(iterator);
+                    // 避免发送过快，造成bug
+                    ((i) => {
+                        setTimeout(() => {
+                            this.conn.sendText(iterator);
+                            console.log(i*100);
+                        }, i*100);
+                    })(i);
+                    i++;
                 }
                 myredis.del(`${this.uid}.toBePush`).then(() => {
                     console.log('离线发送队列已清空');

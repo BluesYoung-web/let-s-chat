@@ -6,9 +6,7 @@
 import store from '@/core/store.js';
 import data from '@/data.js';
 import net from '@/core/net.js';
-import err from '@/core/err.js';
 import event from '@/core/event.js';
-import tools from '@/core/tools.js';
 
 /**
  * 模块id
@@ -27,46 +25,7 @@ event.register({
         }
         let roomId = dt.roomId;
         let msg = dt.msg;
-        data.user.get_info({
-            success: (res) => {
-                if (msg.type == 3 || res.uid == msg.uid) {
-                    // 系统消息或自己发的消息
-                    msg.user = 'myself';
-                } else if(msg.uid) {
-                    // 别人发的消息
-                    msg.user = 'others';
-                    uni.vibrateLong({
-                        success: function () {
-                            console.log('振动。。。。。。。');
-                        }
-                    });
-                }
-                // 添加到消息列表
-                add_to_room_list({
-                    roomId,
-                    userUid: res.uid,
-                    // 以防万一
-                    item: JSON.parse(JSON.stringify(msg)),
-                    success: () => {
-                        console.log('添加到消息列表成功');
-                        // 添加到聊天记录
-                        add_to_chat_log_list({
-                            roomId,
-                            // 修复聊天记录首条消息自动变化的bug
-                            item: JSON.parse(JSON.stringify(msg)),
-                            success: () => {
-                                console.log('添加到聊天记录成功');
-                                // 消息滚动
-                                uni.$emit(roomId+'.onMsg');
-                            }
-                        });
-                    },
-                    fail: (code, err) => {
-                        console.log(code, err);
-                    }
-                });
-            }
-        });
+        receive(msg, roomId)
     }
 });
 /**
@@ -112,6 +71,53 @@ const cmds = {
     quit: 404,
     set_room_info: 405,
     get_my_qun: 406
+}
+/**
+ * 将收到的消息加到消息列表
+ * @param {object} msg 消息对象
+ * @param {number} roomId 聊天室id
+ */
+const receive = function(msg, roomId) {
+    data.user.get_info({
+        success: (res) => {
+            if (msg.type == 3 || res.uid == msg.uid) {
+                // 系统消息或自己发的消息
+                msg.user = 'myself';
+            } else if(msg.uid) {
+                // 别人发的消息
+                msg.user = 'others';
+                uni.vibrateLong({
+                    success: function () {
+                        console.log('振动。。。。。。。');
+                    }
+                });
+            }
+            // 添加到消息列表
+            add_to_room_list({
+                roomId,
+                userUid: res.uid,
+                // 以防万一
+                item: JSON.parse(JSON.stringify(msg)),
+                success: () => {
+                    console.log('添加到消息列表成功');
+                    // 添加到聊天记录
+                    add_to_chat_log_list({
+                        roomId,
+                        // 修复聊天记录首条消息自动变化的bug
+                        item: JSON.parse(JSON.stringify(msg)),
+                        success: () => {
+                            console.log('添加到聊天记录成功');
+                            // 消息滚动
+                            uni.$emit(roomId+'.onMsg');
+                        }
+                    });
+                },
+                fail: (code, err) => {
+                    console.log(code, err);
+                }
+            });
+        }
+    });
 }
 /**
  * 根据聊天室id获取聊天室详细信息

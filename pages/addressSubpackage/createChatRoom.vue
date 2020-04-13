@@ -127,18 +127,24 @@
 			 */
 			clickSure(){
 				if(this.canSure){
-					this.promptVisible = true;
-					this.checked.map((a) => {
-						this.friendsList.map((item) => {
-							if(item.uid == a){
-								this.defaultName += item.nick + '、';
-							}
+					if (this.checked.length == 1) {
+						uni.navigateTo({
+							url: `/pages/addressSubpackage/friendsInfo?uid=${this.checked[0]}`
 						});
-					});
-					this.defaultName = this.defaultName.split('');
-					this.defaultName.pop();
-					this.defaultName = this.defaultName.join('');
-					this.defaultName =this.user.nick + '、' + this.defaultName + '的群聊';
+					} else{
+						this.promptVisible = true;
+						this.checked.map((a) => {
+							this.friendsList.map((item) => {
+								if(item.uid == a){
+									this.defaultName += item.nick + '、';
+								}
+							});
+						});
+						this.defaultName = this.defaultName.split('');
+						this.defaultName.pop();
+						this.defaultName = this.defaultName.join('');
+						this.defaultName =this.user.nick + '、' + this.defaultName + '的群聊';
+					}
 				}
 			},
 			/**

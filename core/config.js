@@ -9,9 +9,11 @@ export default{
 	/**
 	 * @type {string} http服务器地址
 	 */
-	httpUrl:'http://192.168.1.11',
+	// httpUrl:'http://192.168.0.104',
+	httpUrl:'http://117.78.0.214',
 	/**
 	 * @type {string} websocket服务器地址
 	 */
-	websocketUrl:'ws://192.168.1.11:8080',
+	// websocketUrl:'ws://192.168.0.104:8080',
+	websocketUrl:'ws://117.78.0.214:8080',
 }

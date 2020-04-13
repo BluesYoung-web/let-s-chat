@@ -33,6 +33,7 @@ event.register({
     id: 4000,
     on_event: (mode, type, id, data) => {
         if (type == 0 && id == 4000) {
+            net.close();
             err(4000);
         }
     }
@@ -60,6 +61,20 @@ event.register({
     on_event: (model, type, id, data) => {
         if (type == 4002 && id == 0) {
             err(4002);
+        }
+    }
+});
+/**
+ * token验证失败
+ */
+event.register({
+    model,
+    type: 0,
+    id: 4003,
+    on_event: (mode, type, id, data) => {
+        if (type == 0 && id == 4003) {
+            net.close();
+            err(4003);
         }
     }
 });
@@ -98,14 +113,16 @@ const login_to_service = function(args){
             user.sign = sign;
             store.set({
                 key: `${prefix}.account`,
-                data: user
-            });
-            // 连接websocket
-            net.init(() => {
-                success && success({
-                    user,
-                    bnew: res.bnew
-                });
+                data: user,
+                success: () => {
+                    // 连接websocket
+                    net.init(() => {
+                        success && success({
+                            user,
+                            bnew: res.bnew
+                        });
+                    });
+                }
             });
         },
         fail
@@ -128,6 +145,7 @@ const login = function(args) {
 		if(!user){
 			// 获取失败 -> 重新登录
 			err(404);
+			return;
 		}
     }
     try {

@@ -58,6 +58,7 @@ const tokenCheck = function(sign, uid, conn){
                     msg: 'token验证成功'
                 }
             });
+            console.log('token 验证成功');
             conn.sendText(str);
             // 挤号
             let onlines = getOnlines(websocketServer);
@@ -71,23 +72,18 @@ const tokenCheck = function(sign, uid, conn){
                             tips: '账号异地登录，请重新登陆'
                         }
                     }));
-                    setTimeout(() => {
-                        iterator.close(4000, '账号异地登录');
-                    }, 1000);
                 }
             }
         } else {
-            // 验证失败
-            let str = resFormat({
-                status: -1,
+            conn.sendText(pushFormat({
+                model: 100,
+                type: 0,
+                id: 4003,
                 data: {
-                    msg: 'token验证失败'
+                    tips: 'token验证失败'
                 }
-            });
-            conn.sendText(str);
-            setTimeout(() => {
-                conn.close(400, 'token验证失败');
-            }, 1000);
+            }));
+            console.log('token 验证失败');
         }
     });
 }

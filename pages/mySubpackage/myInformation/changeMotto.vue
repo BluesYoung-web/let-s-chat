@@ -17,13 +17,15 @@
 	export default {
 		data() {
 			return {
-				user: {}
+				user: {
+					motto: ''
+				}
 			}
 		},
 		onShow() {
 			data.user.get_info({
 				success: (res) => {
-					this.user = res;
+					this.user = JSON.parse(JSON.stringify(res));
 				}
 			});
 		},

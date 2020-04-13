@@ -32,15 +32,15 @@ const mysqlQuery = async function(sql){
                 reject(err);
             } else {
                 connection.query(sql, (err, data) => {
+                    /**
+                     * 查询结束，释放连接
+                     */
+                    connection.release();
                     if (err) {
                         reject(err);
                     } else {
                         resolve(data);
                     }
-                    /**
-                     * 查询结束，释放连接
-                     */
-                    connection.release();
                 });
             }
         });

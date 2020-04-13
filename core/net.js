@@ -108,22 +108,23 @@ const onDisconnect = function(){
  * @param {function} success 初始化完成的回调函数
  */
 const init = function(success){
-    let user = store.get({
-        key: 'user.account'
+    store.get({
+        key: 'user.account',
+        success: (user) => {
+            let url = `${config.websocketUrl}?sign=${user.sign}&uid=${user.uid}`;
+            socket = new Socket({
+                url,
+                params: {
+                    num: 5
+                },
+                onOpen,
+                onClose,
+                onMessage,
+                onDisconnect
+            });
+            success && socket.init(success);
+        }
     });
-    let {sign, uid} = {...user};
-    let url = `${config.websocketUrl}?sign=${sign}&uid=${uid}`;
-    socket = new Socket({
-        url,
-        params: {
-            num: 5
-        },
-        onOpen,
-        onClose,
-        onMessage,
-        onDisconnect
-    });
-    success && socket.init(success);
 }
 /**
  * 发送消息

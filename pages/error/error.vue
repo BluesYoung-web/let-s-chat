@@ -11,6 +11,7 @@
 		404: '/pages/common/login',
 		4000: '/pages/common/login',
 		4002: '/pages/common/login',
+		4003: '/pages/common/login',
 	}
 	export default {
 		onLoad(e) {

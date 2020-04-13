@@ -122,25 +122,35 @@
 				});
 				// #endif
 				// #ifdef APP-PLUS
-				let config={
-					provider: 'weixin',
+				uni.showModal({
+					title: '提示',
+					content: '未申请微信开放平台权限，此账号仅供测试！',
 					success: (res) => {
-						uni.getUserInfo({
-							provider: 'weixin',
-							success: (infoRes) => {
-								/**
-								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-								 */
-								this.toMain(infoRes.userInfo);
-							}
+						this.toMain({
+							openId:'oRrdQt0VnoxDYW9K8HdI9Cuoklyw'
 						});
 					},
-					fail: (err) => {
-						console.error('授权登录失败：' + JSON.stringify(err));
-					}
-				}
-				uni.login(config);
+					showCancel: false
+				});
+				// let config={
+				// 	provider: 'weixin',
+				// 	success: (res) => {
+				// 		uni.getUserInfo({
+				// 			provider: 'weixin',
+				// 			success: (infoRes) => {
+				// 				/**
+				// 				 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
+				// 				 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
+				// 				 */
+				// 				this.toMain(infoRes.userInfo);
+				// 			}
+				// 		});
+				// 	},
+				// 	fail: (err) => {
+				// 		console.error('授权登录失败：' + JSON.stringify(err));
+				// 	}
+				// }
+				// uni.login(config);
 				// #endif
 			},
 			toMain(userInfo) {

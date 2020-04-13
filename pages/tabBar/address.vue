@@ -205,6 +205,9 @@
 						this.toUserSearch();
 						break;
 					default:
+						uni.showToast({
+							title: "敬请期待！"
+						});
 						break;
 				}
 			},

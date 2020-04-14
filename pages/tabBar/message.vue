@@ -22,6 +22,12 @@
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue";
 	import bubbleMenu from "@/components/young-bubble-menu/young-bubble-menu.vue";
 	import data from '@/data.js';
+	/**
+	 * 提前获取，避免初次发送语音时提示获取录音权限
+	 */
+	const recorderManager = uni.getRecorderManager();
+	const innerAudioContext = uni.createInnerAudioContext();
+	innerAudioContext.autoplay = true;
 	export default {
 		components:{
 			chatItem,
@@ -78,6 +84,16 @@
 					this.user = res;
 				}
 			});
+			/**
+			 * 提前获取录音权限
+			 */
+			recorderManager.start({
+				format: 'mp3'
+			});
+			setTimeout(() => {
+				recorderManager.stop();
+				console.log('已关闭录音');
+			}, 500);
 		},
 		// 观察者
 		watch: {

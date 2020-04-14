@@ -1,9 +1,9 @@
 {
-    "name" : "lailiao V2.1.1",
+    "name" : "来聊",
     "appid" : "__UNI__346FD07",
     "description" : "简介即时聊天APP",
-    "versionName" : "2.1.2",
-    "versionCode" : 200,
+    "versionName" : "2.1.3",
+    "versionCode" : 300,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

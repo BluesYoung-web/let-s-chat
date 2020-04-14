@@ -2,7 +2,7 @@
 <template>
 	<view>
 		<view class="">
-			<input class="width-750 height-100 bg-fff pd-lt30" v-model="user.nick" type="text" value="" maxlength="30"/>
+			<input class="width-750 height-100 bg-fff pd-lt30" v-model="nick" maxlength="30"/>
 		</view>
 	</view>
 </template>
@@ -13,18 +13,22 @@
 		data() {
 			return {
 				user: {},
+				nick: ''
 			}
 		},
 		onShow() {
 			// 从缓存中获取用户数据
 			data.user.get_info({
 				success: (res) => {
+					this.nick = res.nick;
 					this.user = res;
+					console.log(this.nick);
 				}
 			});
 		},
 		// 监听下一步按钮的点击事件
 		onNavigationBarButtonTap(e){
+			this.user.nick = this.nick;
 			this.submitName();
 		},
 		methods: {

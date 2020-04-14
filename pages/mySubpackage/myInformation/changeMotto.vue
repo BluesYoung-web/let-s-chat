@@ -3,9 +3,9 @@
 	<view class="">
 		<!-- 输入文本框 -->
 		<view class="relative">
-			<textarea class="width-750 ft-36" v-model="user.motto" maxlength="20"/>
+			<textarea class="width-750 ft-36" v-model="motto" maxlength="20"/>
 			<view class="absolute countLimit">
-				<text>{{user.motto.length}}/</text>
+				<text>{{motto.length}}/</text>
 				<text>20</text>
 			</view>
 		</view>
@@ -17,20 +17,21 @@
 	export default {
 		data() {
 			return {
-				user: {
-					motto: ''
-				}
+				user: {},
+				motto: ''
 			}
 		},
 		onShow() {
 			data.user.get_info({
 				success: (res) => {
-					this.user = JSON.parse(JSON.stringify(res));
+					this.user = res;
+					this.motto = res.motto;
 				}
 			});
 		},
 		// 监听下一步按钮的点击事件
 		onNavigationBarButtonTap(e){
+			this.user.motto = this.motto;
 			this.submitMotto();
 		},
 		methods: {

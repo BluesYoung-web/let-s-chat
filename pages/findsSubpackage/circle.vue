@@ -203,8 +203,12 @@
 					data.find.like({
 						findId: e.id,
 						success: () => {
-							e.likeAction = 1;
-							e.likesNum++;
+							this.findsList.forEach((v, i) => {
+								if(v.id == e.id){
+									v.likeAction = 1;
+									v.likesNum++;
+								}
+							});
 						},
 						fail: (code, err) => {
 							console.log(code, err);
@@ -214,8 +218,12 @@
 					data.find.dislike({
 						findId: e.id,
 						success: () => {
-							e.likeAction = 0;
-							e.likesNum--;
+							this.findsList.forEach((v, i) => {
+								if(v.id == e.id){
+									v.likeAction = 0;
+									v.likesNum--;
+								}
+							});
 						},
 						fail: (code, err) => {
 							console.log(code, err);

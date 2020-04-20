@@ -2,8 +2,8 @@
     "name" : "来聊",
     "appid" : "__UNI__346FD07",
     "description" : "简介即时聊天APP",
-    "versionName" : "2.1.4",
-    "versionCode" : 400,
+    "versionName" : "2.1.5",
+    "versionCode" : 500,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -118,5 +118,9 @@
     },
     "mp-toutiao" : {
         "usingComponents" : true
+    },
+    "h5" : {
+        "title" : "来聊",
+        "domain" : "http://117.78.0.214"
     }
 }

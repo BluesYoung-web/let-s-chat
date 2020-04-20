@@ -4,7 +4,7 @@
 		<view class="content flex flex-direction-column">
 			<edit-item type="0" title="用户头像" :avatar="user.avatar" @poupChange="openPopup"></edit-item>
 			<edit-item type="1" title="昵称" :content="user.nick" @toChange="toChangeName"></edit-item>
-			<edit-item type="2" title="来聊账号" :content="user.uid" @cpoy="accountCopy"></edit-item>
+			<edit-item type="2" title="来聊账号" :content="user.uid" @copy="accountCopy"></edit-item>
 			<edit-item type="1" title="个性签名" :content="user.motto" @toChange="toChangeMotto"></edit-item>
 		</view>
 		
@@ -94,9 +94,12 @@
 					// data 必须是 string
 					data:`${this.user.uid}`,
 					success: () => {
-						console.log('复制账号成功');
+						uni.showToast({
+							icon: 'none',
+							title: '来聊账号已复制到剪切板'
+						});
 					}
-				})
+				});
 			},
 			// 拍照
 			takePhoto(){

@@ -190,7 +190,7 @@ const login_out = function (args) {
 }
 
 /**
- * 用户上传文件(图片、语言)的函数
+ * 用户上传文件(图片、语音)的函数
  * @param {object} args 
  * @param {string} args.filePath 文件本地路径
  * @param {string} args.name 文件对象中的键名 img/audio
